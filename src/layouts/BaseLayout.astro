@@ -32,6 +32,13 @@ const { title, description = "Jongmin의 개발 블로그", image = "/og-image.j
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.url)} />
 
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      integrity="sha384-+YfKfw2J4FhGmR+e8OFiI7xqnxLUPvRV1rjk2lABO7ZLBiGBN03z2RgRZcEF2d6g"
+      crossorigin="anonymous"
+    />
+
     <title>{title}</title>
   </head>
   <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text transition-colors duration-300">
