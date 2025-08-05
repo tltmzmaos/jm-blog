@@ -11,6 +11,7 @@ export interface Props {
 
 const { title, description, pubDate, heroImage, tags, slug, author } = Astro.props;
 
+const baseUrl = import.meta.env.BASE_URL;
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long',
@@ -19,7 +20,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <article class="bg-white dark:bg-dark-surface rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-dark-border">
-  <a href={`/posts/${slug}`} class="block">
+  <a href={`${baseUrl}posts/${slug}`} class="block">
     {heroImage && (
       <div class="aspect-video overflow-hidden">
         <img 

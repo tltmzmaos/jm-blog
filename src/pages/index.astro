@@ -11,6 +11,7 @@ const sortedPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const recentPosts = sortedPosts.slice(0, 6);
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Jongmin - Dev Blog" description="Jongmin's blog sharing development experiences and technology insights.">
@@ -37,7 +38,7 @@ const recentPosts = sortedPosts.slice(0, 6);
           Recent Posts
         </h2>
         <a 
-          href="/posts" 
+          href={`${baseUrl}posts`}
           class="text-primary-600 dark:text-dark-accent hover:text-primary-700 dark:hover:text-dark-accentHover font-medium transition-colors"
         >
           View All Posts →
