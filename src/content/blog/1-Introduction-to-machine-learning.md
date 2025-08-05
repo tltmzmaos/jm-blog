@@ -27,7 +27,7 @@ draft: false           # ⭕ 선택 (기본 false)
 
 Regression predicts a number infinitely many possible outputs
 
-![Screenshot 2024-03-20 at 6.28.25 PM.png](/public/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.28.25_PM.png)
+![Screenshot 2024-03-20 at 6.28.25 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.28.25_PM.png)
 
 ## Classification
 
