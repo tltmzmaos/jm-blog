@@ -1,0 +1,162 @@
+---
+export interface Props {
+  postSlug: string;
+  initialLikes?: number;
+}
+
+const { postSlug, initialLikes = 0 } = Astro.props;
+---
+
+<div class="like-container flex items-center space-x-2">
+  <button
+    class="like-button flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all duration-200 border border-gray-200 dark:border-gray-600"
+    data-post-slug={postSlug}
+    data-liked="false"
+  >
+    <svg class="like-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+    </svg>
+    <span class="like-count font-medium">{initialLikes}</span>
+  </button>
+</div>
+
+<script>
+  // Like storage selection (can be changed based on environment)
+  import JSONBinLikeStorage from '../utils/jsonbinLikes.js';
+  
+  class LikeManager {
+    constructor() {
+      this.storage = new JSONBinLikeStorage();
+      this.init();
+    }
+    
+    async init() {
+      const likeButtons = document.querySelectorAll('.like-button');
+      
+      for (const button of likeButtons) {
+        const postSlug = button.getAttribute('data-post-slug');
+        
+        // Get like count from server
+        const serverLikes = await this.storage.getLikes(postSlug);
+        const isLiked = this.storage.isLiked(postSlug);
+        
+        this.updateButtonState(button, isLiked, serverLikes);
+        button.addEventListener('click', (e) => this.handleLike(e));
+      }
+    }
+    
+    async handleLike(event) {
+      const button = event.currentTarget;
+      const postSlug = button.getAttribute('data-post-slug');
+      const isCurrentlyLiked = button.getAttribute('data-liked') === 'true';
+      
+      // 버튼 비활성화 및 로딩 상태 표시
+      button.disabled = true;
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Processing...</span>
+      `;
+      
+      try {
+        // Get current server like count
+        const currentServerLikes = await this.storage.getLikes(postSlug);
+        
+        const newLikedState = !isCurrentlyLiked;
+        const newCount = newLikedState ? currentServerLikes + 1 : Math.max(0, currentServerLikes - 1);
+        
+        // Update server
+        await this.storage.setLikes(postSlug, newCount);
+        
+        // Save local like state
+        this.storage.setLiked(postSlug, newLikedState);
+        
+        // Update UI
+        this.updateButtonState(button, newLikedState, newCount);
+        
+        // 애니메이션 효과
+        this.animateLike(button, newLikedState);
+        
+      } catch (error) {
+        console.error('Failed to update like:', error);
+        
+        // Use local storage only on failure
+        const currentCount = parseInt(button.querySelector('.like-count').textContent) || 0;
+        const newLikedState = !isCurrentlyLiked;
+        const newCount = newLikedState ? currentCount + 1 : Math.max(0, currentCount - 1);
+        
+        this.storage.setLiked(postSlug, newLikedState);
+        this.storage.setLocalLikes(postSlug, newCount);
+        this.updateButtonState(button, newLikedState, newCount);
+        
+      } finally {
+        // 버튼 다시 활성화 및 원래 내용 복원
+        button.disabled = false;
+        // No separate handling needed here as content is updated in updateButtonState
+      }
+    }
+    
+    updateButtonState(button, isLiked, count) {
+      const icon = button.querySelector('.like-icon');
+      const countElement = button.querySelector('.like-count');
+      
+      button.setAttribute('data-liked', isLiked.toString());
+      countElement.textContent = count;
+      
+      if (isLiked) {
+        button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+        icon.setAttribute('fill', 'currentColor');
+      } else {
+        button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+        button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        icon.setAttribute('fill', 'none');
+      }
+    }
+    
+    animateLike(button, isLiked) {
+      if (isLiked) {
+        button.classList.add('animate-pulse');
+        setTimeout(() => {
+          button.classList.remove('animate-pulse');
+        }, 600);
+        
+        // 하트 이모지 애니메이션
+        this.createHeartAnimation(button);
+      }
+    }
+    
+    createHeartAnimation(button) {
+      const heart = document.createElement('div');
+      heart.innerHTML = '❤️';
+      heart.className = 'absolute text-red-500 text-lg font-bold pointer-events-none animate-bounce';
+      heart.style.left = '50%';
+      heart.style.top = '-10px';
+      heart.style.transform = 'translateX(-50%)';
+      heart.style.zIndex = '1000';
+      
+      button.style.position = 'relative';
+      button.appendChild(heart);
+      
+      setTimeout(() => {
+        heart.style.opacity = '0';
+        heart.style.transform = 'translateX(-50%) translateY(-20px)';
+        heart.style.transition = 'all 0.5s ease-out';
+      }, 100);
+      
+      setTimeout(() => {
+        if (heart.parentNode) {
+          heart.parentNode.removeChild(heart);
+        }
+      }, 600);
+    }
+  }
+  
+  // DOM이 로드되면 초기화
+  document.addEventListener('DOMContentLoaded', () => {
+    new LikeManager();
+  });
+</script>

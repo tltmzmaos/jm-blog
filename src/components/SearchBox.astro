@@ -1,0 +1,115 @@
+---
+---
+
+<div class="relative">
+  <input
+    type="text"
+    id="search-input"
+    placeholder="Search..."
+    class="w-64 px-4 py-2 pl-10 pr-4 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text"
+  />
+  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+    </svg>
+  </div>
+  
+  <!-- 검색 결과 -->
+  <div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg max-h-96 overflow-y-auto hidden z-50">
+    <!-- 검색 결과가 여기에 표시됩니다 -->
+  </div>
+</div>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  let fuse: Fuse<any>;
+  let posts: any[] = [];
+
+  // 포스트 데이터 로드
+  async function loadPosts() {
+    try {
+      const response = await fetch('/api/posts.json');
+      posts = await response.json();
+      
+      const options = {
+        keys: ['title', 'description', 'tags'],
+        threshold: 0.3,
+        includeScore: true,
+      };
+      
+      fuse = new Fuse(posts, options);
+    } catch (error) {
+      console.error('포스트 데이터를 로드할 수 없습니다:', error);
+    }
+  }
+
+  // 검색 실행
+  function performSearch(query: string) {
+    if (!fuse || query.length < 2) {
+      hideSearchResults();
+      return;
+    }
+
+    const results = fuse.search(query);
+    displaySearchResults(results);
+  }
+
+  // 검색 결과 표시
+  function displaySearchResults(results: any[]) {
+    const searchResults = document.getElementById('search-results');
+    if (!searchResults) return;
+
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="p-4 text-gray-500 dark:text-gray-400">No results found.</div>';
+    } else {
+      searchResults.innerHTML = results.slice(0, 5).map(result => {
+        const post = result.item;
+        return `
+          <a href="/posts/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
+            <h3 class="font-medium text-gray-900 dark:text-gray-100">${post.title}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${post.description}</p>
+            <div class="flex flex-wrap gap-1 mt-2">
+              ${post.tags.map((tag: string) => `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded">${tag}</span>`).join('')}
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    searchResults.classList.remove('hidden');
+  }
+
+  // 검색 결과 숨기기
+  function hideSearchResults() {
+    const searchResults = document.getElementById('search-results');
+    if (searchResults) {
+      searchResults.classList.add('hidden');
+    }
+  }
+
+  // 이벤트 리스너 설정
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPosts();
+
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    if (searchInput) {
+      let debounceTimer: NodeJS.Timeout;
+
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          const query = (e.target as HTMLInputElement).value;
+          performSearch(query);
+        }, 300);
+      });
+
+      // 검색창 외부 클릭 시 결과 숨기기
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target as Node) && !document.getElementById('search-results')?.contains(e.target as Node)) {
+          hideSearchResults();
+        }
+      });
+    }
+  });
+</script>

@@ -1,0 +1,85 @@
+---
+export interface Props {
+  prevPost?: {
+    slug: string;
+    title: string;
+    description?: string;
+  };
+  nextPost?: {
+    slug: string;
+    title: string;
+    description?: string;
+  };
+}
+
+const { prevPost, nextPost } = Astro.props;
+---
+
+{(prevPost || nextPost) && (
+  <nav class="flex flex-col sm:flex-row justify-between items-stretch gap-4 mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
+    {prevPost ? (
+      <a
+        href={`/posts/${prevPost.slug}`}
+        class="group flex-1 p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 hover:shadow-md"
+      >
+        <div class="flex items-start space-x-4">
+          <div class="flex-shrink-0 mt-1">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Previous Post</p>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+              {prevPost.title}
+            </h3>
+            {prevPost.description && (
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+                {prevPost.description}
+              </p>
+            )}
+          </div>
+        </div>
+      </a>
+    ) : (
+      <div class="flex-1"></div>
+    )}
+
+    {nextPost ? (
+      <a
+        href={`/posts/${nextPost.slug}`}
+        class="group flex-1 p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 hover:shadow-md"
+      >
+        <div class="flex items-start space-x-4">
+          <div class="flex-1 min-w-0 text-right">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Next Post</p>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors line-clamp-2">
+              {nextPost.title}
+            </h3>
+            {nextPost.description && (
+              <p class="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-2">
+                {nextPost.description}
+              </p>
+            )}
+          </div>
+          <div class="flex-shrink-0 mt-1">
+            <svg class="w-5 h-5 text-gray-400 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </div>
+        </div>
+      </a>
+    ) : (
+      <div class="flex-1"></div>
+    )}
+  </nav>
+)}
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

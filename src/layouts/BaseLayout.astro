@@ -1,0 +1,71 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = "Jongmin의 개발 블로그", image = "/og-image.jpg" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/logo.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+    <title>{title}</title>
+  </head>
+  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text transition-colors duration-300">
+    <slot />
+    
+    <script>
+      // 다크모드 초기화
+      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+    
+    <style is:global>
+      /* 전역 코드 블록 스타일 */
+      .dark pre[class*="language-"] {
+        background-color: #161b22 !important;
+        border: 1px solid #30363d !important;
+      }
+      
+      .dark code[class*="language-"] {
+        color: #f0f6fc !important;
+      }
+      
+      /* Shiki 코드 하이라이팅 다크모드 개선 */
+      .dark .shiki {
+        background-color: #161b22 !important;
+        border: 1px solid #30363d !important;
+      }
+      
+      .dark .shiki code {
+        color: #f0f6fc !important;
+      }
+    </style>
+  </body>
+</html>

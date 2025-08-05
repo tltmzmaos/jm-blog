@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import PostCard from '../../components/PostCard.astro';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const publishedPosts = allPosts.filter(post => !post.data.draft);
+  
+  const uniqueTags = [...new Set(publishedPosts.flatMap(post => post.data.tags))];
+  
+  return uniqueTags.map(tag => {
+    const filteredPosts = publishedPosts
+      .filter(post => post.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<BaseLayout 
+  title={`${tag} 태그 - 벨로그 스타일 블로그`} 
+  description={`${tag} 태그가 포함된 모든 포스트를 확인해보세요.`}
+>
+  <Header />
+  
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- 페이지 헤더 -->
+    <div class="mb-8">
+      <nav class="mb-4">
+        <a 
+          href="/tags" 
+          class="text-primary-600 dark:text-dark-accent hover:text-primary-700 dark:hover:text-dark-accentHover transition-colors"
+        >
+          ← All Tags
+        </a>
+      </nav>
+      
+      <div class="flex items-center gap-3 mb-4">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-text">
+          {tag}
+        </h1>
+        <span class="px-3 py-1 text-sm bg-primary-100 dark:bg-dark-accent/20 text-primary-800 dark:text-dark-accent rounded-full">
+          {posts.length} posts
+        </span>
+      </div>
+      
+      <p class="text-gray-600 dark:text-dark-subtext">
+        Posts tagged with "{tag}".
+      </p>
+    </div>
+
+    <!-- 포스트 그리드 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => (
+        <PostCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          heroImage={post.data.heroImage}
+          tags={post.data.tags}
+          slug={post.slug}
+          author={post.data.author}
+        />
+      ))}
+    </div>
+
+    {posts.length === 0 && (
+      <div class="text-center py-12">
+        <p class="text-gray-500 dark:text-dark-subtext">No posts found for this tag.</p>
+      </div>
+    )}
+  </main>
+</BaseLayout>

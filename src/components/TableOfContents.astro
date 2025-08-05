@@ -1,0 +1,92 @@
+---
+export interface Props {
+  headings: Array<{
+    depth: number;
+    slug: string;
+    text: string;
+  }>;
+}
+
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <div class="sticky top-24 bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-4">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-text mb-3">
+      Table of Contents
+    </h3>
+    <nav class="toc">
+      <ul class="space-y-1">
+        {headings.map((heading) => (
+          <li class={`toc-item toc-level-${heading.depth}`}>
+            <a
+              href={`#${heading.slug}`}
+              class={`block py-1 text-sm transition-colors hover:text-primary-600 dark:hover:text-dark-accent ${
+                heading.depth === 1 
+                  ? 'font-semibold text-gray-900 dark:text-dark-text' 
+                  : heading.depth === 2
+                  ? 'pl-3 text-gray-700 dark:text-dark-text'
+                  : 'pl-6 text-gray-600 dark:text-dark-subtext'
+              }`}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+)}
+
+<script>
+  // 현재 보고 있는 섹션 하이라이트
+  function updateActiveHeading() {
+    const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+    const tocLinks = document.querySelectorAll('.toc a');
+    
+    let current = '';
+    
+    headings.forEach((heading) => {
+      const rect = heading.getBoundingClientRect();
+      if (rect.top <= 100) {
+        current = heading.id;
+      }
+    });
+    
+    tocLinks.forEach((link) => {
+      link.classList.remove('text-primary-600', 'dark:text-dark-accent', 'font-medium');
+      link.classList.add('text-gray-600', 'dark:text-dark-subtext');
+      
+      if (link.getAttribute('href') === `#${current}`) {
+        link.classList.remove('text-gray-600', 'dark:text-dark-subtext');
+        link.classList.add('text-primary-600', 'dark:text-dark-accent', 'font-medium');
+      }
+    });
+  }
+  
+  // 스크롤 이벤트 리스너
+  window.addEventListener('scroll', updateActiveHeading);
+  window.addEventListener('load', updateActiveHeading);
+</script>
+
+<style>
+  .toc-level-1 {
+    @apply border-l-2 border-transparent;
+  }
+  
+  .toc-level-2 {
+    @apply border-l-2 border-transparent;
+  }
+  
+  .toc-level-3 {
+    @apply border-l-2 border-transparent;
+  }
+  
+  .toc a.text-primary-600 {
+    @apply border-l-2 border-primary-600;
+  }
+  
+  .dark .toc a.dark\:text-dark-accent {
+    @apply border-l-2 border-dark-accent;
+  }
+</style>

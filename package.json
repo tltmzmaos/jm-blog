@@ -1,7 +1,22 @@
 {
-  "name": "pw",
+  "name": "jongmin-blog",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "A modern, fast, and feature-rich blog built with Astro",
+  "author": "Jongmin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/jongmin-blog.git"
+  },
+  "keywords": [
+    "astro",
+    "blog",
+    "typescript",
+    "tailwindcss",
+    "markdown",
+    "dark-mode"
+  ],
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,6 +24,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.12.8"
+    "@astrojs/mdx": "^4.3.3",
+    "@astrojs/sitemap": "^3.4.2",
+    "@astrojs/tailwind": "^6.0.2",
+    "@tailwindcss/typography": "^0.5.16",
+    "astro": "^5.12.8",
+    "fuse.js": "^7.1.0"
   }
 }
