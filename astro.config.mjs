@@ -4,8 +4,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-    site: 'https://tltmzmaos.github.io',
-    base: '/jm-blog',
+    site: 'https://jongmin.me',
+    base: '/',
     integrations: [
         tailwind(),
         mdx(),
