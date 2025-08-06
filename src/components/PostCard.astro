@@ -1,5 +1,6 @@
 ---
 import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
+import OptimizedImage from './OptimizedImage.astro';
 
 export interface Props {
   title: string;
@@ -32,21 +33,20 @@ const readingTime = calculateReadingTime(content || description);
   >
     <div class="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800 relative group">
       {heroImage ? (
-        <img 
+        <OptimizedImage 
           src={heroImage} 
-          alt=""
-          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          alt={`${title} cover image`}
+          class="absolute inset-0 w-full h-full group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
         />
-      ) : null}
-      
-      <!-- Fallback background -->
-      <div class={`w-full h-full bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 flex items-center justify-center ${heroImage ? 'hidden' : 'flex'}`}>
-        <div class="text-primary-600 dark:text-primary-300 text-3xl sm:text-4xl font-bold opacity-20" aria-hidden="true">
-          {title.charAt(0).toUpperCase()}
+      ) : (
+        <!-- Fallback background -->
+        <div class="w-full h-full bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800 flex items-center justify-center">
+          <div class="text-primary-600 dark:text-primary-300 text-3xl sm:text-4xl font-bold opacity-20" aria-hidden="true">
+            {title.charAt(0).toUpperCase()}
+          </div>
         </div>
-      </div>
+      )}
     </div>
     
     <div class="p-4 sm:p-6">

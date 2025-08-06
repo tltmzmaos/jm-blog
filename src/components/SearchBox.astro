@@ -119,8 +119,12 @@
     }
 
     if (!fuse) {
-      searchResults.innerHTML =
-        '<div class="p-4 text-gray-500 dark:text-gray-400">Loading...</div>';
+      searchResults.innerHTML = `
+        <div class="p-4 flex items-center justify-center text-gray-500 dark:text-gray-400">
+          <div class="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-500 rounded-full animate-spin mr-2"></div>
+          Loading...
+        </div>
+      `;
       searchResults.classList.remove("hidden");
       return;
     }

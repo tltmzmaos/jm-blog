@@ -2,6 +2,7 @@
 import SEO from '../components/SEO.astro';
 import ScrollProgress from '../components/ScrollProgress.astro';
 import KeyboardNavigation from '../components/KeyboardNavigation.astro';
+import PageTransition from '../components/PageTransition.astro';
 
 export interface Props {
   title: string;
@@ -37,6 +38,14 @@ const {
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    
+    <!-- Font optimization -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" 
+      rel="stylesheet"
+    />
     
     <!-- SEO 최적화 컴포넌트 -->
     <SEO 
@@ -177,6 +186,9 @@ const {
         border: 0;
       }
     </style>
+    
+    <!-- 페이지 전환 로딩 -->
+    <PageTransition />
     
     <!-- 스크롤 진행률 및 맨 위로 버튼 -->
     <ScrollProgress />
