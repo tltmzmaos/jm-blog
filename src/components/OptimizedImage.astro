@@ -1,0 +1,93 @@
+---
+export interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+}
+
+const { 
+  src, 
+  alt, 
+  width, 
+  height, 
+  class: className = '', 
+  loading = 'lazy'
+} = Astro.props;
+
+// 이미지 확장자 확인
+const getImageFormat = (src: string) => {
+  const ext = src.split('.').pop()?.toLowerCase();
+  return ext || 'jpg';
+};
+
+// 원본 형식
+const originalFormat = getImageFormat(src);
+
+// 반응형 이미지 크기들
+const sizes = width ? [
+  Math.round(width * 0.5),
+  Math.round(width * 0.75),
+  width,
+  Math.round(width * 1.5),
+  Math.round(width * 2)
+] : [400, 600, 800, 1200, 1600];
+
+// srcset 생성 함수 (실제 최적화된 이미지가 없으므로 원본 사용)
+const createSrcSet = (baseSrc: string) => {
+  // 실제 환경에서는 다양한 크기의 이미지를 생성해야 하지만
+  // 현재는 원본 이미지만 사용
+  return sizes.map(size => `${baseSrc} ${size}w`).join(', ');
+};
+---
+
+<picture class={className}>
+  <!-- 기본 img 태그 -->
+  <img 
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={loading}
+    decoding="async"
+    class="transition-opacity duration-300 opacity-0"
+    style="aspect-ratio: auto;"
+  />
+</picture>
+
+<style>
+  picture img {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  picture img.loaded {
+    opacity: 1 !important;
+  }
+</style>
+
+<script>
+  // @ts-nocheck
+  // 이미지 로드 완료 시 페이드 인 효과
+  document.addEventListener('DOMContentLoaded', () => {
+    const images = document.querySelectorAll('picture img');
+    
+    images.forEach((img) => {
+      const imageElement = img as HTMLImageElement;
+      
+      if (imageElement.complete) {
+        imageElement.classList.add('loaded');
+      } else {
+        imageElement.addEventListener('load', () => {
+          imageElement.classList.add('loaded');
+        });
+        
+        // 에러 처리
+        imageElement.addEventListener('error', () => {
+          imageElement.classList.add('loaded'); // 에러가 나도 표시
+        });
+      }
+    });
+  });
+</script>

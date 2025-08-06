@@ -1,4 +1,7 @@
 ---
+import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
+import OptimizedImage from './OptimizedImage.astro';
+
 export interface Props {
   title: string;
   description: string;
@@ -7,9 +10,10 @@ export interface Props {
   tags: string[];
   slug: string;
   author: string;
+  content?: string;
 }
 
-const { title, description, pubDate, heroImage, tags, slug, author } = Astro.props;
+const { title, description, pubDate, heroImage, tags, slug, author, content = '' } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
 const formattedDate = new Intl.DateTimeFormat('en-US', {
@@ -17,17 +21,21 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   month: 'long',
   day: 'numeric'
 }).format(pubDate);
+
+const readingTime = calculateReadingTime(content || description);
 ---
 
 <article class="bg-white dark:bg-dark-surface rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-dark-border">
   <a href={`${baseUrl}posts/${slug}`} class="block">
     {heroImage && (
       <div class="aspect-video overflow-hidden">
-        <img 
+        <OptimizedImage 
           src={heroImage} 
           alt={title}
           class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           loading="lazy"
+          width={800}
+          height={450}
         />
       </div>
     )}
@@ -37,6 +45,11 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
         <span>{author}</span>
         <span class="mx-2">·</span>
         <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+        <span class="mx-2">·</span>
+        <div class="flex items-center gap-1">
+          <Fragment set:html={ReadingTimeIcon} />
+          <span>{readingTime.text}</span>
+        </div>
       </div>
       
       <h2 class="text-xl font-bold text-gray-900 dark:text-dark-text mb-3 line-clamp-2 hover:text-primary-600 dark:hover:text-dark-accent transition-colors">

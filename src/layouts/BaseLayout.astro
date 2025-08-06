@@ -39,19 +39,47 @@ const { title, description = "Jongmin의 개발 블로그", image = "/og-image.j
       crossorigin="anonymous"
     />
 
+    <!-- 다크모드 깜빡임 방지 스크립트 (즉시 실행) -->
+    <script is:inline>
+      // 페이지 로드 전에 즉시 실행되어 깜빡임 방지
+      (function() {
+        // 페이지 로드 시 전환 효과 비활성화
+        document.documentElement.classList.add('no-transition');
+        
+        const theme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (theme === 'dark' || (!theme && systemPrefersDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        
+        // 페이지 로드 완료 후 전환 효과 활성화
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            document.documentElement.classList.remove('no-transition');
+          }, 100);
+        });
+      })();
+    </script>
+
     <title>{title}</title>
   </head>
-  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text transition-colors duration-300">
-    <slot />
-    
-    <script>
-      // 다크모드 초기화
-      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text">
+    <style>
+      /* 다크모드 전환 시 부드러운 애니메이션 */
+      * {
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
       }
-    </script>
+      
+      /* 페이지 로드 시 전환 효과 비활성화 */
+      .no-transition * {
+        transition: none !important;
+      }
+    </style>
+    
+    <slot />
     
     <style is:global>
       /* 전역 코드 블록 스타일 */
