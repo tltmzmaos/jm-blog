@@ -33,55 +33,214 @@ const { postSlug, initialLikes = 0 } = Astro.props;
 
 <script>
   // @ts-nocheck
-  // 간단한 좋아요 시스템 (localStorage만 사용)
+  // JSONBin을 사용한 공유 좋아요 시스템
+  
+  class LikeStorage {
+    constructor() {
+      // 환경변수에서 JSONBin 설정 가져오기
+      this.apiKey = import.meta.env.PUBLIC_JSONBIN_API_KEY;
+      this.binId = import.meta.env.PUBLIC_JSONBIN_BIN_ID;
+      this.useJsonBin = !!(this.apiKey && this.binId);
+      
+      console.log('Like Storage 설정:', {
+        hasApiKey: !!this.apiKey,
+        hasBinId: !!this.binId,
+        useJsonBin: this.useJsonBin
+      });
+      
+      // 캐시
+      this.cache = null;
+      this.cacheTime = 0;
+      this.cacheTimeout = 30000; // 30초
+    }
+    
+    async getLikes(postSlug) {
+      if (this.useJsonBin) {
+        try {
+          const data = await this.fetchFromJsonBin();
+          return data[postSlug] || 0;
+        } catch (error) {
+          console.error('JSONBin에서 좋아요 수 가져오기 실패:', error);
+          return this.getLocalLikes(postSlug);
+        }
+      } else {
+        return this.getLocalLikes(postSlug);
+      }
+    }
+    
+    async setLikes(postSlug, count) {
+      if (this.useJsonBin) {
+        try {
+          const data = await this.fetchFromJsonBin();
+          data[postSlug] = count;
+          await this.saveToJsonBin(data);
+          
+          // 로컬에도 백업 저장
+          this.setLocalLikes(postSlug, count);
+          return true;
+        } catch (error) {
+          console.error('JSONBin에 좋아요 수 저장 실패:', error);
+          return this.setLocalLikes(postSlug, count);
+        }
+      } else {
+        return this.setLocalLikes(postSlug, count);
+      }
+    }
+    
+    async fetchFromJsonBin() {
+      // 캐시 확인
+      if (this.cache && (Date.now() - this.cacheTime) < this.cacheTimeout) {
+        return this.cache;
+      }
+      
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}/latest`, {
+        headers: {
+          'X-Master-Key': this.apiKey,
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`JSONBin API 오류: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      this.cache = result.record || {};
+      this.cacheTime = Date.now();
+      
+      return this.cache;
+    }
+    
+    async saveToJsonBin(data) {
+      const response = await fetch(`https://api.jsonbin.io/v3/b/${this.binId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': this.apiKey,
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`JSONBin 저장 오류: ${response.status}`);
+      }
+      
+      // 캐시 업데이트
+      this.cache = data;
+      this.cacheTime = Date.now();
+      
+      return true;
+    }
+    
+    // 로컬 저장소 폴백 메서드
+    getLocalLikes(postSlug) {
+      const likes = localStorage.getItem(`likes-${postSlug}`);
+      return parseInt(likes) || 0;
+    }
+    
+    setLocalLikes(postSlug, count) {
+      localStorage.setItem(`likes-${postSlug}`, count.toString());
+      return true;
+    }
+    
+    isLiked(postSlug) {
+      return localStorage.getItem(`liked-${postSlug}`) === 'true';
+    }
+    
+    setLiked(postSlug, liked) {
+      localStorage.setItem(`liked-${postSlug}`, liked.toString());
+    }
+  }
+  
+  const likeStorage = new LikeStorage();
   
   function initializeLikeButtons() {
     const likeButtons = document.querySelectorAll('.like-button');
     
-    likeButtons.forEach(button => {
+    likeButtons.forEach(async (button) => {
       const postSlug = button.getAttribute('data-post-slug');
       
-      // localStorage에서 상태 로드
-      const isLiked = localStorage.getItem(`liked-${postSlug}`) === 'true';
-      const savedCount = parseInt(localStorage.getItem(`likes-${postSlug}`)) || 0;
-      
-      // 초기 상태 설정
-      updateButtonAppearance(button, isLiked, savedCount);
+      try {
+        // 서버에서 실제 좋아요 수 가져오기
+        const serverLikes = await likeStorage.getLikes(postSlug);
+        const isLiked = likeStorage.isLiked(postSlug);
+        
+        // 초기 상태 설정
+        updateButtonAppearance(button, isLiked, serverLikes);
+      } catch (error) {
+        console.error('좋아요 초기화 실패:', error);
+        // 에러 시 로컬 값 사용
+        const isLiked = likeStorage.isLiked(postSlug);
+        const localLikes = likeStorage.getLocalLikes(postSlug);
+        updateButtonAppearance(button, isLiked, localLikes);
+      }
       
       // 클릭 이벤트 리스너 추가
       button.addEventListener('click', handleLikeClick);
     });
   }
   
-  function handleLikeClick(event) {
+  async function handleLikeClick(event) {
     const button = event.currentTarget;
     const postSlug = button.getAttribute('data-post-slug');
     const isCurrentlyLiked = button.getAttribute('data-liked') === 'true';
-    const currentCount = parseInt(button.getAttribute('data-count')) || 0;
     
-    // 버튼 비활성화
+    console.log('좋아요 클릭:', { postSlug, isCurrentlyLiked });
+    
+    // 버튼 비활성화 및 로딩 표시
     button.disabled = true;
+    const originalContent = button.innerHTML;
+    button.innerHTML = `
+      <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span class="ml-2">Processing...</span>
+    `;
     
-    // 새로운 상태 계산
-    const newLikedState = !isCurrentlyLiked;
-    const newCount = newLikedState ? currentCount + 1 : Math.max(0, currentCount - 1);
-    
-    // localStorage에 저장
-    localStorage.setItem(`liked-${postSlug}`, newLikedState.toString());
-    localStorage.setItem(`likes-${postSlug}`, newCount.toString());
-    
-    // UI 업데이트
-    updateButtonAppearance(button, newLikedState, newCount);
-    
-    // 애니메이션 효과
-    if (newLikedState) {
-      animateHeart(button);
-    }
-    
-    // 버튼 다시 활성화
-    setTimeout(() => {
+    try {
+      // 현재 서버의 좋아요 수 가져오기
+      const currentServerLikes = await likeStorage.getLikes(postSlug);
+      
+      // 새로운 상태 계산
+      const newLikedState = !isCurrentlyLiked;
+      const newCount = newLikedState ? currentServerLikes + 1 : Math.max(0, currentServerLikes - 1);
+      
+      // 서버에 저장
+      await likeStorage.setLikes(postSlug, newCount);
+      
+      // 로컬 좋아요 상태 저장
+      likeStorage.setLiked(postSlug, newLikedState);
+      
+      // UI 업데이트
+      updateButtonAppearance(button, newLikedState, newCount);
+      
+      // 애니메이션 효과
+      if (newLikedState) {
+        animateHeart(button);
+      }
+      
+    } catch (error) {
+      console.error('좋아요 업데이트 실패:', error);
+      
+      // 에러 시 원래 상태로 복원
+      button.innerHTML = originalContent;
+      
+      // 로컬 전용으로 폴백
+      const currentCount = parseInt(button.getAttribute('data-count')) || 0;
+      const newLikedState = !isCurrentlyLiked;
+      const newCount = newLikedState ? currentCount + 1 : Math.max(0, currentCount - 1);
+      
+      likeStorage.setLiked(postSlug, newLikedState);
+      likeStorage.setLocalLikes(postSlug, newCount);
+      updateButtonAppearance(button, newLikedState, newCount);
+      
+      if (newLikedState) {
+        animateHeart(button);
+      }
+    } finally {
+      // 버튼 다시 활성화
       button.disabled = false;
-    }, 300);
+    }
   }
   
   function updateButtonAppearance(button, isLiked, count) {
@@ -89,25 +248,21 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     button.setAttribute('data-liked', isLiked.toString());
     button.setAttribute('data-count', count.toString());
     
-    // 아이콘과 텍스트 업데이트
-    const icon = button.querySelector('.like-icon');
-    const countElement = button.querySelector('.like-count');
+    // 버튼 내용 복원
+    button.innerHTML = `
+      <svg class="like-icon w-5 h-5" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+      </svg>
+      <span class="like-count font-medium">${count}</span>
+    `;
     
-    if (icon && countElement) {
-      // 아이콘 채우기 상태 변경
-      icon.setAttribute('fill', isLiked ? 'currentColor' : 'none');
-      
-      // 카운트 텍스트 업데이트
-      countElement.textContent = count.toString();
-      
-      // 버튼 스타일 변경
-      if (isLiked) {
-        button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-        button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-      } else {
-        button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-        button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      }
+    // 버튼 스타일 변경
+    if (isLiked) {
+      button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+      button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+    } else {
+      button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+      button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
     }
   }
   
