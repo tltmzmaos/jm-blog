@@ -1,36 +1,51 @@
 ---
+import SEO from '../components/SEO.astro';
+import ScrollProgress from '../components/ScrollProgress.astro';
+import KeyboardNavigation from '../components/KeyboardNavigation.astro';
+
 export interface Props {
   title: string;
   description?: string;
   image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+  author?: string;
 }
 
-const { title, description = "Jongmin의 개발 블로그", image = "/og-image.jpg" } = Astro.props;
+const { 
+  title, 
+  description = "Jongmin의 개발 블로그", 
+  image = "/og-image.jpg",
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  tags,
+  author
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
     
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+    <!-- SEO 최적화 컴포넌트 -->
+    <SEO 
+      title={title}
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+      modifiedTime={modifiedTime}
+      tags={tags}
+      author={author}
+    />
 
     <link
       rel="stylesheet"
@@ -78,6 +93,12 @@ const { title, description = "Jongmin의 개발 블로그", image = "/og-image.j
         transition: none !important;
       }
     </style>
+    
+    <!-- 스크롤 진행률 및 맨 위로 버튼 -->
+    <ScrollProgress />
+    
+    <!-- 키보드 네비게이션 -->
+    <KeyboardNavigation />
     
     <slot />
     

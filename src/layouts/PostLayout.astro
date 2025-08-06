@@ -56,7 +56,16 @@ const formatDate = (date: Date) => {
 };
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout 
+  title={title} 
+  description={description}
+  type="article"
+  publishedTime={pubDate.toISOString()}
+  modifiedTime={updatedDate?.toISOString()}
+  tags={tags}
+  author={author}
+  image={heroImage}
+>
   <Header />
   <article class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">

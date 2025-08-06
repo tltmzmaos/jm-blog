@@ -1,0 +1,154 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  tags?: string[];
+  author?: string;
+  canonical?: string;
+}
+
+const {
+  title,
+  description = "Jongmin의 개발 블로그 - 웹 개발, 머신러닝, 프로그래밍에 대한 인사이트를 공유합니다.",
+  image = "/og-image.jpg",
+  type = "website",
+  publishedTime,
+  modifiedTime,
+  tags = [],
+  author = "Jongmin",
+  canonical
+} = Astro.props;
+
+const siteUrl = Astro.site || "https://jongmin.me";
+const currentUrl = new URL(Astro.url.pathname, siteUrl);
+const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
+const imageUrl = new URL(image, siteUrl);
+
+// 구조화된 데이터 생성
+const structuredData: any = {
+  "@context": "https://schema.org",
+  "@type": type === "article" ? "BlogPosting" : "WebSite",
+  "headline": title,
+  "description": description,
+  "image": imageUrl.toString(),
+  "url": currentUrl.toString(),
+  "datePublished": publishedTime,
+  "dateModified": modifiedTime || publishedTime,
+  "author": {
+    "@type": "Person",
+    "name": author,
+    "url": siteUrl.toString()
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Jongmin Blog",
+    "url": siteUrl.toString(),
+    "logo": {
+      "@type": "ImageObject",
+      "url": new URL("/logo.svg", siteUrl).toString()
+    }
+  }
+};
+
+if (type === "article" && tags.length > 0) {
+  structuredData.keywords = tags.join(", ");
+}
+
+if (type === "website") {
+  structuredData["@type"] = "WebSite";
+  structuredData.potentialAction = {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+    },
+    "query-input": "required name=search_term_string"
+  };
+}
+---
+
+<!-- 기본 메타 태그 -->
+<meta name="description" content={description} />
+<meta name="author" content={author} />
+<meta name="robots" content="index, follow" />
+<meta name="googlebot" content="index, follow" />
+
+<!-- 언어 및 지역 -->
+<meta name="language" content="ko-KR" />
+<meta name="geo.region" content="KR" />
+
+<!-- 캐노니컬 URL -->
+<link rel="canonical" href={canonicalUrl.toString()} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={currentUrl.toString()} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl.toString()} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="Jongmin Blog" />
+<meta property="og:locale" content="ko_KR" />
+
+{type === "article" && publishedTime && (
+  <>
+    <meta property="article:published_time" content={publishedTime} />
+    <meta property="article:author" content={author} />
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    {tags.map(tag => <meta property="article:tag" content={tag} />)}
+  </>
+)}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={currentUrl.toString()} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl.toString()} />
+<meta name="twitter:creator" content="@jongmin" />
+<meta name="twitter:site" content="@jongmin" />
+
+<!-- 추가 메타 태그 -->
+<meta name="theme-color" content="#3b82f6" />
+<meta name="msapplication-TileColor" content="#3b82f6" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Jongmin Blog" />
+
+<!-- 구조화된 데이터 -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
+
+<!-- 추가 구조화된 데이터 (웹사이트 정보) -->
+{type === "website" && (
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Jongmin Blog",
+    "url": siteUrl.toString(),
+    "logo": new URL("/logo.svg", siteUrl).toString(),
+    "sameAs": [
+      "https://github.com/tltmzmaos",
+      "https://linkedin.com/in/jongmin"
+    ]
+  })} />
+)}
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
+<!-- DNS prefetch for better performance -->
+<link rel="dns-prefetch" href="https://api.github.com" />
+<link rel="dns-prefetch" href="https://gist.github.com" />
+
+<!-- Preload critical resources -->
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" as="style" />
+
+<!-- Resource hints for better performance -->
+<link rel="prefetch" href="/api/posts.json" />

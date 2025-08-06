@@ -5,8 +5,10 @@
   <input
     type="text"
     id="search-input"
-    placeholder="Search..."
-    class="w-64 px-4 py-2 pl-10 pr-4 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text"
+    placeholder="Search posts..."
+    class="w-64 px-4 py-2 pl-10 pr-4 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text transition-all duration-200"
+    autocomplete="off"
+    spellcheck="false"
   />
   <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,10 +23,29 @@
 </div>
 
 <script>
+  // @ts-nocheck
   import Fuse from 'fuse.js';
 
-  let fuse: Fuse<any>;
-  let posts: any[] = [];
+  let fuse;
+  let posts = [];
+  let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+
+  // 텍스트 하이라이팅 함수
+  function highlightText(text, query) {
+    if (!query || query.length < 2) return text;
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
+  }
+
+  // 검색 히스토리 저장
+  function saveSearchHistory(query) {
+    if (query.length < 2) return;
+    
+    searchHistory = searchHistory.filter(item => item !== query);
+    searchHistory.unshift(query);
+    searchHistory = searchHistory.slice(0, 5); // 최대 5개만 저장
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+  }
 
   // 포스트 데이터 로드
   async function loadPosts() {
@@ -34,9 +55,15 @@
       posts = await response.json();
       
       const options = {
-        keys: ['title', 'description', 'tags'],
+        keys: [
+          { name: 'title', weight: 0.7 },
+          { name: 'description', weight: 0.2 },
+          { name: 'tags', weight: 0.1 }
+        ],
         threshold: 0.3,
         includeScore: true,
+        includeMatches: true,
+        minMatchCharLength: 2
       };
       
       fuse = new Fuse(posts, options);
@@ -46,37 +73,107 @@
   }
 
   // 검색 실행
-  function performSearch(query: string) {
-    if (!fuse || query.length < 2) {
-      hideSearchResults();
+  function performSearch(query) {
+    const searchResults = document.getElementById('search-results');
+    if (!searchResults) return;
+
+    if (!query || query.length < 2) {
+      showSearchHistory();
+      return;
+    }
+
+    if (!fuse) {
+      searchResults.innerHTML = '<div class="p-4 text-gray-500 dark:text-gray-400">Loading...</div>';
+      searchResults.classList.remove('hidden');
       return;
     }
 
     const results = fuse.search(query);
-    displaySearchResults(results);
+    displaySearchResults(results, query);
+    
+    // 검색 히스토리에 저장
+    if (results.length > 0) {
+      saveSearchHistory(query);
+    }
+  }
+
+  // 검색 히스토리 표시
+  function showSearchHistory() {
+    const searchResults = document.getElementById('search-results');
+    if (!searchResults || searchHistory.length === 0) {
+      hideSearchResults();
+      return;
+    }
+
+    searchResults.innerHTML = `
+      <div class="p-3 border-b border-gray-200 dark:border-gray-600">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Recent Searches</span>
+          <button onclick="clearSearchHistory()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Clear</button>
+        </div>
+      </div>
+      ${searchHistory.map(query => `
+        <button onclick="fillSearch('${query}')" class="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors">
+          <div class="flex items-center">
+            <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm text-gray-700 dark:text-gray-300">${query}</span>
+          </div>
+        </button>
+      `).join('')}
+    `;
+    
+    searchResults.classList.remove('hidden');
   }
 
   // 검색 결과 표시
-  function displaySearchResults(results: any[]) {
+  function displaySearchResults(results, query) {
     const searchResults = document.getElementById('search-results');
     if (!searchResults) return;
 
     if (results.length === 0) {
-      searchResults.innerHTML = '<div class="p-4 text-gray-500 dark:text-gray-400">No results found.</div>';
+      searchResults.innerHTML = `
+        <div class="p-4 text-center">
+          <div class="text-gray-500 dark:text-gray-400 mb-2">No results found for "${query}"</div>
+          <div class="text-xs text-gray-400">Try different keywords or check spelling</div>
+        </div>
+      `;
     } else {
       const baseUrl = import.meta.env.BASE_URL;
-      searchResults.innerHTML = results.slice(0, 5).map(result => {
-        const post = result.item;
-        return `
-          <a href="${baseUrl}posts/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
-            <h3 class="font-medium text-gray-900 dark:text-gray-100">${post.title}</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${post.description}</p>
-            <div class="flex flex-wrap gap-1 mt-2">
-              ${post.tags.map((tag: string) => `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded">${tag}</span>`).join('')}
-            </div>
-          </a>
-        `;
-      }).join('');
+      searchResults.innerHTML = `
+        <div class="p-3 border-b border-gray-200 dark:border-gray-600">
+          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            ${results.length} result${results.length > 1 ? 's' : ''} for "${query}"
+          </span>
+        </div>
+        ${results.slice(0, 5).map(result => {
+          const post = result.item;
+          const score = Math.round((1 - result.score) * 100);
+          const highlightedTitle = highlightText(post.title, query);
+          const highlightedDescription = highlightText(post.description, query);
+          
+          return `
+            <a href="${baseUrl}posts/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="font-medium text-gray-900 dark:text-gray-100 mb-1">${highlightedTitle}</h3>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">${highlightedDescription}</p>
+                  <div class="flex flex-wrap gap-1">
+                    ${post.tags.map(tag => {
+                      const highlightedTag = highlightText(tag, query);
+                      return `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded">${highlightedTag}</span>`;
+                    }).join('')}
+                  </div>
+                </div>
+                <div class="ml-3 text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  ${score}%
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('')}
+      `;
     }
 
     searchResults.classList.remove('hidden');
@@ -90,28 +187,78 @@
     }
   }
 
+  // 전역 함수들
+  window.clearSearchHistory = function() {
+    searchHistory = [];
+    localStorage.removeItem('searchHistory');
+    hideSearchResults();
+  };
+
+  window.fillSearch = function(query) {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.value = query;
+      performSearch(query);
+      searchInput.focus();
+    }
+  };
+
   // 이벤트 리스너 설정
   document.addEventListener('DOMContentLoaded', () => {
     loadPosts();
 
-    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchInput = document.getElementById('search-input');
     if (searchInput) {
-      let debounceTimer: NodeJS.Timeout;
+      let debounceTimer;
 
+      // 입력 이벤트
       searchInput.addEventListener('input', (e) => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
-          const query = (e.target as HTMLInputElement).value;
+          const query = e.target.value.trim();
           performSearch(query);
         }, 300);
       });
 
+      // 포커스 이벤트
+      searchInput.addEventListener('focus', () => {
+        const query = searchInput.value.trim();
+        if (query.length < 2) {
+          showSearchHistory();
+        } else {
+          performSearch(query);
+        }
+      });
+
+      // 키보드 네비게이션
+      searchInput.addEventListener('keydown', (e) => {
+        const searchResults = document.getElementById('search-results');
+        const links = searchResults?.querySelectorAll('a, button');
+        
+        if (e.key === 'Escape') {
+          hideSearchResults();
+          searchInput.blur();
+        } else if (e.key === 'ArrowDown' && links?.length > 0) {
+          e.preventDefault();
+          links[0].focus();
+        }
+      });
+
       // 검색창 외부 클릭 시 결과 숨기기
       document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target as Node) && !document.getElementById('search-results')?.contains(e.target as Node)) {
+        if (!searchInput.contains(e.target) && !document.getElementById('search-results')?.contains(e.target)) {
           hideSearchResults();
         }
       });
     }
   });
 </script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
