@@ -26,7 +26,12 @@ const { postSlug, initialLikes = 0 } = Astro.props;
         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
       ></path>
     </svg>
-    <span class="like-count font-medium">{initialLikes}</span>
+    <span class="like-count font-medium">
+      <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </span>
   </button>
 </div>
 
@@ -243,22 +248,30 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     try {
       button.setAttribute('data-liked', isLiked.toString());
       
-      // 버튼 내용 업데이트
-      button.innerHTML = `
-        <svg class="like-icon w-5 h-5" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-        </svg>
-        <span class="like-count font-medium">${count}</span>
-      `;
+      // 부드러운 전환을 위한 페이드 효과
+      button.style.opacity = '0.7';
       
-      // 스타일 업데이트
-      if (isLiked) {
-        button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-        button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-      } else {
-        button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-        button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-      }
+      setTimeout(() => {
+        // 버튼 내용 업데이트
+        button.innerHTML = `
+          <svg class="like-icon w-5 h-5 transition-all duration-200" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+          </svg>
+          <span class="like-count font-medium transition-all duration-200">${count}</span>
+        `;
+        
+        // 스타일 업데이트
+        if (isLiked) {
+          button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+          button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+        } else {
+          button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
+          button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        }
+        
+        // 페이드 인
+        button.style.opacity = '1';
+      }, 100);
       
     } catch (error) {
       console.error('UI 업데이트 실패:', error);
@@ -305,10 +318,16 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     }, 1000);
   }
   
-  // 초기화
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeLikeButtons);
-  } else {
+  // 초기화 - 더 빠른 실행
+  function startInitialization() {
+    // 즉시 실행
     initializeLikeButtons();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startInitialization);
+  } else {
+    // 페이지가 이미 로드된 경우 즉시 실행
+    startInitialization();
   }
 </script>
