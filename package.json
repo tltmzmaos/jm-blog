@@ -21,7 +21,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "build:prod": "node scripts/build-optimize.js",
+    "optimize": "node scripts/performance-check.js",
+    "build:analyze": "npm run build && npm run optimize && npm run seo:check",
+    "lighthouse": "lhci autorun",
+    "check": "astro check",
+    "check:types": "astro check --typescript",
+    "sitemap": "astro build && echo 'Sitemap generated at /sitemap.xml'",
+    "seo:check": "npm run build && node scripts/seo-check.js",
+    "perf:analyze": "npm run build && npm run optimize"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.3",
@@ -33,5 +42,12 @@
     "katex": "^0.16.22",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.13.0",
+    "imagemin": "^8.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "imagemin-webp": "^8.0.0"
   }
 }

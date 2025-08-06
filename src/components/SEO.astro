@@ -13,7 +13,7 @@ export interface Props {
 
 const {
   title,
-  description = "Jongmin의 개발 블로그 - 웹 개발, 머신러닝, 프로그래밍에 대한 인사이트를 공유합니다.",
+  description = "Jongmin's development blog - Sharing insights about web development, machine learning, and programming.",
   image = "/og-image.jpg",
   type = "website",
   publishedTime,
@@ -23,7 +23,7 @@ const {
   canonical
 } = Astro.props;
 
-const siteUrl = Astro.site || "https://jongmin.me";
+const siteUrl = Astro.site || "https://jongminlee.dev";
 const currentUrl = new URL(Astro.url.pathname, siteUrl);
 const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
 const imageUrl = new URL(image, siteUrl);

@@ -7,12 +7,21 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  site: 'https://jongmin.me',
+  site: 'https://jongminlee.dev',
   base: '/',
   integrations: [
-    tailwind(),
+    tailwind({
+      config: {
+        applyBaseStyles: false, // We handle base styles in globals.css
+      }
+    }),
     mdx(),
-    sitemap()
+    sitemap({
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date(),
+      entryLimit: 10000,
+    })
   ],
   markdown: {
     shikiConfig: {
@@ -21,5 +30,27 @@ export default defineConfig({
     },
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex]
-  }
+  },
+  vite: {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Separate vendor chunks for better caching
+            'vendor-utils': ['fuse.js'],
+          },
+        },
+      },
+      minify: 'esbuild',
+      cssMinify: true,
+    },
+    ssr: {
+      noExternal: ['katex'],
+    },
+  },
+  build: {
+    inlineStylesheets: 'auto',
+  },
+  output: 'static',
+  compressHTML: true,
 });
