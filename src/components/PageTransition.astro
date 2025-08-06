@@ -74,9 +74,12 @@
     // Listen for navigation events
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a');
-      if (link && link.href && !link.href.startsWith('#') && !link.target) {
+      if (link && link.href && !link.target) {
         const url = new URL(link.href);
-        if (url.origin === window.location.origin) {
+        // Only show loading for different pages, not hash links or external links
+        if (url.origin === window.location.origin && 
+            url.pathname !== window.location.pathname && 
+            !link.href.includes('#')) {
           showLoading();
         }
       }

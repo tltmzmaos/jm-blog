@@ -11,82 +11,229 @@ const { headings } = Astro.props;
 ---
 
 {headings.length > 0 && (
-  <div class="sticky top-24 bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-4">
-    <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-text mb-3">
-      Table of Contents
-    </h3>
-    <nav class="toc">
+  <div class="sticky top-24 bg-white dark:bg-dark-surface rounded-lg shadow-sm border border-gray-200 dark:border-dark-border overflow-hidden">
+    <!-- TOC Header -->
+    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-dark-text">
+        Table of Contents
+      </h3>
+      <button 
+        id="toc-toggle" 
+        class="md:hidden p-1 rounded text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+        aria-label="Toggle table of contents"
+      >
+        <svg class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <!-- TOC Content -->
+    <nav class="toc-content p-4" id="toc-content">
       <ul class="space-y-1">
         {headings.map((heading) => (
-          <li class={`toc-item toc-level-${heading.depth}`}>
+          <li class={`toc-item toc-level-${heading.depth} relative`}>
             <a
               href={`#${heading.slug}`}
-              class={`block py-1 text-sm transition-colors hover:text-primary-600 dark:hover:text-dark-accent ${
+              class={`toc-link block py-2 px-3 text-sm transition-all duration-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 border-l-3 border-transparent ${
                 heading.depth === 1 
                   ? 'font-semibold text-gray-900 dark:text-dark-text' 
                   : heading.depth === 2
-                  ? 'pl-3 text-gray-700 dark:text-dark-text'
-                  : 'pl-6 text-gray-600 dark:text-dark-subtext'
+                  ? 'ml-3 text-gray-700 dark:text-dark-text'
+                  : 'ml-6 text-gray-600 dark:text-dark-subtext'
               }`}
+              data-heading-id={heading.slug}
             >
               {heading.text}
             </a>
           </li>
         ))}
       </ul>
+      
+      <!-- Progress indicator -->
+      <div class="mt-4 pt-3 border-t border-gray-200 dark:border-dark-border">
+        <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <span>Reading Progress</span>
+          <span id="reading-progress">0%</span>
+        </div>
+        <div class="mt-1 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+          <div id="progress-bar" class="bg-primary-500 dark:bg-primary-400 h-1 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
     </nav>
   </div>
 )}
 
 <script>
-  // 현재 보고 있는 섹션 하이라이트
-  function updateActiveHeading() {
-    const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
-    const tocLinks = document.querySelectorAll('.toc a');
+  // @ts-nocheck
+  document.addEventListener('DOMContentLoaded', () => {
+    const tocToggle = document.getElementById('toc-toggle');
+    const tocContent = document.getElementById('toc-content');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('reading-progress');
     
-    let current = '';
-    
-    headings.forEach((heading) => {
-      const rect = heading.getBoundingClientRect();
-      if (rect.top <= 100) {
-        current = heading.id;
-      }
-    });
-    
-    tocLinks.forEach((link) => {
-      link.classList.remove('text-primary-600', 'dark:text-dark-accent', 'font-medium');
-      link.classList.add('text-gray-600', 'dark:text-dark-subtext');
+    // Mobile TOC toggle
+    if (tocToggle && tocContent) {
+      tocToggle.addEventListener('click', () => {
+        const isHidden = tocContent.classList.contains('hidden');
+        const icon = tocToggle.querySelector('svg');
+        
+        if (isHidden) {
+          tocContent.classList.remove('hidden');
+          icon.style.transform = 'rotate(0deg)';
+        } else {
+          tocContent.classList.add('hidden');
+          icon.style.transform = 'rotate(-90deg)';
+        }
+      });
       
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.remove('text-gray-600', 'dark:text-dark-subtext');
-        link.classList.add('text-primary-600', 'dark:text-dark-accent', 'font-medium');
+      // Hide TOC content on mobile by default
+      if (window.innerWidth < 768) {
+        tocContent.classList.add('hidden');
+        tocToggle.querySelector('svg').style.transform = 'rotate(-90deg)';
+      }
+    }
+    
+    // Smooth scroll for TOC links
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        
+        if (targetElement) {
+          const headerOffset = 100; // Account for sticky header
+          const elementPosition = targetElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+          
+          // Update URL without triggering page reload
+          history.pushState(null, null, `#${targetId}`);
+        }
+      });
+    });
+    
+    // Update active heading and reading progress
+    function updateActiveHeading() {
+      const headings = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+      
+      // Update progress bar
+      if (progressBar && progressText) {
+        progressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+        progressText.textContent = `${Math.min(scrollPercent, 100)}%`;
+      }
+      
+      let current = '';
+      const offset = 120; // Offset for better UX
+      
+      // Find current heading
+      headings.forEach((heading) => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= offset) {
+          current = heading.id;
+        }
+      });
+      
+      // Update TOC links
+      tocLinks.forEach((link) => {
+        const isActive = link.getAttribute('data-heading-id') === current;
+        
+        // Remove active classes
+        link.classList.remove(
+          'text-primary-600', 'dark:text-primary-400', 
+          'bg-primary-50', 'dark:bg-primary-900/20',
+          'border-l-primary-500', 'dark:border-l-primary-400',
+          'font-medium'
+        );
+        
+        // Add default classes
+        link.classList.add('border-l-transparent');
+        
+        if (isActive) {
+          // Add active classes
+          link.classList.remove('border-l-transparent');
+          link.classList.add(
+            'text-primary-600', 'dark:text-primary-400',
+            'bg-primary-50', 'dark:bg-primary-900/20',
+            'border-l-primary-500', 'dark:border-l-primary-400',
+            'font-medium'
+          );
+        }
+      });
+    }
+    
+    // Throttled scroll handler for better performance
+    let ticking = false;
+    function handleScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActiveHeading();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    
+    // Event listeners
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('load', updateActiveHeading);
+    window.addEventListener('resize', () => {
+      if (tocToggle && tocContent) {
+        if (window.innerWidth >= 768) {
+          tocContent.classList.remove('hidden');
+          tocToggle.querySelector('svg').style.transform = 'rotate(0deg)';
+        }
       }
     });
-  }
-  
-  // 스크롤 이벤트 리스너
-  window.addEventListener('scroll', updateActiveHeading);
-  window.addEventListener('load', updateActiveHeading);
+    
+    // Initial call
+    updateActiveHeading();
+  });
 </script>
 
 <style>
-  .toc-level-1 {
-    @apply border-l-2 border-transparent;
+  /* TOC responsive behavior */
+  @media (max-width: 768px) {
+    .toc-content.hidden {
+      display: none;
+    }
   }
   
-  .toc-level-2 {
-    @apply border-l-2 border-transparent;
+  /* Smooth transitions */
+  .toc-link {
+    transition: all 0.2s ease-in-out;
   }
   
-  .toc-level-3 {
-    @apply border-l-2 border-transparent;
+  /* Active link indicator */
+  .toc-link.border-l-primary-500 {
+    box-shadow: inset 3px 0 0 #3b82f6;
   }
   
-  .toc a.text-primary-600 {
-    @apply border-l-2 border-primary-600;
+  .dark .toc-link.dark\:border-l-primary-400 {
+    box-shadow: inset 3px 0 0 #60a5fa;
   }
   
-  .dark .toc a.dark\:text-dark-accent {
-    @apply border-l-2 border-dark-accent;
+  /* Progress bar animation */
+  #progress-bar {
+    transition: width 0.3s ease-out;
+  }
+  
+  /* Hover effects */
+  .toc-link:hover {
+    transform: translateX(2px);
+  }
+  
+  /* Focus styles for accessibility */
+  .toc-link:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
   }
 </style>
