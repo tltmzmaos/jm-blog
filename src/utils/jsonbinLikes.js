@@ -6,6 +6,13 @@ class JSONBinLikeStorage {
     this.binId = import.meta.env.PUBLIC_JSONBIN_BIN_ID || '';
     this.fallbackToLocal = !this.apiKey || !this.binId;
     
+    // 디버깅을 위한 로그
+    console.log('JSONBin 설정:', {
+      hasApiKey: !!this.apiKey,
+      hasBinId: !!this.binId,
+      fallbackToLocal: this.fallbackToLocal
+    });
+    
     // 캐시를 위한 메모리 저장소
     this.cache = null;
     this.cacheTime = 0;
@@ -21,7 +28,7 @@ class JSONBinLikeStorage {
       const data = await this.fetchData();
       return data[postSlug] || 0;
     } catch (error) {
-      console.warn('JSONBin 호출 실패, 로컬 저장소 사용:', error);
+      console.error('JSONBin 호출 실패, 로컬 저장소 사용:', error);
       return this.getLocalLikes(postSlug);
     }
   }
@@ -56,7 +63,7 @@ class JSONBinLikeStorage {
       
       throw new Error('JSONBin 업데이트 실패');
     } catch (error) {
-      console.warn('JSONBin 업데이트 실패, 로컬 저장소 사용:', error);
+      console.error('JSONBin 업데이트 실패, 로컬 저장소 사용:', error);
       return this.setLocalLikes(postSlug, count);
     }
   }
