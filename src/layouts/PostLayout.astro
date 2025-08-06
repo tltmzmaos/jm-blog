@@ -37,7 +37,8 @@ const { frontmatter, headings = [], prevPost, nextPost } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, tags = [], author = 'Jongmin' } = frontmatter;
 
 // 슬러그 생성 (URL에서 추출)
-const slug = Astro.url.pathname.split('/').pop() || '';
+const pathParts = Astro.url.pathname.split('/').filter(part => part !== '');
+const slug = pathParts[pathParts.length - 1] || '';
 
 // 날짜 포맷팅
 const formatDate = (date: string) => {

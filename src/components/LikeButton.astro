@@ -173,6 +173,13 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     for (const button of buttons) {
       const postSlug = button.getAttribute('data-post-slug');
       
+      // 빈 문자열이나 null 체크
+      if (!postSlug || postSlug.trim() === '') {
+        console.error('유효하지 않은 postSlug:', postSlug);
+        updateButtonUI(button, 0, false);
+        continue;
+      }
+      
       try {
         // Gist에서 현재 상태 가져오기
         const { count, isLiked } = await likeSystem.getPostLikes(postSlug);
