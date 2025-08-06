@@ -130,18 +130,14 @@
         });
       }
       
-      // Example: Send to custom analytics endpoint
-      fetch('/api/analytics/vitals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: window.location.href,
-          vitals,
-          timestamp: Date.now(),
-          userAgent: navigator.userAgent
-        })
-      }).catch(() => {
-        // Silently fail - analytics shouldn't break the site
+      // Log vitals to console for debugging
+      console.log('Web Vitals:', {
+        url: window.location.href,
+        CLS: vitals.CLS.toFixed(3),
+        FID: Math.round(vitals.FID),
+        LCP: Math.round(vitals.LCP),
+        FCP: Math.round(vitals.FCP),
+        TTFB: Math.round(vitals.TTFB)
       });
     }
     
