@@ -9,15 +9,20 @@ const { postSlug, initialLikes = 0 } = Astro.props;
 
 <div class="like-container flex items-center space-x-2">
   <button
-    class="like-button flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all duration-200 border border-gray-200 dark:border-gray-600"
+    class="like-button flex items-center space-x-2 px-3 py-2 sm:px-4 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all duration-200 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 min-h-[44px] min-w-[44px]"
     data-post-slug={postSlug}
     data-liked="false"
+    type="button"
+    aria-label="이 포스트에 좋아요 표시"
+    aria-describedby="like-status"
+    title="좋아요"
   >
     <svg
-      class="like-icon w-5 h-5"
+      class="like-icon w-4 h-4 sm:w-5 sm:h-5"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <path
         stroke-linecap="round"
@@ -26,13 +31,14 @@ const { postSlug, initialLikes = 0 } = Astro.props;
         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
       ></path>
     </svg>
-    <span class="like-count font-medium">
-      <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+    <span class="like-count font-medium text-sm sm:text-base" aria-live="polite">
+      <svg class="animate-spin w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
         <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
       </svg>
     </span>
   </button>
+  <div id="like-status" class="sr-only" aria-live="polite"></div>
 </div>
 
 <script>
@@ -274,16 +280,20 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     try {
       button.setAttribute('data-liked', isLiked.toString());
       
+      // 접근성: aria-label 업데이트
+      const likeText = isLiked ? '좋아요 취소' : '좋아요';
+      button.setAttribute('aria-label', `${likeText} (현재 ${count}개)`);
+      
       // 부드러운 전환을 위한 페이드 효과
       button.style.opacity = '0.7';
       
       setTimeout(() => {
         // 버튼 내용 업데이트
         button.innerHTML = `
-          <svg class="like-icon w-5 h-5 transition-all duration-200" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="like-icon w-4 h-4 sm:w-5 sm:h-5 transition-all duration-200" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
           </svg>
-          <span class="like-count font-medium transition-all duration-200">${count}</span>
+          <span class="like-count font-medium text-sm sm:text-base transition-all duration-200" aria-live="polite">${count}</span>
         `;
         
         // 스타일 업데이트
@@ -293,6 +303,12 @@ const { postSlug, initialLikes = 0 } = Astro.props;
         } else {
           button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
           button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+        }
+        
+        // 접근성: 상태 알림
+        const statusElement = document.getElementById('like-status');
+        if (statusElement) {
+          statusElement.textContent = `좋아요 ${count}개${isLiked ? ', 좋아요 표시됨' : ''}`;
         }
         
         // 페이드 인

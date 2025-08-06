@@ -1,80 +1,116 @@
 ---
+
 ---
 
-<div class="relative">
+<div class="relative w-full max-w-xs sm:max-w-md">
+  <label for="search-input" class="sr-only">Search blog posts</label>
   <input
     type="text"
     id="search-input"
-    placeholder="Search posts..."
-    class="w-64 px-4 py-2 pl-10 pr-4 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text transition-all duration-200"
+    placeholder="Search..."
+    class="w-full px-3 py-2 pl-9 pr-3 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text transition-all duration-200 sm:px-4 sm:pl-10 sm:pr-4 sm:w-64"
     autocomplete="off"
     spellcheck="false"
+    role="searchbox"
+    aria-label="Search blog posts"
+    aria-describedby="search-help"
+    aria-expanded="false"
+    aria-haspopup="listbox"
   />
-  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+  <div
+    class="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none"
+    aria-hidden="true"
+  >
+    <svg
+      class="w-4 h-4 text-gray-400"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
     </svg>
   </div>
-  
-  <!-- 검색 결과 -->
-  <div id="search-results" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg max-h-96 overflow-y-auto hidden z-50">
-    <!-- 검색 결과가 여기에 표시됩니다 -->
+
+  <!-- Search help (screen reader only) -->
+  <div id="search-help" class="sr-only">
+    Enter at least 2 characters. Use arrow keys to navigate results and Enter to
+    select.
+  </div>
+
+  <!-- Search results -->
+  <div
+    id="search-results"
+    class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg max-h-96 overflow-y-auto hidden z-50"
+    role="listbox"
+    aria-label="Search results"
+  >
+    <!-- Search results will be displayed here -->
   </div>
 </div>
 
 <script>
   // @ts-nocheck
-  import Fuse from 'fuse.js';
+  import Fuse from "fuse.js";
 
   let fuse;
   let posts = [];
-  let searchHistory = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+  let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
 
   // 텍스트 하이라이팅 함수
   function highlightText(text, query) {
     if (!query || query.length < 2) return text;
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    return text.replace(regex, '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>');
+    const regex = new RegExp(
+      `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+      "gi",
+    );
+    return text.replace(
+      regex,
+      '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>',
+    );
   }
 
-  // 검색 히스토리 저장
+  // Save search history
   function saveSearchHistory(query) {
     if (query.length < 2) return;
-    
-    searchHistory = searchHistory.filter(item => item !== query);
+
+    searchHistory = searchHistory.filter((item) => item !== query);
     searchHistory.unshift(query);
-    searchHistory = searchHistory.slice(0, 5); // 최대 5개만 저장
-    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+    searchHistory = searchHistory.slice(0, 5); // Keep only 5 recent searches
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
   }
 
-  // 포스트 데이터 로드
+  // Load posts data
   async function loadPosts() {
     try {
       const baseUrl = import.meta.env.BASE_URL;
       const response = await fetch(`${baseUrl}api/posts.json`);
       posts = await response.json();
-      
+
       const options = {
         keys: [
-          { name: 'title', weight: 0.7 },
-          { name: 'description', weight: 0.2 },
-          { name: 'tags', weight: 0.1 }
+          { name: "title", weight: 0.7 },
+          { name: "description", weight: 0.2 },
+          { name: "tags", weight: 0.1 },
         ],
         threshold: 0.3,
         includeScore: true,
         includeMatches: true,
-        minMatchCharLength: 2
+        minMatchCharLength: 2,
       };
-      
+
       fuse = new Fuse(posts, options);
     } catch (error) {
-      console.error('포스트 데이터를 로드할 수 없습니다:', error);
+      console.error("Failed to load posts data:", error);
     }
   }
 
-  // 검색 실행
+  // Perform search
   function performSearch(query) {
-    const searchResults = document.getElementById('search-results');
+    const searchResults = document.getElementById("search-results");
     if (!searchResults) return;
 
     if (!query || query.length < 2) {
@@ -83,23 +119,24 @@
     }
 
     if (!fuse) {
-      searchResults.innerHTML = '<div class="p-4 text-gray-500 dark:text-gray-400">Loading...</div>';
-      searchResults.classList.remove('hidden');
+      searchResults.innerHTML =
+        '<div class="p-4 text-gray-500 dark:text-gray-400">Loading...</div>';
+      searchResults.classList.remove("hidden");
       return;
     }
 
     const results = fuse.search(query);
     displaySearchResults(results, query);
-    
-    // 검색 히스토리에 저장
+
+    // Save to search history if results found
     if (results.length > 0) {
       saveSearchHistory(query);
     }
   }
 
-  // 검색 히스토리 표시
+  // Show search history
   function showSearchHistory() {
-    const searchResults = document.getElementById('search-results');
+    const searchResults = document.getElementById("search-results");
     if (!searchResults || searchHistory.length === 0) {
       hideSearchResults();
       return;
@@ -112,7 +149,9 @@
           <button onclick="clearSearchHistory()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Clear</button>
         </div>
       </div>
-      ${searchHistory.map(query => `
+      ${searchHistory
+        .map(
+          (query) => `
         <button onclick="fillSearch('${query}')" class="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors">
           <div class="flex items-center">
             <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -121,20 +160,28 @@
             <span class="text-sm text-gray-700 dark:text-gray-300">${query}</span>
           </div>
         </button>
-      `).join('')}
+      `,
+        )
+        .join("")}
     `;
-    
-    searchResults.classList.remove('hidden');
+
+    searchResults.classList.remove("hidden");
   }
 
-  // 검색 결과 표시
+  // Display search results
   function displaySearchResults(results, query) {
-    const searchResults = document.getElementById('search-results');
+    const searchResults = document.getElementById("search-results");
+    const searchInput = document.getElementById("search-input");
     if (!searchResults) return;
+
+    // Update search input aria-expanded
+    if (searchInput) {
+      searchInput.setAttribute("aria-expanded", "true");
+    }
 
     if (results.length === 0) {
       searchResults.innerHTML = `
-        <div class="p-4 text-center">
+        <div class="p-4 text-center" role="status" aria-live="polite">
           <div class="text-gray-500 dark:text-gray-400 mb-2">No results found for "${query}"</div>
           <div class="text-xs text-gray-400">Try different keywords or check spelling</div>
         </div>
@@ -142,60 +189,80 @@
     } else {
       const baseUrl = import.meta.env.BASE_URL;
       searchResults.innerHTML = `
-        <div class="p-3 border-b border-gray-200 dark:border-gray-600">
+        <div class="p-3 border-b border-gray-200 dark:border-gray-600" role="status" aria-live="polite">
           <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            ${results.length} result${results.length > 1 ? 's' : ''} for "${query}"
+            ${results.length} result${results.length > 1 ? "s" : ""} for "${query}"
           </span>
         </div>
-        ${results.slice(0, 5).map(result => {
-          const post = result.item;
-          const score = Math.round((1 - result.score) * 100);
-          const highlightedTitle = highlightText(post.title, query);
-          const highlightedDescription = highlightText(post.description, query);
-          
-          return `
-            <a href="${baseUrl}posts/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors">
+        ${results
+          .slice(0, 5)
+          .map((result, index) => {
+            const post = result.item;
+            const score = Math.round((1 - result.score) * 100);
+            const highlightedTitle = highlightText(post.title, query);
+            const highlightedDescription = highlightText(
+              post.description,
+              query,
+            );
+
+            return `
+            <a 
+              href="${baseUrl}posts/${post.slug}" 
+              class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors focus:bg-gray-50 dark:focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset"
+              role="option"
+              aria-describedby="result-${index}-desc"
+              tabindex="-1"
+            >
               <div class="flex items-start justify-between">
                 <div class="flex-1">
                   <h3 class="font-medium text-gray-900 dark:text-gray-100 mb-1">${highlightedTitle}</h3>
-                  <p class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">${highlightedDescription}</p>
-                  <div class="flex flex-wrap gap-1">
-                    ${post.tags.map(tag => {
-                      const highlightedTag = highlightText(tag, query);
-                      return `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded">${highlightedTag}</span>`;
-                    }).join('')}
+                  <p id="result-${index}-desc" class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">${highlightedDescription}</p>
+                  <div class="flex flex-wrap gap-1" role="list" aria-label="Tags">
+                    ${post.tags
+                      .map((tag) => {
+                        const highlightedTag = highlightText(tag, query);
+                        return `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded" role="listitem">${highlightedTag}</span>`;
+                      })
+                      .join("")}
                   </div>
                 </div>
-                <div class="ml-3 text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                <div class="ml-3 text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded" aria-label="Relevance ${score}%">
                   ${score}%
                 </div>
               </div>
             </a>
           `;
-        }).join('')}
+          })
+          .join("")}
       `;
     }
 
-    searchResults.classList.remove('hidden');
+    searchResults.classList.remove("hidden");
   }
 
-  // 검색 결과 숨기기
+  // Hide search results
   function hideSearchResults() {
-    const searchResults = document.getElementById('search-results');
+    const searchResults = document.getElementById("search-results");
+    const searchInput = document.getElementById("search-input");
+
     if (searchResults) {
-      searchResults.classList.add('hidden');
+      searchResults.classList.add("hidden");
+    }
+
+    if (searchInput) {
+      searchInput.setAttribute("aria-expanded", "false");
     }
   }
 
-  // 전역 함수들
-  window.clearSearchHistory = function() {
+  // Global functions
+  window.clearSearchHistory = function () {
     searchHistory = [];
-    localStorage.removeItem('searchHistory');
+    localStorage.removeItem("searchHistory");
     hideSearchResults();
   };
 
-  window.fillSearch = function(query) {
-    const searchInput = document.getElementById('search-input');
+  window.fillSearch = function (query) {
+    const searchInput = document.getElementById("search-input");
     if (searchInput) {
       searchInput.value = query;
       performSearch(query);
@@ -203,25 +270,32 @@
     }
   };
 
-  // 이벤트 리스너 설정
-  document.addEventListener('DOMContentLoaded', () => {
+  // Event listeners setup
+  document.addEventListener("DOMContentLoaded", () => {
     loadPosts();
 
-    const searchInput = document.getElementById('search-input');
+    const searchInput = document.getElementById("search-input");
     if (searchInput) {
       let debounceTimer;
 
-      // 입력 이벤트
-      searchInput.addEventListener('input', (e) => {
+      // Input event with debouncing
+      searchInput.addEventListener("input", (e) => {
         clearTimeout(debounceTimer);
+        const query = e.target.value.trim();
+
+        // Immediate search for empty query to show history
+        if (query.length === 0) {
+          showSearchHistory();
+          return;
+        }
+
         debounceTimer = setTimeout(() => {
-          const query = e.target.value.trim();
           performSearch(query);
-        }, 300);
+        }, 250);
       });
 
-      // 포커스 이벤트
-      searchInput.addEventListener('focus', () => {
+      // Focus event
+      searchInput.addEventListener("focus", () => {
         const query = searchInput.value.trim();
         if (query.length < 2) {
           showSearchHistory();
@@ -230,23 +304,58 @@
         }
       });
 
-      // 키보드 네비게이션
-      searchInput.addEventListener('keydown', (e) => {
-        const searchResults = document.getElementById('search-results');
-        const links = searchResults?.querySelectorAll('a, button');
-        
-        if (e.key === 'Escape') {
+      // Keyboard navigation
+      searchInput.addEventListener("keydown", (e) => {
+        const searchResults = document.getElementById("search-results");
+        const links = searchResults?.querySelectorAll("a, button");
+
+        if (e.key === "Escape") {
           hideSearchResults();
           searchInput.blur();
-        } else if (e.key === 'ArrowDown' && links?.length > 0) {
+        } else if (e.key === "ArrowDown" && links?.length > 0) {
           e.preventDefault();
           links[0].focus();
+        } else if (e.key === "Enter" && links?.length === 1) {
+          // Navigate directly when only one result
+          e.preventDefault();
+          links[0].click();
         }
       });
 
-      // 검색창 외부 클릭 시 결과 숨기기
-      document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !document.getElementById('search-results')?.contains(e.target)) {
+      // Keyboard navigation within search results
+      document.addEventListener("keydown", (e) => {
+        const searchResults = document.getElementById("search-results");
+        if (searchResults?.classList.contains("hidden")) return;
+
+        const links = searchResults?.querySelectorAll("a, button");
+        const currentFocus = document.activeElement;
+        const currentIndex = Array.from(links || []).indexOf(currentFocus);
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          const nextIndex =
+            currentIndex < (links?.length || 0) - 1 ? currentIndex + 1 : 0;
+          links?.[nextIndex]?.focus();
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          if (currentIndex <= 0) {
+            searchInput.focus();
+          } else {
+            const prevIndex = currentIndex - 1;
+            links?.[prevIndex]?.focus();
+          }
+        } else if (e.key === "Escape") {
+          hideSearchResults();
+          searchInput.focus();
+        }
+      });
+
+      // Hide results on outside click
+      document.addEventListener("click", (e) => {
+        if (
+          !searchInput.contains(e.target as Node) &&
+          !document.getElementById("search-results")?.contains(e.target as Node)
+        ) {
           hideSearchResults();
         }
       });

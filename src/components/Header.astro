@@ -6,36 +6,69 @@ import Logo from './Logo.astro';
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
-<header class="sticky top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-sm border-b border-gray-200 dark:border-dark-border">
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-sm border-b border-gray-200 dark:border-dark-border" role="banner">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
-      <!-- 로고 -->
+    <div class="flex items-center justify-between h-16 md:h-20">
+      <!-- Logo -->
       <div class="flex items-center">
-        <a href={baseUrl} class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+        <a 
+          href={baseUrl} 
+          class="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg p-1"
+          aria-label="Go to home"
+        >
           <Logo size="md" />
-          <span class="hidden sm:block text-xl font-bold text-gray-900 dark:text-dark-text">Jongmin</span>
+          <span class="hidden sm:block text-lg md:text-xl font-bold text-gray-900 dark:text-dark-text">Jongmin</span>
         </a>
       </div>
 
-      <!-- 검색 및 네비게이션 -->
-      <div class="flex items-center space-x-4">
-        <SearchBox />
-        <nav class="hidden md:flex items-center space-x-6">
-          <a href={baseUrl} class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors">
+      <!-- Mobile and Desktop navigation -->
+      <div class="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+        <!-- Search box - always visible -->
+        <div class="flex-shrink-0">
+          <SearchBox />
+        </div>
+        
+        <!-- Desktop navigation links -->
+        <nav class="hidden md:flex items-center space-x-4 lg:space-x-6" role="navigation" aria-label="Main menu">
+          <a 
+            href={baseUrl} 
+            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label="Home"
+          >
             Home
           </a>
-          <a href={`${baseUrl}posts`} class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors">
+          <a 
+            href={`${baseUrl}posts`} 
+            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label="Posts"
+          >
             Posts
           </a>
-          <a href={`${baseUrl}tags`} class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors">
+          <a 
+            href={`${baseUrl}tags`} 
+            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label="Tags"
+          >
             Tags
           </a>
-          <a href={`${baseUrl}about`} class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors">
+          <a 
+            href={`${baseUrl}about`} 
+            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            aria-label="About"
+          >
             About
           </a>
         </nav>
-        <ThemeToggle />
+        
+        <!-- Theme toggle - always visible -->
+        <div class="flex-shrink-0">
+          <ThemeToggle />
+        </div>
       </div>
     </div>
+
+
   </div>
+
+
 </header>

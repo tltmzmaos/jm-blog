@@ -16,34 +16,36 @@ const recentPosts = sortedPosts.slice(0, 6);
 <BaseLayout title="Jongmin - Dev Blog" description="Jongmin's blog sharing development experiences and technology insights.">
   <Header />
   
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- 히어로 섹션 -->
-    <section class="text-center py-12 mb-12">
-      <div class="flex items-center justify-center gap-4 mb-4">
-        <Logo size="lg" className="w-16 h-16" />
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-dark-text">
+  <main id="main-content" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8" role="main">
+    <!-- Hero section -->
+    <section class="text-center py-8 sm:py-12 mb-8 sm:mb-12" aria-labelledby="hero-title">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4">
+        <Logo size="lg" className="w-12 h-12 sm:w-16 sm:h-16" />
+        <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-dark-text">
           Jongmin's Dev Blog
         </h1>
       </div>
-      <p class="text-xl text-gray-600 dark:text-dark-subtext max-w-2xl mx-auto">
+      <p class="text-lg sm:text-xl text-gray-600 dark:text-dark-subtext max-w-2xl mx-auto px-4">
         Sharing experiences and insights about software engineering and development
+      </p>
     </section>
 
-    <!-- 최근 포스트 -->
-    <section>
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-dark-text">
+    <!-- Recent posts -->
+    <section aria-labelledby="recent-posts-title">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
+        <h2 id="recent-posts-title" class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-dark-text">
           Recent Posts
         </h2>
         <a 
           href="/posts" 
-          class="text-primary-600 dark:text-dark-accent hover:text-primary-700 dark:hover:text-dark-accentHover font-medium transition-colors"
+          class="text-primary-600 dark:text-dark-accent hover:text-primary-700 dark:hover:text-dark-accentHover font-medium transition-colors focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg px-2 py-1"
+          aria-label="View all posts"
         >
           View All Posts →
         </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {recentPosts.map((post) => (
           <PostCard
             title={post.data.title}
@@ -59,7 +61,7 @@ const recentPosts = sortedPosts.slice(0, 6);
       </div>
 
       {recentPosts.length === 0 && (
-        <div class="text-center py-12">
+        <div class="text-center py-12" role="status" aria-live="polite">
           <p class="text-gray-500 dark:text-dark-subtext">No posts yet.</p>
         </div>
       )}

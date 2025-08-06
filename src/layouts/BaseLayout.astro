@@ -27,13 +27,16 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="ko" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
     
     <!-- SEO 최적화 컴포넌트 -->
     <SEO 
@@ -53,6 +56,9 @@ const {
       integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
       crossorigin="anonymous"
     />
+    
+    <!-- 전역 스타일 -->
+    <link rel="stylesheet" href="/src/styles/globals.css" />
 
     <!-- 다크모드 깜빡임 방지 스크립트 (즉시 실행) -->
     <script is:inline>
@@ -66,9 +72,24 @@ const {
         
         if (theme === 'dark' || (!theme && systemPrefersDark)) {
           document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
         } else {
           document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
         }
+        
+        // 시스템 테마 변경 감지
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+          if (!localStorage.getItem('theme')) {
+            if (e.matches) {
+              document.documentElement.classList.add('dark');
+              document.documentElement.style.colorScheme = 'dark';
+            } else {
+              document.documentElement.classList.remove('dark');
+              document.documentElement.style.colorScheme = 'light';
+            }
+          }
+        });
         
         // 페이지 로드 완료 후 전환 효과 활성화
         window.addEventListener('load', function() {
@@ -81,16 +102,79 @@ const {
 
     <title>{title}</title>
   </head>
-  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text">
+  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text min-h-screen">
+    <!-- 스킵 링크 (접근성) -->
+    <a href="#main-content" class="skip-link">메인 콘텐츠로 건너뛰기</a>
+    
     <style>
       /* 다크모드 전환 시 부드러운 애니메이션 */
       * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       }
       
       /* 페이지 로드 시 전환 효과 비활성화 */
       .no-transition * {
         transition: none !important;
+      }
+      
+      /* 접근성 개선: 포커스 표시 */
+      *:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+      
+      /* 다크모드에서 포커스 색상 */
+      .dark *:focus {
+        outline-color: #60a5fa;
+      }
+      
+      /* 고대비 모드 지원 */
+      @media (prefers-contrast: high) {
+        * {
+          border-width: 2px !important;
+        }
+        
+        .dark {
+          --tw-bg-opacity: 1;
+          background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+          color: rgb(255 255 255);
+        }
+      }
+      
+      /* 애니메이션 감소 설정 존중 */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+      
+      /* 반응형 텍스트 크기 */
+      @media (max-width: 640px) {
+        html {
+          font-size: 14px;
+        }
+      }
+      
+      @media (min-width: 1024px) {
+        html {
+          font-size: 16px;
+        }
+      }
+      
+      /* 스크린 리더 전용 텍스트 */
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
     </style>
     
