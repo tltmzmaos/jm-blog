@@ -82,6 +82,14 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     // Gist에 데이터 저장
     async saveGistData(data) {
       try {
+        // 빈 문자열 키 제거
+        const cleanData = {};
+        for (const [key, value] of Object.entries(data)) {
+          if (key && key.trim() !== '') {
+            cleanData[key] = value;
+          }
+        }
+        
         const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
           method: 'PATCH',
           headers: {
@@ -92,7 +100,7 @@ const { postSlug, initialLikes = 0 } = Astro.props;
           body: JSON.stringify({
             files: {
               'blog-likes.json': {
-                content: JSON.stringify(data, null, 2)
+                content: JSON.stringify(cleanData, null, 2)
               }
             }
           })
@@ -111,6 +119,11 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     
     // 특정 포스트의 좋아요 정보 가져오기
     async getPostLikes(postSlug) {
+      if (!postSlug || postSlug.trim() === '') {
+        console.error('getPostLikes: 유효하지 않은 postSlug:', postSlug);
+        return { count: 0, isLiked: false };
+      }
+      
       const data = await this.fetchGistData();
       let postData = data[postSlug];
       
@@ -129,6 +142,11 @@ const { postSlug, initialLikes = 0 } = Astro.props;
     
     // 좋아요 토글
     async toggleLike(postSlug) {
+      if (!postSlug || postSlug.trim() === '') {
+        console.error('toggleLike: 유효하지 않은 postSlug:', postSlug);
+        throw new Error('유효하지 않은 postSlug');
+      }
+      
       const data = await this.fetchGistData();
       
       // 기존 데이터 처리 (숫자인 경우 객체로 변환)
@@ -180,10 +198,12 @@ const { postSlug, initialLikes = 0 } = Astro.props;
       
       // 빈 문자열이나 null 체크
       if (!postSlug || postSlug.trim() === '') {
-        console.error('유효하지 않은 postSlug:', postSlug);
+        console.error('초기화 시 유효하지 않은 postSlug:', postSlug, 'URL:', window.location.href);
         updateButtonUI(button, 0, false);
         continue;
       }
+      
+      console.log('초기화 중인 postSlug:', postSlug);
       
       try {
         // Gist에서 현재 상태 가져오기
@@ -206,6 +226,12 @@ const { postSlug, initialLikes = 0 } = Astro.props;
   
   // 좋아요 클릭 처리
   async function handleLikeClick(button, postSlug) {
+    // postSlug 유효성 검사
+    if (!postSlug || postSlug.trim() === '') {
+      console.error('클릭 시 유효하지 않은 postSlug:', postSlug);
+      return;
+    }
+    
     // 버튼 비활성화
     button.disabled = true;
     
