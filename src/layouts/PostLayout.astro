@@ -34,17 +34,17 @@ export interface Props {
     description?: string;
   };
   content?: string;
+  slug?: string;
 }
 
-const { frontmatter, headings = [], prevPost, nextPost, content } = Astro.props;
+const { frontmatter, headings = [], prevPost, nextPost, content, slug: postSlug } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, tags = [], author = 'Jongmin' } = frontmatter;
 
 // 읽기 시간 계산 (실제 콘텐츠 기반)
 const readingTime = calculateReadingTime(content || description || title);
 
-// 슬러그 생성 (URL에서 추출)
-const pathParts = Astro.url.pathname.split('/').filter(part => part !== '');
-const slug = pathParts[pathParts.length - 1] || '';
+// 슬러그 사용 (props에서 전달받거나 URL에서 추출)
+const slug = postSlug || Astro.url.pathname.split('/').filter(part => part !== '').pop() || '';
 
 // 날짜 포맷팅
 const formatDate = (date: Date) => {
