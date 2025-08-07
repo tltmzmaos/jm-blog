@@ -3,7 +3,6 @@ import SEO from '../components/SEO.astro';
 import ScrollProgress from '../components/ScrollProgress.astro';
 import KeyboardNavigation from '../components/KeyboardNavigation.astro';
 import PageTransition from '../components/PageTransition.astro';
-import PerformanceMonitor from '../components/PerformanceMonitor.astro';
 
 export interface Props {
   title: string;
@@ -193,9 +192,6 @@ const {
     
     <!-- 키보드 네비게이션 -->
     <KeyboardNavigation />
-    
-    <!-- 성능 모니터링 -->
-    <PerformanceMonitor />
     
     <slot />
     
