@@ -1,10 +1,9 @@
 ---
 export interface Props {
   postSlug: string;
-  initialLikes?: number;
 }
 
-const { postSlug, initialLikes = 0 } = Astro.props;
+const { postSlug } = Astro.props;
 
 // 서버 사이드에서 환경변수 읽기
 const githubToken = import.meta.env.PUBLIC_GITHUB_TOKEN;

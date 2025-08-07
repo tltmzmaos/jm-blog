@@ -23,14 +23,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "build:prod": "node scripts/build-optimize.js",
-    "optimize": "node scripts/performance-check.js",
-    "build:analyze": "npm run build && npm run optimize && npm run seo:check",
-
     "check": "astro check",
     "check:types": "astro check --typescript",
     "sitemap": "astro build && echo 'Sitemap generated at /sitemap.xml'",
-    "seo:check": "npm run build && node scripts/seo-check.js",
-    "perf:analyze": "npm run build && npm run optimize"
+    "seo:check": "npm run build && node scripts/seo-check.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.3",

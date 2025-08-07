@@ -43,14 +43,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], author =
 // 읽기 시간 계산 (실제 콘텐츠 기반)
 const readingTime = calculateReadingTime(content || description || title);
 
-// 디버깅을 위한 로그 (개발 환경에서만)
-if (import.meta.env.DEV) {
-  console.log('PostLayout - Reading time calculation:', {
-    contentLength: content?.length || 0,
-    descriptionLength: description?.length || 0,
-    readingTime: readingTime
-  });
-}
+
 
 // 슬러그 사용 (props에서 전달받거나 URL에서 추출)
 const slug = postSlug || Astro.url.pathname.split('/').filter(part => part !== '').pop() || '';

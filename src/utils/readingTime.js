@@ -49,23 +49,7 @@ export function calculateReadingTime(content) {
   const totalMinutes = (textWords / wordsPerMinute) + imageTime + codeTime;
   const minutes = Math.max(1, Math.ceil(totalMinutes));
   
-  // 디버깅 정보 (개발 환경에서만)
-  if (typeof window !== 'undefined' && import.meta.env?.DEV) {
-    console.log('Reading time calculation details:', {
-      originalLength: content.length,
-      cleanTextLength: cleanText.length,
-      koreanChars,
-      englishWords,
-      numbers,
-      textWords,
-      imageCount,
-      codeBlockCount,
-      imageTime,
-      codeTime,
-      totalMinutes,
-      minutes
-    });
-  }
+
   
   return {
     minutes,

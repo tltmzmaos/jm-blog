@@ -24,15 +24,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 
 const readingTime = calculateReadingTime(content || description);
 
-// 디버깅을 위한 로그 (개발 환경에서만)
-if (import.meta.env.DEV) {
-  console.log('PostCard - Reading time calculation:', {
-    title,
-    contentLength: content?.length || 0,
-    descriptionLength: description?.length || 0,
-    readingTime: readingTime
-  });
-}
+
 ---
 
 <article class="bg-white dark:bg-dark-surface rounded-lg shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-200 dark:border-dark-border focus-within:ring-2 focus-within:ring-primary-500 focus-within:ring-offset-2">
