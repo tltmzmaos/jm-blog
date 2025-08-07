@@ -62,13 +62,102 @@ const {
     <!-- KaTeX CSS (수학 공식 렌더링용) -->
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+      integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
       crossorigin="anonymous"
     />
     
     <!-- 전역 스타일 -->
     <style>
-      @import '../styles/globals.css';
+      /* Global CSS variables and dark mode improvements */
+      :root {
+        /* Light mode colors */
+        --color-primary: #3b82f6;
+        --color-primary-hover: #2563eb;
+        --color-text: #1f2937;
+        --color-text-muted: #6b7280;
+        --color-bg: #ffffff;
+        --color-bg-secondary: #f9fafb;
+        --color-border: #e5e7eb;
+        --color-shadow: rgba(0, 0, 0, 0.1);
+        
+        /* Accessibility */
+        --focus-ring: 0 0 0 2px var(--color-primary);
+        --border-radius: 0.5rem;
+        --transition: all 0.2s ease-in-out;
+      }
+
+      .dark {
+        /* Dark mode colors */
+        --color-primary: #60a5fa;
+        --color-primary-hover: #3b82f6;
+        --color-text: #f9fafb;
+        --color-text-muted: #d1d5db;
+        --color-bg: #111827;
+        --color-bg-secondary: #1f2937;
+        --color-border: #374151;
+        --color-shadow: rgba(0, 0, 0, 0.3);
+        
+        /* Dark mode specific colors */
+        --dark-bg: #0f172a;
+        --dark-surface: #1e293b;
+        --dark-muted: #334155;
+        --dark-text: #f1f5f9;
+        --dark-text-muted: #cbd5e1;
+        --dark-border: #475569;
+        --dark-accent: #38bdf8;
+      }
+
+      /* Font optimization */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+        font-variant-numeric: oldstyle-nums;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Text selection styles */
+      ::selection {
+        background-color: var(--color-primary);
+        color: white;
+      }
+
+      .dark ::selection {
+        background-color: var(--color-primary);
+        color: var(--dark-bg);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--color-bg-secondary);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-border);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-text-muted);
+      }
+
+      .dark ::-webkit-scrollbar-track {
+        background: var(--dark-surface);
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: var(--dark-border);
+      }
+
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: var(--dark-text-muted);
+      }
     </style>
 
     <!-- 다크모드 깜빡임 방지 스크립트 (즉시 실행) -->
