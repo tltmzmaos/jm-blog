@@ -59,15 +59,17 @@ const {
       author={author}
     />
 
+    <!-- KaTeX CSS (수학 공식 렌더링용) -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"
-      integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn"
       crossorigin="anonymous"
     />
     
     <!-- 전역 스타일 -->
-    <link rel="stylesheet" href="/src/styles/globals.css" />
+    <style>
+      @import '../styles/globals.css';
+    </style>
 
     <!-- 다크모드 깜빡임 방지 스크립트 (즉시 실행) -->
     <script is:inline>
