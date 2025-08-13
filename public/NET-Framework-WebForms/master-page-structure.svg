@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Enhanced background gradient -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Header gradient -->
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Footer gradient -->
+    <linearGradient id="footerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6b7280;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4b5563;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Content gradients -->
+    <linearGradient id="homeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <linearGradient id="productGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <linearGradient id="contactGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0.9" />
+    </linearGradient>
+    
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bg)"/>
+  
+  <!-- Title with glow effect -->
+  <text x="600" y="50" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#ffffff" text-anchor="middle" filter="url(#glow)">
+    🏗️ Master Page Structure in WebForms
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="600" y="80" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8" text-anchor="middle">
+    Consistent layout and shared functionality across all pages
+  </text>
+  
+  <!-- Master Page Container with enhanced styling -->
+  <rect x="80" y="110" width="1040" height="520" rx="20" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="2" filter="url(#shadow)"/>
+  
+  <!-- Header Section with enhanced styling -->
+  <rect x="100" y="130" width="1000" height="100" rx="15" fill="url(#headerGrad)" filter="url(#glow)"/>
+  <text x="600" y="165" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">
+    🌐 Site.Master - Header Section
+  </text>
+  <text x="600" y="190" font-family="Arial, sans-serif" font-size="16" fill="rgba(255,255,255,0.9)" text-anchor="middle">
+    Navigation, Logo, User Authentication
+  </text>
+  
+  <!-- Enhanced Navigation Elements -->
+  <rect x="120" y="145" width="120" height="35" rx="8" fill="rgba(255,255,255,0.25)" filter="url(#glow)"/>
+  <text x="180" y="167" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">
+    🧭 Navigation
+  </text>
+  
+  <rect x="260" y="145" width="100" height="35" rx="8" fill="rgba(255,255,255,0.25)" filter="url(#glow)"/>
+  <text x="310" y="167" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">
+    🏢 Logo
+  </text>
+  
+  <rect x="940" y="145" width="140" height="35" rx="8" fill="rgba(255,255,255,0.25)" filter="url(#glow)"/>
+  <text x="1010" y="167" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white" text-anchor="middle">
+    👤 User Menu
+  </text>
+  
+  <!-- Content Placeholder with enhanced styling -->
+  <rect x="100" y="250" width="1000" height="300" rx="15" fill="rgba(59, 130, 246, 0.1)" stroke="#3b82f6" stroke-width="3" stroke-dasharray="15,10"/>
+  
+  <!-- Content Placeholder Label with enhanced styling -->
+  <rect x="450" y="270" width="300" height="50" rx="15" fill="#3b82f6" filter="url(#glow)"/>
+  <text x="600" y="300" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">
+    📄 ContentPlaceHolder="MainContent"
+  </text>
+  
+  <!-- Enhanced Content Page Examples -->
+  <rect x="150" y="340" width="280" height="180" rx="15" fill="rgba(255,255,255,0.1)" stroke="#10b981" stroke-width="3" filter="url(#shadow)"/>
+  <rect x="170" y="360" width="240" height="40" rx="10" fill="url(#homeGrad)" filter="url(#glow)"/>
+  <text x="290" y="385" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">
+    🏠 Home.aspx
+  </text>
+  <text x="170" y="415" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🎉 Welcome message</text>
+  <text x="170" y="435" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• ⭐ Featured content</text>
+  <text x="170" y="455" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 📰 News updates</text>
+  <text x="170" y="475" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🔗 Quick links</text>
+  <text x="170" y="495" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 📊 Dashboard widgets</text>
+  
+  <rect x="460" y="340" width="280" height="180" rx="15" fill="rgba(255,255,255,0.1)" stroke="#f59e0b" stroke-width="3" filter="url(#shadow)"/>
+  <rect x="480" y="360" width="240" height="40" rx="10" fill="url(#productGrad)" filter="url(#glow)"/>
+  <text x="600" y="385" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">
+    🛍️ Products.aspx
+  </text>
+  <text x="480" y="415" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 📦 Product catalog</text>
+  <text x="480" y="435" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🔍 Search functionality</text>
+  <text x="480" y="455" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🎛️ Filter options</text>
+  <text x="480" y="475" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🛒 Shopping cart</text>
+  <text x="480" y="495" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 💳 Checkout process</text>
+  
+  <rect x="770" y="340" width="280" height="180" rx="15" fill="rgba(255,255,255,0.1)" stroke="#8b5cf6" stroke-width="3" filter="url(#shadow)"/>
+  <rect x="790" y="360" width="240" height="40" rx="10" fill="url(#contactGrad)" filter="url(#glow)"/>
+  <text x="910" y="385" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">
+    📞 Contact.aspx
+  </text>
+  <text x="790" y="415" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 📝 Contact form</text>
+  <text x="790" y="435" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🏢 Office locations</text>
+  <text x="790" y="455" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• ⏰ Business hours</text>
+  <text x="790" y="475" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 🗺️ Map integration</text>
+  <text x="790" y="495" font-family="Arial, sans-serif" font-size="13" fill="#ffffff">• 📧 Email support</text>
+  
+  <!-- Footer Section with enhanced styling -->
+  <rect x="100" y="570" width="1000" height="60" rx="15" fill="url(#footerGrad)" filter="url(#glow)"/>
+  <text x="600" y="595" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">
+    🦶 Site.Master - Footer Section
+  </text>
+  <text x="600" y="615" font-family="Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.9)" text-anchor="middle">
+    Copyright © 2024 • Privacy Policy • Terms of Service • Contact Info
+  </text>
+  
+  <!-- Enhanced Code snippets -->
+  <rect x="120" y="530" width="250" height="35" rx="8" fill="#1f2937" filter="url(#shadow)"/>
+  <text x="245" y="552" font-family="monospace" font-size="12" fill="#34d399" text-anchor="middle">
+    &lt;asp:Content ID="Content1"
+  </text>
+  
+  <rect x="830" y="530" width="250" height="35" rx="8" fill="#1f2937" filter="url(#shadow)"/>
+  <text x="955" y="552" font-family="monospace" font-size="12" fill="#34d399" text-anchor="middle">
+    ContentPlaceHolderID="MainContent"&gt;
+  </text>
+  
+  <!-- Enhanced Benefits section -->
+  <rect x="80" y="650" width="1040" height="40" rx="20" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="2"/>
+  <text x="600" y="675" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#c084fc" text-anchor="middle">
+    💡 Benefits: Consistent Layout • Easy Maintenance • Shared Navigation • Common Styling • Centralized Updates
+  </text>
+</svg>

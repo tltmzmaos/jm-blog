@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getCollection('blog');
@@ -38,8 +38,8 @@ export const GET: APIRoute = async ({ site }) => {
   
   // Blog posts
   const blogPages = posts
-    .filter(post => !post.data.draft)
-    .map(post => ({
+    .filter((post: CollectionEntry<'blog'>) => !post.data.draft)
+    .map((post: CollectionEntry<'blog'>) => ({
       url: `${siteUrl}/posts/${post.slug}/`,
       lastmod: post.data.updatedDate?.toISOString() || post.data.pubDate.toISOString(),
       changefreq: 'monthly',
@@ -47,13 +47,15 @@ export const GET: APIRoute = async ({ site }) => {
     }));
   
   // Get unique tags
-  const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
-  const tagPages = allTags.map(tag => ({
-    url: `${siteUrl}/tags/${tag}/`,
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.5'
-  }));
+  const allTags = [...new Set(posts.flatMap((post: CollectionEntry<'blog'>) => post.data.tags || []))];
+  const tagPages = allTags
+    .filter((tag): tag is string => typeof tag === 'string')
+    .map((tag: string) => ({
+      url: `${siteUrl}/tags/${tag}/`,
+      lastmod: new Date().toISOString(),
+      changefreq: 'weekly',
+      priority: '0.5'
+    }));
   
   const allPages = [...staticPages, ...blogPages, ...tagPages];
   

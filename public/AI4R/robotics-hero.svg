@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Ultra modern holographic background -->
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#c44569;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#6c5ce7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d3436;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- 3D Robot gradient with depth -->
+    <linearGradient id="robotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#74b9ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0984e3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00cec9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Robot shadow gradient -->
+    <linearGradient id="robotShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3436;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#636e72;stop-opacity:0.1" />
+    </linearGradient>
+    
+    <!-- AI brain holographic gradient -->
+    <radialGradient id="brainGrad" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" style="stop-color:#fd79a8;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#fdcb6e;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#6c5ce7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a29bfe;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Enhanced glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- 3D drop shadow -->
+    <filter id="shadow3d" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#2d3436" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#636e72" flood-opacity="0.15"/>
+    </filter>
+    
+    <!-- Neon glow -->
+    <filter id="neon" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Holographic background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  
+  <!-- Floating holographic particles -->
+  <g opacity="0.7">
+    <circle cx="120" cy="120" r="8" fill="#74b9ff">
+      <animate attributeName="cy" values="120;100;120" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1080" cy="500" r="6" fill="#fd79a8">
+      <animate attributeName="cy" values="500;480;500" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="1050" cy="150" r="10" fill="#00cec9">
+      <animate attributeName="cy" values="150;130;150" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="200" cy="550" r="5" fill="#fdcb6e">
+      <animate attributeName="cy" values="550;530;550" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Main glass container with modern styling -->
+  <rect x="80" y="80" width="1040" height="470" rx="40" fill="rgba(255,255,255,0.05)" 
+        stroke="rgba(255,255,255,0.15)" stroke-width="2" filter="url(#shadow3d)"/>
+  
+  <!-- Title with holographic effect -->
+  <text x="600" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="56" font-weight="900" 
+        fill="#ffffff" filter="url(#neon)">
+    🤖✨ AI4R ✨🧠
+  </text>
+  
+  <!-- Subtitle with glow -->
+  <text x="600" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" 
+        fill="rgba(255,255,255,0.95)" filter="url(#glow)">
+    Artificial Intelligence for Robotics
+  </text>
+  
+  <!-- Course info -->
+  <text x="600" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" 
+        fill="rgba(255,255,255,0.8)">
+    Georgia Tech OMSCS CS 7638 • Spring 2025
+  </text>
+  
+  <!-- Ultra cute 3D robot emoji style -->
+  <g transform="translate(280, 270)" filter="url(#shadow3d)">
+    <!-- Robot shadow for 3D effect -->
+    <ellipse cx="65" cy="240" rx="80" ry="15" fill="url(#robotShadow)" opacity="0.4"/>
+    
+    <!-- Robot body with 3D depth -->
+    <rect x="15" y="45" width="100" height="130" rx="30" fill="url(#robotGrad)"/>
+    <!-- Body highlight -->
+    <rect x="20" y="50" width="90" height="15" rx="15" fill="rgba(255,255,255,0.3)"/>
+    <!-- Body depth shadow -->
+    <rect x="15" y="160" width="100" height="15" rx="15" fill="rgba(0,0,0,0.2)"/>
+    
+    <!-- Robot head with 3D effect -->
+    <rect x="25" y="15" width="80" height="65" rx="35" fill="url(#robotGrad)"/>
+    <!-- Head highlight -->
+    <rect x="30" y="20" width="70" height="12" rx="20" fill="rgba(255,255,255,0.4)"/>
+    
+    <!-- Super expressive kawaii eyes -->
+    <g>
+      <!-- Eye whites with 3D effect -->
+      <ellipse cx="45" cy="40" rx="15" ry="18" fill="white"/>
+      <ellipse cx="85" cy="40" rx="15" ry="18" fill="white"/>
+      <!-- Eye shadows -->
+      <ellipse cx="45" cy="45" rx="15" ry="5" fill="rgba(0,0,0,0.1)"/>
+      <ellipse cx="85" cy="45" rx="15" ry="5" fill="rgba(0,0,0,0.1)"/>
+      
+      <!-- Animated pupils -->
+      <circle cx="45" cy="38" r="10" fill="#0984e3">
+        <animate attributeName="r" values="10;12;10" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="85" cy="38" r="10" fill="#0984e3">
+        <animate attributeName="r" values="10;12;10" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Multiple sparkles in eyes -->
+      <circle cx="48" cy="35" r="4" fill="white"/>
+      <circle cx="88" cy="35" r="4" fill="white"/>
+      <circle cx="42" cy="42" r="2" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="82" cy="42" r="2" fill="rgba(255,255,255,0.8)"/>
+      <circle cx="50" cy="40" r="1" fill="white"/>
+      <circle cx="90" cy="40" r="1" fill="white"/>
+    </g>
+    
+    <!-- Adorable blushing cheeks -->
+    <ellipse cx="15" cy="50" rx="8" ry="6" fill="#ff7675" opacity="0.7">
+      <animate attributeName="opacity" values="0.7;0.9;0.7" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="115" cy="50" rx="8" ry="6" fill="#ff7675" opacity="0.7">
+      <animate attributeName="opacity" values="0.7;0.9;0.7" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+    
+    <!-- Super happy smile -->
+    <path d="M50,58 Q65,75 80,58" stroke="#2d3436" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Smile highlight -->
+    <path d="M52,60 Q65,72 78,60" stroke="rgba(255,255,255,0.6)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    
+    <!-- 3D robot arms -->
+    <rect x="-20" y="65" width="25" height="70" rx="12" fill="url(#robotGrad)"/>
+    <rect x="125" y="65" width="25" height="70" rx="12" fill="url(#robotGrad)"/>
+    <!-- Arm highlights -->
+    <rect x="-18" y="67" width="21" height="8" rx="10" fill="rgba(255,255,255,0.3)"/>
+    <rect x="127" y="67" width="21" height="8" rx="10" fill="rgba(255,255,255,0.3)"/>
+    
+    <!-- Cute waving hands -->
+    <circle cx="-7" cy="140" r="15" fill="url(#robotGrad)">
+      <animateTransform attributeName="transform" type="rotate" values="0 -7 140;15 -7 140;0 -7 140" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="137" cy="140" r="15" fill="url(#robotGrad)">
+      <animateTransform attributeName="transform" type="rotate" values="0 137 140;-15 137 140;0 137 140" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- 3D robot legs -->
+    <rect x="35" y="175" width="22" height="55" rx="11" fill="url(#robotGrad)"/>
+    <rect x="73" y="175" width="22" height="55" rx="11" fill="url(#robotGrad)"/>
+    <!-- Leg highlights -->
+    <rect x="37" y="177" width="18" height="8" rx="9" fill="rgba(255,255,255,0.3)"/>
+    <rect x="75" y="177" width="18" height="8" rx="9" fill="rgba(255,255,255,0.3)"/>
+    
+    <!-- Adorable feet -->
+    <ellipse cx="46" cy="240" rx="20" ry="10" fill="url(#robotGrad)"/>
+    <ellipse cx="84" cy="240" rx="20" ry="10" fill="url(#robotGrad)"/>
+    
+    <!-- Glowing holographic antenna -->
+    <line x1="65" y1="15" x2="65" y2="-20" stroke="#fdcb6e" stroke-width="5" stroke-linecap="round" filter="url(#neon)"/>
+    <circle cx="65" cy="-25" r="8" fill="#fdcb6e" filter="url(#neon)">
+      <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Pulsing heart on chest -->
+    <path d="M65,90 C60,85 50,85 50,95 C50,105 65,120 65,120 C65,120 80,105 80,95 C80,85 70,85 65,90 Z" 
+          fill="#ff7675" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;1;0.9" dur="1.5s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" values="1;1.1;1" dur="1.5s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- RGB status lights with 3D effect -->
+    <g>
+      <circle cx="45" cy="110" r="4" fill="#00b894">
+        <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="65" cy="110" r="4" fill="#fdcb6e">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="85" cy="110" r="4" fill="#e17055">
+        <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+      </circle>
+      <!-- Light reflections -->
+      <circle cx="46" cy="108" r="1" fill="white" opacity="0.8"/>
+      <circle cx="66" cy="108" r="1" fill="white" opacity="0.8"/>
+      <circle cx="86" cy="108" r="1" fill="white" opacity="0.8"/>
+    </g>
+  </g>  
+
+  <!-- Ultra modern AI brain with holographic effect -->
+  <g transform="translate(720, 290)" filter="url(#shadow3d)">
+    <!-- Brain shadow for 3D depth -->
+    <ellipse cx="90" cy="130" rx="90" ry="20" fill="url(#robotShadow)" opacity="0.3"/>
+    
+    <!-- Main brain with holographic gradient -->
+    <path d="M15,70 Q15,25 50,25 Q75,0 100,25 Q135,0 160,25 Q195,25 195,70 Q195,115 160,115 Q135,140 115,115 Q100,140 85,115 Q50,140 35,115 Q15,115 15,70 Z" 
+          fill="url(#brainGrad)" filter="url(#glow)"/>
+    
+    <!-- Brain highlight for 3D effect -->
+    <path d="M25,45 Q45,30 75,35 Q105,25 135,35 Q165,30 185,45" 
+          stroke="rgba(255,255,255,0.4)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Holographic neural network -->
+    <g stroke-width="3" filter="url(#neon)">
+      <!-- Input neurons with glow -->
+      <circle cx="45" cy="50" r="6" fill="#74b9ff">
+        <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="45" cy="70" r="6" fill="#74b9ff">
+        <animate attributeName="r" values="6;8;6" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="45" cy="90" r="6" fill="#74b9ff">
+        <animate attributeName="r" values="6;8;6" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Hidden layer neurons -->
+      <circle cx="105" cy="40" r="6" fill="#00cec9">
+        <animate attributeName="r" values="6;9;6" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="105" cy="60" r="6" fill="#00cec9">
+        <animate attributeName="r" values="6;9;6" dur="2.1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="105" cy="80" r="6" fill="#00cec9">
+        <animate attributeName="r" values="6;9;6" dur="2.3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="105" cy="100" r="6" fill="#00cec9">
+        <animate attributeName="r" values="6;9;6" dur="1.9s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Output neurons -->
+      <circle cx="165" cy="55" r="6" fill="#fd79a8">
+        <animate attributeName="r" values="6;10;6" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="165" cy="85" r="6" fill="#fd79a8">
+        <animate attributeName="r" values="6;10;6" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
+      
+      <!-- Animated holographic connections -->
+      <line x1="51" y1="50" x2="99" y2="40" stroke="#74b9ff" opacity="0.8">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="51" y1="70" x2="99" y2="60" stroke="#74b9ff" opacity="0.8">
+        <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="51" y1="90" x2="99" y2="80" stroke="#74b9ff" opacity="0.8">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="111" y1="40" x2="159" y2="55" stroke="#00cec9" opacity="0.8">
+        <animate attributeName="opacity" values="1;0.3;1" dur="2.2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="111" y1="60" x2="159" y2="85" stroke="#00cec9" opacity="0.8">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2.2s" repeatCount="indefinite"/>
+      </line>
+    </g>
+    
+    <!-- Floating thought bubbles with 3D effect -->
+    <g>
+      <circle cx="220" cy="35" r="12" fill="rgba(255,255,255,0.9)" filter="url(#glow)">
+        <animate attributeName="cy" values="35;25;35" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="12;15;12" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="240" cy="20" r="8" fill="rgba(255,255,255,0.7)" filter="url(#glow)">
+        <animate attributeName="cy" values="20;10;20" dur="3.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="255" cy="10" r="5" fill="rgba(255,255,255,0.5)" filter="url(#glow)">
+        <animate attributeName="cy" values="10;0;10" dur="4s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Holographic sparkles around brain -->
+    <g fill="#fdcb6e" opacity="0.9" filter="url(#neon)">
+      <polygon points="230,80 233,88 241,88 236,94 238,102 230,97 222,102 224,94 219,88 227,88">
+        <animateTransform attributeName="transform" type="rotate" values="0 230 95;360 230 95" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="15,30 18,38 26,38 21,44 23,52 15,47 7,52 9,44 4,38 12,38">
+        <animateTransform attributeName="transform" type="rotate" values="0 15 45;360 15 45" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="200,120 202,126 208,126 204,130 206,136 200,132 194,136 196,130 192,126 198,126">
+        <animateTransform attributeName="transform" type="rotate" values="0 200 133;360 200 133" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;1;0.8" dur="1.8s" repeatCount="indefinite"/>
+      </polygon>
+    </g>
+  </g>
+  
+  <!-- Holographic data stream connection -->
+  <path d="M420,390 Q550,350 720,390" stroke="url(#robotGrad)" stroke-width="6" fill="none" 
+        stroke-linecap="round" filter="url(#neon)" opacity="0.8">
+    <animate attributeName="stroke-dasharray" values="0,1000;1000,0" dur="4s" repeatCount="indefinite"/>
+  </path>
+  
+  <!-- Floating holographic data particles -->
+  <g>
+    <circle cx="480" cy="375" r="4" fill="#74b9ff" filter="url(#neon)">
+      <animateMotion dur="4s" repeatCount="indefinite">
+        <mpath href="#connectionPath"/>
+      </animateMotion>
+      <animate attributeName="r" values="4;6;4" dur="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="520" cy="365" r="4" fill="#00cec9" filter="url(#neon)">
+      <animateMotion dur="4.5s" repeatCount="indefinite">
+        <mpath href="#connectionPath"/>
+      </animateMotion>
+      <animate attributeName="r" values="4;6;4" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="560" cy="370" r="4" fill="#fd79a8" filter="url(#neon)">
+      <animateMotion dur="5s" repeatCount="indefinite">
+        <mpath href="#connectionPath"/>
+      </animateMotion>
+      <animate attributeName="r" values="4;6;4" dur="0.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Hidden path for particle animation -->
+  <defs>
+    <path id="connectionPath" d="M420,390 Q550,350 720,390"/>
+  </defs>
+  
+  <!-- Modern glass info panel -->
+  <rect x="120" y="450" width="960" height="80" rx="25" fill="rgba(255,255,255,0.08)" 
+        stroke="rgba(255,255,255,0.2)" stroke-width="2" filter="url(#shadow3d)"/>
+  
+  <!-- Key concepts with holographic styling -->
+  <text x="600" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" 
+        fill="#ffffff" filter="url(#glow)">
+    🎯 Localization • 🗺️ SLAM • 🛤️ Path Planning • 📊 Kalman Filters • 🎮 Control Systems
+  </text>
+  <text x="600" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" 
+        fill="rgba(255,255,255,0.9)">
+    Making robots smart, autonomous, and capable of real-world navigation ✨🚀
+  </text>
+  
+  <!-- Holographic decorative elements -->
+  <g fill="rgba(255,255,255,0.4)" opacity="0.8" filter="url(#neon)">
+    <polygon points="80,570 83,578 91,578 86,583 88,591 80,586 72,591 74,583 69,578 77,578">
+      <animateTransform attributeName="transform" type="rotate" values="0 80 584;360 80 584" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="3s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="1120,100 1123,108 1131,108 1126,113 1128,121 1120,116 1112,121 1114,113 1109,108 1117,108">
+      <animateTransform attributeName="transform" type="rotate" values="0 1120 114;360 1120 114" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="1050,580 1052,586 1058,586 1054,590 1056,596 1050,592 1044,596 1046,590 1042,586 1048,586">
+      <animateTransform attributeName="transform" type="rotate" values="0 1050 593;360 1050 593" dur="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+</svg>
