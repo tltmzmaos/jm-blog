@@ -1,5 +1,3 @@
-// 블로그 관련 타입 정의
-
 export interface BlogPost {
   slug: string;
   title: string;
@@ -11,17 +9,6 @@ export interface BlogPost {
   author: string;
   draft?: boolean;
   body: string;
-}
-
-export interface PostCardProps {
-  title: string;
-  description: string;
-  pubDate: Date;
-  heroImage?: string;
-  tags: string[];
-  slug: string;
-  author: string;
-  content?: string;
 }
 
 export interface ReadingTime {
@@ -64,5 +51,14 @@ export interface SEOProps {
 export interface NavigationPost {
   slug: string;
   title: string;
-  description?: string;
+}
+
+export interface PostListItemProps {
+  title: string;
+  description: string;
+  pubDate: Date;
+  heroImage?: string;
+  tags: string[];
+  slug: string;
+  content?: string;
 }

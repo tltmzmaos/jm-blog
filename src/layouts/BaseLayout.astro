@@ -1,8 +1,5 @@
 ---
 import SEO from '../components/SEO.astro';
-import ScrollProgress from '../components/ScrollProgress.astro';
-import KeyboardNavigation from '../components/KeyboardNavigation.astro';
-import PageTransition from '../components/PageTransition.astro';
 
 export interface Props {
   title: string;
@@ -13,42 +10,57 @@ export interface Props {
   modifiedTime?: string;
   tags?: string[];
   author?: string;
+  hasMath?: boolean;
 }
 
-const { 
-  title, 
-  description = "Jongmin의 개발 블로그", 
+const {
+  title,
+  description = "Jongmin's Dev Blog",
   image = "/og-image.jpg",
   type = "website",
   publishedTime,
   modifiedTime,
   tags,
-  author
+  author,
+  hasMath = false
 } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="ko" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-    
-    <!-- Font optimization -->
+
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
+    <!-- Font with display swap for better performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link 
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
-    
-    <!-- SEO 최적화 컴포넌트 -->
-    <SEO 
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
+    <!-- SEO -->
+    <SEO
       title={title}
       description={description}
       image={image}
@@ -59,253 +71,157 @@ const {
       author={author}
     />
 
-    <!-- KaTeX CSS (수학 공식 렌더링용) -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
-      integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
-      crossorigin="anonymous"
-    />
-    
-    <!-- 전역 스타일 -->
-    <style>
-      /* Global CSS variables and dark mode improvements */
-      :root {
-        /* Light mode colors */
-        --color-primary: #3b82f6;
-        --color-primary-hover: #2563eb;
-        --color-text: #1f2937;
-        --color-text-muted: #6b7280;
-        --color-bg: #ffffff;
-        --color-bg-secondary: #f9fafb;
-        --color-border: #e5e7eb;
-        --color-shadow: rgba(0, 0, 0, 0.1);
-        
-        /* Accessibility */
-        --focus-ring: 0 0 0 2px var(--color-primary);
-        --border-radius: 0.5rem;
-        --transition: all 0.2s ease-in-out;
-      }
+    <!-- KaTeX CSS (only loaded on pages with math) -->
+    {hasMath && (
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        crossorigin="anonymous"
+      />
+    )}
 
-      .dark {
-        /* Dark mode colors */
-        --color-primary: #60a5fa;
-        --color-primary-hover: #3b82f6;
-        --color-text: #f9fafb;
-        --color-text-muted: #d1d5db;
-        --color-bg: #111827;
-        --color-bg-secondary: #1f2937;
-        --color-border: #374151;
-        --color-shadow: rgba(0, 0, 0, 0.3);
-        
-        /* Dark mode specific colors */
-        --dark-bg: #0f172a;
-        --dark-surface: #1e293b;
-        --dark-muted: #334155;
-        --dark-text: #f1f5f9;
-        --dark-text-muted: #cbd5e1;
-        --dark-border: #475569;
-        --dark-accent: #38bdf8;
-      }
+    <title>{title}</title>
 
-      /* Font optimization */
-      body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-        font-variant-numeric: oldstyle-nums;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Text selection styles */
-      ::selection {
-        background-color: var(--color-primary);
-        color: white;
-      }
-
-      .dark ::selection {
-        background-color: var(--color-primary);
-        color: var(--dark-bg);
-      }
-
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-
-      ::-webkit-scrollbar-track {
-        background: var(--color-bg-secondary);
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background: var(--color-border);
-        border-radius: 4px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: var(--color-text-muted);
-      }
-
-      .dark ::-webkit-scrollbar-track {
-        background: var(--dark-surface);
-      }
-
-      .dark ::-webkit-scrollbar-thumb {
-        background: var(--dark-border);
-      }
-
-      .dark ::-webkit-scrollbar-thumb:hover {
-        background: var(--dark-text-muted);
-      }
-    </style>
-
-    <!-- 다크모드 깜빡임 방지 스크립트 (즉시 실행) -->
+    <!-- Prevent dark mode flash -->
     <script is:inline>
-      // 페이지 로드 전에 즉시 실행되어 깜빡임 방지
       (function() {
-        // 페이지 로드 시 전환 효과 비활성화
-        document.documentElement.classList.add('no-transition');
-        
         const theme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (theme === 'dark' || (!theme && systemPrefersDark)) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (theme === 'dark' || (!theme && prefersDark)) {
           document.documentElement.classList.add('dark');
           document.documentElement.style.colorScheme = 'dark';
-        } else {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.style.colorScheme = 'light';
         }
-        
-        // 시스템 테마 변경 감지
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
           if (!localStorage.getItem('theme')) {
-            if (e.matches) {
-              document.documentElement.classList.add('dark');
-              document.documentElement.style.colorScheme = 'dark';
-            } else {
-              document.documentElement.classList.remove('dark');
-              document.documentElement.style.colorScheme = 'light';
-            }
+            document.documentElement.classList.toggle('dark', e.matches);
+            document.documentElement.style.colorScheme = e.matches ? 'dark' : 'light';
           }
-        });
-        
-        // 페이지 로드 완료 후 전환 효과 활성화
-        window.addEventListener('load', function() {
-          setTimeout(function() {
-            document.documentElement.classList.remove('no-transition');
-          }, 100);
         });
       })();
     </script>
-
-    <title>{title}</title>
   </head>
-  <body class="bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text min-h-screen">
-    <style>
-      /* 다크모드 전환 시 부드러운 애니메이션 */
-      * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      }
-      
-      /* 페이지 로드 시 전환 효과 비활성화 */
-      .no-transition * {
-        transition: none !important;
-      }
-      
-      /* 접근성 개선: 포커스 표시 */
-      *:focus {
-        outline: 2px solid #3b82f6;
-        outline-offset: 2px;
-      }
-      
-      /* 다크모드에서 포커스 색상 */
-      .dark *:focus {
-        outline-color: #60a5fa;
-      }
-      
-      /* 고대비 모드 지원 */
-      @media (prefers-contrast: high) {
-        * {
-          border-width: 2px !important;
-        }
-        
-        .dark {
-          --tw-bg-opacity: 1;
-          background-color: rgb(0 0 0 / var(--tw-bg-opacity));
-          color: rgb(255 255 255);
-        }
-      }
-      
-      /* 애니메이션 감소 설정 존중 */
-      @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-          scroll-behavior: auto !important;
-        }
-      }
-      
-      /* 반응형 텍스트 크기 */
-      @media (max-width: 640px) {
-        html {
-          font-size: 14px;
-        }
-      }
-      
-      @media (min-width: 1024px) {
-        html {
-          font-size: 16px;
-        }
-      }
-      
-      /* 스크린 리더 전용 텍스트 */
-      .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-    </style>
-    
-    <!-- 페이지 전환 로딩 -->
-    <PageTransition />
-    
-    <!-- 스크롤 진행률 및 맨 위로 버튼 -->
-    <ScrollProgress />
-    
-    <!-- 키보드 네비게이션 -->
-    <KeyboardNavigation />
-    
+
+  <body>
     <slot />
-    
-    <style is:global>
-      /* 전역 코드 블록 스타일 */
-      .dark pre[class*="language-"] {
-        background-color: #161b22 !important;
-        border: 1px solid #30363d !important;
-      }
-      
-      .dark code[class*="language-"] {
-        color: #f0f6fc !important;
-      }
-      
-      /* Shiki 코드 하이라이팅 다크모드 개선 */
-      .dark .shiki {
-        background-color: #161b22 !important;
-        border: 1px solid #30363d !important;
-      }
-      
-      .dark .shiki code {
-        color: #f0f6fc !important;
-      }
-    </style>
   </body>
 </html>
+
+<style is:global>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #fff;
+    color: #1a1a1a;
+    line-height: 1.6;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body {
+    background: #1a1a1a;
+    color: #f0f0f0;
+  }
+
+  /* Dark mode transition animation */
+  .theme-transition,
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, fill 0.2s ease, stroke 0.2s ease !important;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Selection styles */
+  ::selection {
+    background: #0066ff;
+    color: #fff;
+  }
+
+  .dark ::selection {
+    background: #58a6ff;
+    color: #1a1a1a;
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid #0066ff;
+    outline-offset: 2px;
+  }
+
+  .dark :focus-visible {
+    outline-color: #58a6ff;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f5f5f5;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    background: #242424;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: #444;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  /* Code blocks */
+  .dark pre[class*="language-"],
+  .dark .shiki {
+    background: #161b22 !important;
+    border: 1px solid #30363d !important;
+  }
+
+  .dark code[class*="language-"],
+  .dark .shiki code {
+    color: #f0f6fc !important;
+  }
+
+  /* Reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>

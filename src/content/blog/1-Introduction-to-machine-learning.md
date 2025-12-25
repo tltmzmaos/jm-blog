@@ -2,11 +2,11 @@
 title: "Introduction to Machine Learning"
 description: "Overview of supervised and unsupervised learning, linear regression, and gradient descent"
 pubDate: "2024-03-20"
-updatedDate: "2024-08-04" # ⭕ 선택 (없어도 OK)
+updatedDate: "2024-08-04"
 tags: ["machine learning", "regression", "gradient descent"]
-heroImage: "/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.png" # ⭕ 선택
-author: "Jongmin Lee"  # ⭕ 선택 (없으면 'Anonymous')
-draft: false           # ⭕ 선택 (기본 false)
+heroImage: "/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.png"
+author: "Jongmin Lee"
+draft: false
 ---
 
 # 1. Introduction to machine learning

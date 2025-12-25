@@ -3,8 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -22,40 +20,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
-          
+
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v4
-        
+
       - name: Build with Astro
-        run: |
-          npm run build
+        run: npm run build
         env:
           SITE: ${{ steps.pages.outputs.origin }}
           BASE_URL: ${{ steps.pages.outputs.base_path }}/
-          PUBLIC_GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}
-          PUBLIC_GIST_ID: ${{ secrets.PUBLIC_GIST_ID }}
-          
-      - name: Optimize build
+
+      - name: Generate robots.txt
         run: |
-          echo "Build optimization completed during Astro build process"
-          
-      - name: Generate additional SEO files
-        run: |
-          # Create additional SEO files
-          echo "User-agent: *
+          cat > dist/robots.txt << EOF
+          User-agent: *
           Allow: /
-          Sitemap: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}/sitemap.xml" > dist/robots.txt
-          
+          Sitemap: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}/sitemap-index.xml
+          EOF
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

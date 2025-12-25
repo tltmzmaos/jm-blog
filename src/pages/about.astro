@@ -1,108 +1,251 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import Logo from '../components/Logo.astro';
 ---
 
-<BaseLayout title="About - Jongmin" description="About Jongmin">
+<BaseLayout title="About - Jongmin" description="Software engineer passionate about backend systems, lab automation, and continuous learning.">
   <Header />
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="bg-white dark:bg-dark-surface rounded-lg shadow-sm p-8">
-      <div class="text-center mb-8">
-        <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center">
-          <Logo size="lg" className="w-32 h-32" />
+
+  <main class="main-content">
+    <h1>About</h1>
+
+    <section class="intro">
+      <h2>Hey, I'm Jongmin 👋</h2>
+      <p>
+        I'm a software engineer who recently made the jump from automotive to biotech.
+        After 4.5 years building backend systems for the automotive industry, I'm now working
+        on lab automation at a biotech company—basically helping robots do science.
+      </p>
+      <p style="margin-top: 1rem;">
+        I studied CS at UC Irvine and I'm currently chipping away at Georgia Tech's OMSCS program
+        (slowly but surely). Most of my professional experience has been in the .NET ecosystem,
+        though I enjoy picking up whatever tools make sense for the job.
+      </p>
+    </section>
+
+    <section class="interests">
+      <h2>What I'm Into</h2>
+      <ul>
+        <li><strong>Building things that work</strong> — Clean APIs, reliable services, code that doesn't wake me up at 3am</li>
+        <li><strong>Automation</strong> — If I have to do something twice, I'm probably scripting it</li>
+        <li><strong>Learning in public</strong> — This blog is my attempt to document what I learn and think through problems</li>
+        <li><strong>The intersection of software and physical systems</strong> — There's something satisfying about code that moves real things</li>
+      </ul>
+    </section>
+
+    <section class="stack">
+      <h2>What I Work With</h2>
+      <p class="stack-note">Primarily .NET these days, but I'm tool-agnostic. Here's what I've been using:</p>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <strong>Day-to-day</strong>
+          <span>C#, .NET Framework, .NET 8, SQL Server</span>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-text mb-2">
-          Hello, I'm Jongmin
-        </h1>
-        <p class="text-lg text-gray-600 dark:text-dark-subtext">
-          Software Developer & OMSCS Student
-        </p>
+        <div class="stack-item">
+          <strong>Infrastructure</strong>
+          <span>IIS, Docker, GitHub Actions, AWS</span>
+        </div>
+        <div class="stack-item">
+          <strong>Sometimes</strong>
+          <span>React, Vite, Python, TypeScript, Swift</span>
+        </div>
+        <div class="stack-item">
+          <strong>Learning</strong>
+          <span>ML/AI concepts</span>
+        </div>
       </div>
+    </section>
 
-      <div class="prose prose-lg dark:prose-dark max-w-none">
-        <h2>Introduction</h2>
-        <p>
-          I'm a software developer working in the automotive industry, with hands-on experience in building backend services using .NET and Java. I graduated from the University of California, Irvine with a degree in Computer Science, and I'm currently pursuing a Master of Science in Computer Science through Georgia Tech's OMSCS program to deepen my knowledge in scalable systems and machine learning.
-        </p>
-
-        <h2>Areas of Interest</h2>
-        <ul>
-          <li>Backend Engineering (.NET 8.0, Java Spring Boot)</li>
-          <li>Cloud & Platform Engineering (AWS, Docker, CI/CD)</li>
-          <li>Distributed Systems & Microservices Architecture</li>
-          <li>Machine Learning & Applied AI (OMSCS ML Specialization)</li>
-        </ul>
-
-        <h2>Tech Stack</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 not-prose">
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Languages</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              C#, Java, SQL, Python
-            </div>
-          </div>
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Frameworks</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              .NET 8.0, ASP.NET, Spring Boot
-            </div>
-          </div>
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Database</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              MS SQL, PostgreSQL, SQLite
-            </div>
-          </div>
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Cloud & DevOps</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              AWS (EC2, S3, RDS), Docker, GitHub Actions
-            </div>
-          </div>
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Tools</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              Git, Visual Studio, Rider, Postman
-            </div>
-          </div>
-          <div class="bg-gray-50 dark:bg-dark-muted p-3 rounded-lg text-center border dark:border-dark-border">
-            <div class="font-semibold text-gray-900 dark:text-dark-text">Others</div>
-            <div class="text-sm text-gray-600 dark:text-dark-subtext mt-1">
-              REST APIs, AOP Logging, System Modernization
-            </div>
-          </div>
-        </div>
-
-        <h2>Contact</h2>
-        <div class="flex flex-wrap gap-4 not-prose">
-          <a href="mailto:tltmzmaos@gmail.com" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-            Email
-          </a>
-          <a href="https://github.com/tltmzmaos" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            GitHub
-          </a>
-          <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-            LinkedIn
-          </a>
-        </div>
-
-        <h2>About This Blog</h2>
-        <p>
-          This blog is built with Astro and Tailwind CSS. 
-          It's a space for documenting and sharing what I learn during development. 
-          Feel free to reach out if you have any questions or feedback!
-        </p>
+    <section class="contact">
+      <h2>Say Hi</h2>
+      <p style="margin-bottom: 1rem;">Always happy to chat about software, career stuff, or whatever. Best way to reach me:</p>
+      <div class="links">
+        <a href="mailto:tltmzmaos@gmail.com" class="link-btn email" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </a>
+        <a href="https://github.com/tltmzmaos" target="_blank" rel="noopener" class="link-btn github" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </a>
+        <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener" class="link-btn linkedin" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
       </div>
-    </div>
-  </div>
+    </section>
+
+    <section class="blog-info">
+      <h2>About This Blog</h2>
+      <p>
+        Built with Astro because I wanted something fast and simple.
+        This is where I write about things I'm learning, problems I've solved (or haven't),
+        and occasionally ramble about tech topics that interest me.
+      </p>
+      <p style="margin-top: 0.75rem;">
+        No SEO optimization, no engagement metrics—just notes for myself that might help someone else.
+      </p>
+    </section>
+  </main>
 </BaseLayout>
+
+<style>
+  .main-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 2rem;
+  }
+
+  :global(.dark) h1 {
+    color: #f0f0f0;
+  }
+
+  section {
+    margin-bottom: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 1rem;
+  }
+
+  :global(.dark) h2 {
+    color: #f0f0f0;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    margin: 0;
+  }
+
+  :global(.dark) p {
+    color: #b0b0b0;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  li {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    margin: 0.5rem 0;
+  }
+
+  :global(.dark) li {
+    color: #b0b0b0;
+  }
+
+  .stack-note {
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
+  }
+
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stack-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+  }
+
+  :global(.dark) .stack-item {
+    background: #242424;
+  }
+
+  .stack-item strong {
+    font-size: 0.875rem;
+    color: #888;
+  }
+
+  .stack-item span {
+    font-size: 0.9375rem;
+    color: #1a1a1a;
+  }
+
+  :global(.dark) .stack-item span {
+    color: #f0f0f0;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50%;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .link-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .link-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .link-btn.email {
+    background: #0066ff;
+  }
+
+  .link-btn.github {
+    background: #333;
+  }
+
+  :global(.dark) .link-btn.github {
+    background: #555;
+  }
+
+  .link-btn.linkedin {
+    background: #0077b5;
+  }
+
+  @media (max-width: 640px) {
+    .main-content {
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    .stack-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

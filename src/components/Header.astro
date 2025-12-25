@@ -1,74 +1,203 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 import SearchBox from './SearchBox.astro';
-import Logo from './Logo.astro';
 
 const baseUrl = import.meta.env.BASE_URL;
+const pathname = Astro.url.pathname;
+
+const isActive = (path: string) => {
+  if (path === baseUrl || path === '/') return pathname === baseUrl || pathname === '/';
+  return pathname.startsWith(path);
+};
 ---
 
-<header class="sticky top-0 z-50 bg-white/80 dark:bg-dark-bg/80 backdrop-blur-sm border-b border-gray-200 dark:border-dark-border" role="banner">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16 md:h-20">
-      <!-- Logo -->
-      <div class="flex items-center">
-        <a 
-          href={baseUrl} 
-          class="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg p-1"
-          aria-label="Go to home"
-        >
-          <Logo size="md" />
-          <span class="hidden sm:block text-lg md:text-xl font-bold text-gray-900 dark:text-dark-text">Jongmin</span>
-        </a>
-      </div>
+<header class="header">
+  <div class="header-inner">
+    <a href={baseUrl} class="logo">Jongmin</a>
 
-      <!-- Mobile and Desktop navigation -->
-      <div class="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
-        <!-- Search box - always visible -->
-        <div class="flex-shrink-0">
-          <SearchBox />
-        </div>
-        
-        <!-- Desktop navigation links -->
-        <nav class="hidden md:flex items-center space-x-4 lg:space-x-6" role="navigation" aria-label="Main menu">
-          <a 
-            href={baseUrl} 
-            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label="Home"
-          >
-            Home
-          </a>
-          <a 
-            href={`${baseUrl}posts`} 
-            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label="Posts"
-          >
-            Posts
-          </a>
-          <a 
-            href={`${baseUrl}tags`} 
-            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label="Tags"
-          >
-            Tags
-          </a>
-          <a 
-            href={`${baseUrl}about`} 
-            class="text-gray-700 dark:text-dark-text hover:text-primary-600 dark:hover:text-dark-accent transition-colors px-3 py-2 rounded-lg focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-            aria-label="About"
-          >
-            About
-          </a>
-        </nav>
-        
-        <!-- Theme toggle - always visible -->
-        <div class="flex-shrink-0">
-          <ThemeToggle />
-        </div>
-      </div>
+    <nav class="nav">
+      <a href={baseUrl} class:list={["nav-link", { active: isActive('/') }]}>Home</a>
+      <a href={`${baseUrl}tags`} class:list={["nav-link", { active: isActive('/tags') }]}>Tags</a>
+      <a href={`${baseUrl}about`} class:list={["nav-link", { active: isActive('/about') }]}>About</a>
+    </nav>
+
+    <div class="actions">
+      <SearchBox />
+      <ThemeToggle />
     </div>
 
-
+    <button class="mobile-menu-btn" aria-label="Open menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+      </svg>
+    </button>
   </div>
 
-
+  <nav class="mobile-nav">
+    <a href={baseUrl} class:list={["mobile-nav-link", { active: isActive('/') }]}>Home</a>
+    <a href={`${baseUrl}tags`} class:list={["mobile-nav-link", { active: isActive('/tags') }]}>Tags</a>
+    <a href={`${baseUrl}about`} class:list={["mobile-nav-link", { active: isActive('/about') }]}>About</a>
+  </nav>
 </header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  :global(.dark) .header {
+    background: rgba(26, 26, 26, 0.95);
+    border-bottom-color: #333;
+  }
+
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  :global(.dark) .logo {
+    color: #f0f0f0;
+  }
+
+  .nav {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: #666;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.15s;
+  }
+
+  .nav-link:hover {
+    color: #1a1a1a;
+    background: #f5f5f5;
+  }
+
+  :global(.dark) .nav-link {
+    color: #888;
+  }
+
+  :global(.dark) .nav-link:hover {
+    color: #f0f0f0;
+    background: #2a2a2a;
+  }
+
+  .nav-link.active {
+    color: #0066ff;
+    font-weight: 500;
+  }
+
+  :global(.dark) .nav-link.active {
+    color: #58a6ff;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    padding: 0.5rem;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  :global(.dark) .mobile-menu-btn {
+    color: #888;
+  }
+
+  .mobile-nav {
+    display: none;
+    padding: 0.5rem 1.5rem 1rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  :global(.dark) .mobile-nav {
+    border-top-color: #333;
+  }
+
+  .mobile-nav-link {
+    display: block;
+    padding: 0.75rem 0;
+    font-size: 0.9375rem;
+    color: #666;
+    text-decoration: none;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .mobile-nav-link:last-child {
+    border-bottom: none;
+  }
+
+  :global(.dark) .mobile-nav-link {
+    color: #888;
+    border-bottom-color: #333;
+  }
+
+  .mobile-nav-link.active {
+    color: #0066ff;
+    font-weight: 500;
+  }
+
+  :global(.dark) .mobile-nav-link.active {
+    color: #58a6ff;
+  }
+
+  @media (max-width: 768px) {
+    .nav {
+      display: none;
+    }
+
+    .mobile-menu-btn {
+      display: block;
+    }
+
+    .header.open .mobile-nav {
+      display: block;
+    }
+
+    .header-inner {
+      padding: 0 1rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('.header');
+    const menuBtn = document.querySelector('.mobile-menu-btn');
+
+    menuBtn?.addEventListener('click', () => {
+      header?.classList.toggle('open');
+    });
+  });
+</script>

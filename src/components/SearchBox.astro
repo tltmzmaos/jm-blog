@@ -1,377 +1,516 @@
 ---
-
 ---
 
-<div class="relative w-full max-w-xs sm:max-w-md">
-  <label for="search-input" class="sr-only">Search blog posts</label>
-  <input
-    type="text"
-    id="search-input"
-    placeholder="Search..."
-    class="w-full px-3 py-2 pl-9 pr-3 text-sm bg-gray-100 dark:bg-dark-muted border border-gray-300 dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:text-dark-text transition-all duration-200 sm:px-4 sm:pl-10 sm:pr-4 sm:w-64"
-    autocomplete="off"
-    spellcheck="false"
-    role="searchbox"
-    aria-label="Search blog posts"
-    aria-describedby="search-help"
-    aria-expanded="false"
-    aria-haspopup="listbox"
-  />
-  <div
-    class="absolute inset-y-0 left-0 pl-2 sm:pl-3 flex items-center pointer-events-none"
-    aria-hidden="true"
-  >
-    <svg
-      class="w-4 h-4 text-gray-400"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="m21 21-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+<div class="search-wrapper">
+  <button class="search-trigger" type="button" aria-label="Search" id="search-trigger">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
     </svg>
-  </div>
+  </button>
 
-  <!-- Search help (screen reader only) -->
-  <div id="search-help" class="sr-only">
-    Enter at least 2 characters. Use arrow keys to navigate results and Enter to
-    select.
-  </div>
+  <div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Search">
+    <div class="search-backdrop" id="search-backdrop"></div>
+    <div class="search-panel">
+      <div class="search-header">
+        <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          id="search-input"
+          placeholder="Search posts..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <kbd class="close-hint">ESC</kbd>
+      </div>
 
-  <!-- Search results -->
-  <div
-    id="search-results"
-    class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded-lg shadow-lg max-h-96 overflow-y-auto hidden z-50"
-    role="listbox"
-    aria-label="Search results"
-  >
-    <!-- Search results will be displayed here -->
+      <div class="search-body" id="search-body">
+        <div class="search-results" id="search-results"></div>
+        <div class="search-empty" id="search-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <p>Type to search posts</p>
+        </div>
+        <div class="search-no-results" id="search-no-results">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
+            <line x1="9" y1="9" x2="9.01" y2="9"/>
+            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          </svg>
+          <p>No results found</p>
+        </div>
+      </div>
+
+      <div class="search-footer">
+        <div class="footer-hint">
+          <kbd>↑</kbd><kbd>↓</kbd> Navigate
+        </div>
+        <div class="footer-hint">
+          <kbd>↵</kbd> Open
+        </div>
+        <div class="footer-hint">
+          <kbd>ESC</kbd> Close
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<script>
-  // @ts-nocheck
-  import Fuse from "fuse.js";
-
-  let fuse;
-  let posts = [];
-  let searchHistory = JSON.parse(localStorage.getItem("searchHistory") || "[]");
-
-  // 텍스트 하이라이팅 함수
-  function highlightText(text, query) {
-    if (!query || query.length < 2) return text;
-    const regex = new RegExp(
-      `(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
-      "gi",
-    );
-    return text.replace(
-      regex,
-      '<mark class="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">$1</mark>',
-    );
+<style>
+  .search-wrapper {
+    position: relative;
   }
 
-  // Save search history
-  function saveSearchHistory(query) {
-    if (query.length < 2) return;
+  /* Trigger Button */
+  .search-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    color: #666;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
 
-    searchHistory = searchHistory.filter((item) => item !== query);
-    searchHistory.unshift(query);
-    searchHistory = searchHistory.slice(0, 5); // Keep only 5 recent searches
-    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+  .search-trigger:hover {
+    color: #1a1a1a;
+    background: #f0f0f0;
+  }
+
+  :global(.dark) .search-trigger {
+    color: #888;
+  }
+
+  :global(.dark) .search-trigger:hover {
+    color: #f0f0f0;
+    background: #333;
+  }
+
+  /* Modal */
+  .search-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    padding: 10vh 1rem 1rem;
+  }
+
+  .search-modal.open {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    animation: fadeIn 0.15s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .search-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(0.9px) saturate(1.05);
+    -webkit-backdrop-filter: blur(0.9px) saturate(1.05);
+    transition: background 0.2s ease, backdrop-filter 0.2s ease;
+  }
+
+  :global(.dark) .search-backdrop {
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .search-panel {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 70vh;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  :global(.dark) .search-panel {
+    background: #1e1e1e;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Header */
+  .search-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  :global(.dark) .search-header {
+    border-bottom-color: #333;
+  }
+
+  .header-icon {
+    flex-shrink: 0;
+    color: #0066ff;
+  }
+
+  :global(.dark) .header-icon {
+    color: #58a6ff;
+  }
+
+  .search-input {
+    flex: 1;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #1a1a1a;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+
+  :global(.dark) .search-input {
+    color: #f0f0f0;
+  }
+
+  .search-input::placeholder {
+    color: #999;
+    font-weight: 400;
+  }
+
+  .close-hint {
+    flex-shrink: 0;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.6875rem;
+    font-family: inherit;
+    color: #888;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+  }
+
+  :global(.dark) .close-hint {
+    background: #333;
+  }
+
+  /* Body */
+  .search-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 200px;
+  }
+
+  .search-results {
+    display: none;
+  }
+
+  .search-results.has-results {
+    display: block;
+  }
+
+  .search-empty,
+  .search-no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 3rem;
+    color: #888;
+  }
+
+  .search-empty svg,
+  .search-no-results svg {
+    opacity: 0.3;
+  }
+
+  .search-empty p,
+  .search-no-results p {
+    font-size: 0.9375rem;
+    margin: 0;
+  }
+
+  .search-no-results {
+    display: none;
+  }
+
+  .search-body.no-results .search-empty {
+    display: none;
+  }
+
+  .search-body.no-results .search-no-results {
+    display: flex;
+  }
+
+  .search-body.has-query .search-empty {
+    display: none;
+  }
+
+  /* Footer */
+  .search-footer {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid #e5e5e5;
+    background: #fafafa;
+  }
+
+  :global(.dark) .search-footer {
+    border-top-color: #333;
+    background: #1a1a1a;
+  }
+
+  .footer-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .footer-hint kbd {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.6875rem;
+    font-family: inherit;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+  :global(.dark) .footer-hint kbd {
+    background: #2a2a2a;
+    border-color: #444;
+  }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .search-modal {
+      padding: 1rem;
+    }
+
+    .search-panel {
+      max-height: 80vh;
+    }
+
+    .search-footer {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  interface Post {
+    title: string;
+    description: string;
+    slug: string;
+    tags: string[];
+  }
+
+  // State
+  let postsData: Post[] = [];
+  let fuse: Fuse<Post> | null = null;
+  let selectedIndex = -1;
+  let results: Post[] = [];
+
+  // DOM elements
+  const trigger = document.getElementById('search-trigger');
+  const modal = document.getElementById('search-modal');
+  const backdrop = document.getElementById('search-backdrop');
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const resultsContainer = document.getElementById('search-results');
+  const searchBody = document.getElementById('search-body');
+
+  if (modal && modal.parentElement !== document.body) {
+    document.body.appendChild(modal);
   }
 
   // Load posts data
   async function loadPosts() {
+    if (postsData.length > 0) return;
     try {
-      const baseUrl = import.meta.env.BASE_URL;
-      const response = await fetch(`${baseUrl}api/posts.json`);
-      posts = await response.json();
-
-      const options = {
+      const response = await fetch('/api/posts.json');
+      if (!response.ok) throw new Error('Failed to fetch posts');
+      postsData = await response.json();
+      fuse = new Fuse(postsData, {
         keys: [
-          { name: "title", weight: 0.7 },
-          { name: "description", weight: 0.2 },
-          { name: "tags", weight: 0.1 },
+          { name: 'title', weight: 2 },
+          { name: 'description', weight: 1 },
+          { name: 'tags', weight: 1.5 }
         ],
         threshold: 0.3,
-        includeScore: true,
-        includeMatches: true,
-        minMatchCharLength: 2,
-      };
-
-      fuse = new Fuse(posts, options);
+      });
     } catch (error) {
-      console.error("Failed to load posts data:", error);
+      console.error('Search: Failed to load posts:', error);
     }
   }
 
-  // Perform search
-  function performSearch(query) {
-    const searchResults = document.getElementById("search-results");
-    if (!searchResults) return;
-
-    if (!query || query.length < 2) {
-      showSearchHistory();
-      return;
-    }
-
-    if (!fuse) {
-      searchResults.innerHTML = `
-        <div class="p-4 flex items-center justify-center text-gray-500 dark:text-gray-400">
-          <div class="w-4 h-4 border-2 border-gray-300 dark:border-gray-600 border-t-primary-500 rounded-full animate-spin mr-2"></div>
-          Loading...
-        </div>
-      `;
-      searchResults.classList.remove("hidden");
-      return;
-    }
-
-    const results = fuse.search(query);
-    displaySearchResults(results, query);
-
-    // Save to search history if results found
-    if (results.length > 0) {
-      saveSearchHistory(query);
-    }
+  // Escape HTML for XSS prevention
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
   }
 
-  // Show search history
-  function showSearchHistory() {
-    const searchResults = document.getElementById("search-results");
-    if (!searchResults || searchHistory.length === 0) {
-      hideSearchResults();
-      return;
-    }
-
-    searchResults.innerHTML = `
-      <div class="p-3 border-b border-gray-200 dark:border-gray-600">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Recent Searches</span>
-          <button onclick="clearSearchHistory()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Clear</button>
-        </div>
-      </div>
-      ${searchHistory
-        .map(
-          (query) => `
-        <button onclick="fillSearch('${query}')" class="w-full text-left p-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors">
-          <div class="flex items-center">
-            <svg class="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span class="text-sm text-gray-700 dark:text-gray-300">${query}</span>
-          </div>
-        </button>
-      `,
-        )
-        .join("")}
-    `;
-
-    searchResults.classList.remove("hidden");
-  }
-
-  // Display search results
-  function displaySearchResults(results, query) {
-    const searchResults = document.getElementById("search-results");
-    const searchInput = document.getElementById("search-input");
-    if (!searchResults) return;
-
-    // Update search input aria-expanded
-    if (searchInput) {
-      searchInput.setAttribute("aria-expanded", "true");
-    }
-
-    if (results.length === 0) {
-      searchResults.innerHTML = `
-        <div class="p-4 text-center" role="status" aria-live="polite">
-          <div class="text-gray-500 dark:text-gray-400 mb-2">No results found for "${query}"</div>
-          <div class="text-xs text-gray-400">Try different keywords or check spelling</div>
-        </div>
-      `;
-    } else {
-      const baseUrl = import.meta.env.BASE_URL;
-      searchResults.innerHTML = `
-        <div class="p-3 border-b border-gray-200 dark:border-gray-600" role="status" aria-live="polite">
-          <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            ${results.length} result${results.length > 1 ? "s" : ""} for "${query}"
-          </span>
-        </div>
-        ${results
-          .slice(0, 5)
-          .map((result, index) => {
-            const post = result.item;
-            const score = Math.round((1 - result.score) * 100);
-            const highlightedTitle = highlightText(post.title, query);
-            const highlightedDescription = highlightText(
-              post.description,
-              query,
-            );
-
-            return `
-            <a 
-              href="${baseUrl}posts/${post.slug}" 
-              class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-200 dark:border-gray-600 last:border-b-0 transition-colors focus:bg-gray-50 dark:focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset"
-              role="option"
-              aria-describedby="result-${index}-desc"
-              tabindex="-1"
-            >
-              <div class="flex items-start justify-between">
-                <div class="flex-1">
-                  <h3 class="font-medium text-gray-900 dark:text-gray-100 mb-1">${highlightedTitle}</h3>
-                  <p id="result-${index}-desc" class="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">${highlightedDescription}</p>
-                  <div class="flex flex-wrap gap-1" role="list" aria-label="Tags">
-                    ${post.tags
-                      .map((tag) => {
-                        const highlightedTag = highlightText(tag, query);
-                        return `<span class="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded" role="listitem">${highlightedTag}</span>`;
-                      })
-                      .join("")}
-                  </div>
-                </div>
-                <div class="ml-3 text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded" aria-label="Relevance ${score}%">
-                  ${score}%
-                </div>
-              </div>
-            </a>
-          `;
-          })
-          .join("")}
-      `;
-    }
-
-    searchResults.classList.remove("hidden");
-  }
-
-  // Hide search results
-  function hideSearchResults() {
-    const searchResults = document.getElementById("search-results");
-    const searchInput = document.getElementById("search-input");
-
-    if (searchResults) {
-      searchResults.classList.add("hidden");
-    }
-
-    if (searchInput) {
-      searchInput.setAttribute("aria-expanded", "false");
-    }
-  }
-
-  // Global functions
-  window.clearSearchHistory = function () {
-    searchHistory = [];
-    localStorage.removeItem("searchHistory");
-    hideSearchResults();
-  };
-
-  window.fillSearch = function (query) {
-    const searchInput = document.getElementById("search-input");
-    if (searchInput) {
-      searchInput.value = query;
-      performSearch(query);
-      searchInput.focus();
-    }
-  };
-
-  // Event listeners setup
-  document.addEventListener("DOMContentLoaded", () => {
+  // Open modal
+  function openModal() {
+    modal?.classList.add('open');
+    document.body.style.overflow = 'hidden';
     loadPosts();
+    setTimeout(() => input?.focus(), 50);
+  }
 
-    const searchInput = document.getElementById("search-input");
-    if (searchInput) {
-      let debounceTimer;
+  // Close modal
+  function closeModal() {
+    modal?.classList.remove('open');
+    document.body.style.overflow = '';
+    if (input) input.value = '';
+    if (resultsContainer) {
+      resultsContainer.innerHTML = '';
+      resultsContainer.classList.remove('has-results');
+    }
+    searchBody?.classList.remove('has-query', 'no-results');
+    results = [];
+    selectedIndex = -1;
+  }
 
-      // Input event with debouncing
-      searchInput.addEventListener("input", (e) => {
-        clearTimeout(debounceTimer);
-        const query = e.target.value.trim();
+  // Render results
+  function renderResults(items: Post[]) {
+    results = items;
+    selectedIndex = items.length > 0 ? 0 : -1;
+    if (!resultsContainer) return;
 
-        // Immediate search for empty query to show history
-        if (query.length === 0) {
-          showSearchHistory();
-          return;
-        }
+    const isDark = document.documentElement.classList.contains('dark');
+    const borderColor = isDark ? '#2a2a2a' : '#f0f0f0';
+    const titleColor = isDark ? '#f0f0f0' : '#1a1a1a';
+    const descColor = isDark ? '#888' : '#666';
 
-        debounceTimer = setTimeout(() => {
-          performSearch(query);
-        }, 250);
-      });
+    resultsContainer.innerHTML = items.map((post, index) => {
+      let tagsHtml = '';
+      if (post.tags && post.tags.length) {
+        tagsHtml = '<div style="display: flex; gap: 0.5rem; margin-top: 0.375rem;">' +
+          post.tags.slice(0, 3).map(tag =>
+            `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(88, 166, 255, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#58a6ff' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
+          ).join('') + '</div>';
+      }
+      return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2a2a' : '#f5f5f5') : 'transparent'};">
+        <div style="font-size: 0.9375rem; font-weight: 600; color: ${titleColor}; margin-bottom: 0.25rem;">${escapeHtml(post.title)}</div>
+        <div style="font-size: 0.8125rem; color: ${descColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(post.description)}</div>
+        ${tagsHtml}</a>`;
+    }).join('');
+  }
 
-      // Focus event
-      searchInput.addEventListener("focus", () => {
-        const query = searchInput.value.trim();
-        if (query.length < 2) {
-          showSearchHistory();
-        } else {
-          performSearch(query);
-        }
-      });
+  // Update selection highlight
+  function updateSelection() {
+    if (!resultsContainer) return;
+    const isDark = document.documentElement.classList.contains('dark');
+    const items = resultsContainer.querySelectorAll('.search-result');
+    items.forEach((el, i) => {
+      const isSelected = i === selectedIndex;
+      (el as HTMLElement).style.background = isSelected ? (isDark ? '#2a2a2a' : '#f5f5f5') : 'transparent';
+      if (isSelected) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
 
-      // Keyboard navigation
-      searchInput.addEventListener("keydown", (e) => {
-        const searchResults = document.getElementById("search-results");
-        const links = searchResults?.querySelectorAll("a, button");
+  // Handle search
+  function handleSearch(query: string) {
+    if (!fuse || query.length < 2) {
+      searchBody?.classList.remove('has-query', 'no-results');
+      resultsContainer?.classList.remove('has-results');
+      if (resultsContainer) resultsContainer.innerHTML = '';
+      results = [];
+      selectedIndex = -1;
+      return;
+    }
 
-        if (e.key === "Escape") {
-          hideSearchResults();
-          searchInput.blur();
-        } else if (e.key === "ArrowDown" && links?.length > 0) {
-          e.preventDefault();
-          links[0].focus();
-        } else if (e.key === "Enter" && links?.length === 1) {
-          // Navigate directly when only one result
-          e.preventDefault();
-          links[0].click();
-        }
-      });
+    searchBody?.classList.add('has-query');
+    const found = fuse.search(query).slice(0, 8).map(r => r.item);
 
-      // Keyboard navigation within search results
-      document.addEventListener("keydown", (e) => {
-        const searchResults = document.getElementById("search-results");
-        if (searchResults?.classList.contains("hidden")) return;
+    if (found.length > 0) {
+      searchBody?.classList.remove('no-results');
+      resultsContainer?.classList.add('has-results');
+      renderResults(found);
+    } else {
+      searchBody?.classList.add('no-results');
+      resultsContainer?.classList.remove('has-results');
+      if (resultsContainer) resultsContainer.innerHTML = '';
+      results = [];
+    }
+  }
 
-        const links = searchResults?.querySelectorAll("a, button");
-        const currentFocus = document.activeElement;
-        const currentIndex = Array.from(links || []).indexOf(currentFocus);
+  // Event listeners
+  trigger?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openModal();
+  });
 
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          const nextIndex =
-            currentIndex < (links?.length || 0) - 1 ? currentIndex + 1 : 0;
-          links?.[nextIndex]?.focus();
-        } else if (e.key === "ArrowUp") {
-          e.preventDefault();
-          if (currentIndex <= 0) {
-            searchInput.focus();
-          } else {
-            const prevIndex = currentIndex - 1;
-            links?.[prevIndex]?.focus();
-          }
-        } else if (e.key === "Escape") {
-          hideSearchResults();
-          searchInput.focus();
-        }
-      });
+  backdrop?.addEventListener('click', closeModal);
 
-      // Hide results on outside click
-      document.addEventListener("click", (e) => {
-        if (
-          !searchInput.contains(e.target as Node) &&
-          !document.getElementById("search-results")?.contains(e.target as Node)
-        ) {
-          hideSearchResults();
-        }
-      });
+  input?.addEventListener('input', (e) => {
+    const query = (e.target as HTMLInputElement).value.trim();
+    handleSearch(query);
+  });
+
+  input?.addEventListener('keydown', (e) => {
+    if (results.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+      updateSelection();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+      updateSelection();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && results[selectedIndex]) {
+        window.location.href = `/posts/${results[selectedIndex].slug}`;
+      }
     }
   });
-</script>
 
-<style>
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-</style>
+  // Global keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal?.classList.contains('open')) {
+      closeModal();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (modal?.classList.contains('open')) {
+        closeModal();
+      } else {
+        openModal();
+      }
+    }
+  });
+
+  // Click on result
+  resultsContainer?.addEventListener('click', closeModal);
+</script>
