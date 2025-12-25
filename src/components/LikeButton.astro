@@ -4,13 +4,18 @@ export interface Props {
 }
 
 const { postSlug } = Astro.props;
+
+const githubToken = import.meta.env.PUBLIC_GITHUB_TOKEN;
+const gistId = import.meta.env.PUBLIC_GIST_ID;
 ---
 
 <button
   class="like-btn"
   data-slug={postSlug}
+  data-github-token={githubToken}
+  data-gist-id={gistId}
   type="button"
-  aria-label="Like"
+  aria-label="Like this post"
 >
   <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
@@ -86,98 +91,202 @@ const { postSlug } = Astro.props;
 </style>
 
 <script>
-  // Get or create user ID for like tracking
-  function getOrCreateUserId(): string {
-    try {
-      let id = localStorage.getItem('blog-uid');
-      if (!id) {
-        id = crypto.randomUUID();
-        localStorage.setItem('blog-uid', id);
+  class GistLikeSystem {
+    private githubToken: string;
+    private gistId: string;
+    private userId: string;
+
+    constructor(githubToken: string, gistId: string) {
+      this.githubToken = githubToken;
+      this.gistId = gistId;
+      this.userId = this.getOrCreateUserId();
+    }
+
+    private getOrCreateUserId(): string {
+      try {
+        let userId = localStorage.getItem('blog-user-id');
+        if (!userId) {
+          userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+          localStorage.setItem('blog-user-id', userId);
+        }
+        return userId;
+      } catch {
+        return 'anonymous_' + Math.random().toString(36).substr(2, 9);
       }
-      return id;
-    } catch {
-      // Private browsing or storage disabled
-      return crypto.randomUUID();
+    }
+
+    async fetchGistData(): Promise<Record<string, { count: number; users: string[] }>> {
+      if (!this.githubToken || !this.gistId) {
+        return {};
+      }
+
+      try {
+        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+          headers: {
+            'Authorization': `Bearer ${this.githubToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`GitHub API error: ${response.status}`);
+        }
+
+        const gist = await response.json();
+        const content = gist.files['blog-likes.json']?.content || '{}';
+        return JSON.parse(content);
+      } catch (error) {
+        console.error('Failed to fetch Gist data:', error);
+        return {};
+      }
+    }
+
+    async saveGistData(data: Record<string, { count: number; users: string[] }>): Promise<boolean> {
+      if (!this.githubToken || !this.gistId) {
+        return false;
+      }
+
+      try {
+        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${this.githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            files: {
+              'blog-likes.json': {
+                content: JSON.stringify(data, null, 2)
+              }
+            }
+          })
+        });
+
+        return response.ok;
+      } catch (error) {
+        console.error('Failed to save Gist data:', error);
+        return false;
+      }
+    }
+
+    async getPostLikes(postSlug: string): Promise<{ count: number; isLiked: boolean }> {
+      if (!postSlug) {
+        return { count: 0, isLiked: false };
+      }
+
+      const data = await this.fetchGistData();
+      let postData = data[postSlug];
+
+      if (typeof postData === 'number') {
+        postData = { count: postData, users: [] };
+      } else if (!postData) {
+        postData = { count: 0, users: [] };
+      }
+
+      return {
+        count: postData.count || 0,
+        isLiked: postData.users ? postData.users.includes(this.userId) : false
+      };
+    }
+
+    async toggleLike(postSlug: string): Promise<{ count: number; isLiked: boolean }> {
+      if (!postSlug) {
+        throw new Error('Invalid postSlug');
+      }
+
+      const data = await this.fetchGistData();
+
+      let postData = data[postSlug];
+      if (typeof postData === 'number') {
+        postData = { count: postData, users: [] };
+      } else if (!postData) {
+        postData = { count: 0, users: [] };
+      }
+
+      const isCurrentlyLiked = postData.users && postData.users.includes(this.userId);
+
+      if (isCurrentlyLiked) {
+        postData.count = Math.max(0, postData.count - 1);
+        postData.users = postData.users.filter((id: string) => id !== this.userId);
+      } else {
+        postData.count = postData.count + 1;
+        if (!postData.users) postData.users = [];
+        postData.users.push(this.userId);
+      }
+
+      data[postSlug] = postData;
+
+      const success = await this.saveGistData(data);
+
+      if (success) {
+        return {
+          count: postData.count,
+          isLiked: !isCurrentlyLiked
+        };
+      } else {
+        throw new Error('Failed to save like');
+      }
+    }
+
+    isConfigured(): boolean {
+      return !!(this.githubToken && this.gistId &&
+                this.githubToken !== 'undefined' && this.gistId !== 'undefined');
     }
   }
 
-  // Debounce helper to prevent spam clicks
-  function debounce<T extends (...args: unknown[]) => unknown>(fn: T, delay: number) {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn(...args), delay);
-    };
-  }
-
   async function initLikeButtons() {
-    const userId = getOrCreateUserId();
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.like-btn');
 
-    document.querySelectorAll<HTMLButtonElement>('.like-btn').forEach(async (btn) => {
+    buttons.forEach(async (btn) => {
       const slug = btn.dataset.slug;
+      const githubToken = btn.dataset.githubToken || '';
+      const gistId = btn.dataset.gistId || '';
+      const countEl = btn.querySelector('.count')!;
+
       if (!slug) {
         btn.disabled = true;
+        countEl.textContent = '0';
         return;
       }
 
-      const countEl = btn.querySelector('.count')!;
+      const likeSystem = new GistLikeSystem(githubToken, gistId);
+
+      if (!likeSystem.isConfigured()) {
+        btn.disabled = true;
+        btn.title = 'Like feature is not configured';
+        countEl.textContent = '0';
+        return;
+      }
+
       let isLoading = false;
 
       // Fetch initial state
       try {
-        const res = await fetch(`/api/likes?slug=${encodeURIComponent(slug)}&userId=${encodeURIComponent(userId)}`);
-        const data = await res.json();
-
-        if (data.disabled) {
-          btn.disabled = true;
-          btn.title = 'Like feature is disabled';
-          countEl.textContent = '0';
-          return;
-        }
-
-        countEl.textContent = String(data.count || 0);
-        if (data.isLiked) btn.classList.add('liked');
+        const { count, isLiked } = await likeSystem.getPostLikes(slug);
+        countEl.textContent = String(count);
+        if (isLiked) btn.classList.add('liked');
       } catch {
-        btn.title = 'Failed to load likes';
         countEl.textContent = '0';
       }
 
-      // Handle click with debouncing
-      const handleClick = debounce(async () => {
+      // Handle click
+      btn.addEventListener('click', async () => {
         if (isLoading) return;
         isLoading = true;
         btn.disabled = true;
 
         try {
-          const res = await fetch('/api/likes', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug, userId }),
-          });
-
-          if (res.status === 429) {
-            btn.title = 'Too many requests. Please wait.';
-            return;
-          }
-
-          const data = await res.json();
-          if (data.error) {
-            btn.title = 'Failed to save. Please try again.';
-            return;
-          }
-
-          countEl.textContent = String(data.count);
-          btn.classList.toggle('liked', data.isLiked);
-          btn.title = '';
-        } catch {
-          btn.title = 'Network error. Please try again.';
+          const { count, isLiked } = await likeSystem.toggleLike(slug);
+          countEl.textContent = String(count);
+          btn.classList.toggle('liked', isLiked);
+        } catch (error) {
+          console.error('Like toggle failed:', error);
         } finally {
           isLoading = false;
           btn.disabled = false;
         }
-      }, 300);
-
-      btn.addEventListener('click', handleClick);
+      });
     });
   }
 
