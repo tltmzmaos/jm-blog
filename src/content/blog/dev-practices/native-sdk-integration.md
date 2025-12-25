@@ -4,7 +4,7 @@ description: "Practical considerations and patterns learned from working with ve
 pubDate: 2025-12-05
 author: "Jongmin Lee"
 tags: ["Software Engineering", "Backend", "Best Practices"]
-draft: true
+draft: false
 ---
 
 Most software engineers today work with clean, well-documented APIs: REST endpoints, gRPC services, and NuGet packages with full IntelliSense support.
