@@ -4,418 +4,186 @@ export interface Props {
 }
 
 const { postSlug } = Astro.props;
-
-// 서버 사이드에서 환경변수 읽기
-const githubToken = import.meta.env.PUBLIC_GITHUB_TOKEN;
-const gistId = import.meta.env.PUBLIC_GIST_ID;
 ---
 
-<div class="like-container flex items-center space-x-2">
-  <button
-    class="like-button flex items-center space-x-2 px-3 py-2 sm:px-4 bg-gray-100 dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-all duration-200 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 min-h-[44px] min-w-[44px]"
-    data-post-slug={postSlug}
-    data-github-token={githubToken}
-    data-gist-id={gistId}
-    data-liked="false"
-    type="button"
-    aria-label="이 포스트에 좋아요 표시"
-    aria-describedby="like-status"
-    title="좋아요"
-  >
-    <svg
-      class="like-icon w-4 h-4 sm:w-5 sm:h-5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-      ></path>
-    </svg>
-    <span class="like-count font-medium text-sm sm:text-base" aria-live="polite">
-      <svg class="animate-spin w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-    </span>
-  </button>
-  <div id="like-status" class="sr-only" aria-live="polite"></div>
-</div>
+<button
+  class="like-btn"
+  data-slug={postSlug}
+  type="button"
+  aria-label="Like"
+>
+  <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+  </svg>
+  <span class="count">-</span>
+</button>
+
+<style>
+  .like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #666;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  :global(.dark) .like-btn {
+    color: #888;
+    background: #2a2a2a;
+    border-color: #404040;
+  }
+
+  .like-btn:hover:not(:disabled) {
+    color: #e53935;
+    border-color: #e53935;
+  }
+
+  .like-btn.liked {
+    color: #e53935;
+    background: rgba(229, 57, 53, 0.1);
+    border-color: #e53935;
+  }
+
+  .like-btn.liked .heart-icon {
+    fill: #e53935;
+  }
+
+  .like-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .heart-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s;
+  }
+
+  .like-btn:hover:not(:disabled) .heart-icon {
+    transform: scale(1.1);
+  }
+
+  .like-btn.liked .heart-icon {
+    animation: heartPop 0.3s ease;
+  }
+
+  @keyframes heartPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .count {
+    font-weight: 500;
+    min-width: 1ch;
+  }
+</style>
 
 <script>
-  // @ts-nocheck
-  // GitHub Gist 기반 완전한 좋아요 시스템
-  
-  class GistLikeSystem {
-    constructor(githubToken, gistId) {
-      this.githubToken = githubToken;
-      this.gistId = gistId;
-      this.userId = this.getUserId(); // 브라우저별 고유 ID
-      
-      // 환경변수 검증
-      if (!this.githubToken || !this.gistId) {
-        console.error('GitHub 환경변수가 설정되지 않았습니다:', {
-          token: this.githubToken ? '설정됨' : '없음',
-          gistId: this.gistId ? '설정됨' : '없음'
-        });
-      }
-    }
-    
-    // 브라우저별 고유 ID 생성 (localStorage 기반)
-    getUserId() {
-      let userId = localStorage.getItem('blog-user-id');
-      if (!userId) {
-        userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-        localStorage.setItem('blog-user-id', userId);
-      }
-      return userId;
-    }
-    
-    // Gist에서 전체 데이터 가져오기
-    async fetchGistData() {
-      // 환경변수 검증
-      if (!this.githubToken || !this.gistId) {
-        console.error('GitHub 환경변수가 설정되지 않아 Gist 데이터를 가져올 수 없습니다.');
-        return {};
-      }
-      
-      try {
-        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-          headers: {
-            'Authorization': `Bearer ${this.githubToken}`,
-            'Accept': 'application/vnd.github.v3+json'
-          }
-        });
-        
-        if (!response.ok) {
-          throw new Error(`GitHub API 오류: ${response.status}`);
-        }
-        
-        const gist = await response.json();
-        const content = gist.files['blog-likes.json']?.content || '{}';
-        return JSON.parse(content);
-      } catch (error) {
-        console.error('Gist 데이터 가져오기 실패:', error);
-        return {};
-      }
-    }
-    
-    // Gist에 데이터 저장
-    async saveGistData(data) {
-      // 환경변수 검증
-      if (!this.githubToken || !this.gistId) {
-        console.error('GitHub 환경변수가 설정되지 않아 Gist 데이터를 저장할 수 없습니다.');
-        return false;
-      }
-      
-      try {
-        // 빈 문자열 키 제거
-        const cleanData = {};
-        for (const [key, value] of Object.entries(data)) {
-          if (key && key.trim() !== '') {
-            cleanData[key] = value;
-          }
-        }
-        
-        const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': `Bearer ${this.githubToken}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            files: {
-              'blog-likes.json': {
-                content: JSON.stringify(cleanData, null, 2)
-              }
-            }
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`GitHub API 저장 오류: ${response.status}`);
-        }
-        
-        return true;
-      } catch (error) {
-        console.error('Gist 저장 실패:', error);
-        return false;
-      }
-    }
-    
-    // 특정 포스트의 좋아요 정보 가져오기
-    async getPostLikes(postSlug) {
-      if (!postSlug || postSlug.trim() === '') {
-        console.error('getPostLikes: 유효하지 않은 postSlug:', postSlug);
-        return { count: 0, isLiked: false };
-      }
-      
-      const data = await this.fetchGistData();
-      let postData = data[postSlug];
-      
-      // 기존 데이터가 숫자인 경우 (이전 버전 호환성)
-      if (typeof postData === 'number') {
-        postData = { count: postData, users: [] };
-      } else if (!postData) {
-        postData = { count: 0, users: [] };
-      }
-      
-      return {
-        count: postData.count || 0,
-        isLiked: postData.users ? postData.users.includes(this.userId) : false
-      };
-    }
-    
-    // 좋아요 토글
-    async toggleLike(postSlug) {
-      if (!postSlug || postSlug.trim() === '') {
-        console.error('toggleLike: 유효하지 않은 postSlug:', postSlug);
-        throw new Error('유효하지 않은 postSlug');
-      }
-      
-      const data = await this.fetchGistData();
-      
-      // 기존 데이터 처리 (숫자인 경우 객체로 변환)
-      let postData = data[postSlug];
-      if (typeof postData === 'number') {
-        postData = { count: postData, users: [] };
-      } else if (!postData) {
-        postData = { count: 0, users: [] };
-      }
-      
-      const isCurrentlyLiked = postData.users && postData.users.includes(this.userId);
-      
-      if (isCurrentlyLiked) {
-        // 좋아요 취소
-        postData.count = Math.max(0, postData.count - 1);
-        postData.users = postData.users.filter(id => id !== this.userId);
-      } else {
-        // 좋아요 추가
-        postData.count = postData.count + 1;
-        if (!postData.users) postData.users = [];
-        postData.users.push(this.userId);
-      }
-      
-      // 데이터 업데이트
-      data[postSlug] = postData;
-      
-      // Gist에 저장
-      const success = await this.saveGistData(data);
-      
-      if (success) {
-        return {
-          count: postData.count,
-          isLiked: !isCurrentlyLiked
-        };
-      } else {
-        throw new Error('좋아요 저장 실패');
-      }
-    }
-  }
-  
-  // 버튼 초기화
-  async function initializeLikeButtons() {
-    const buttons = document.querySelectorAll('.like-button');
-    
-    // 각 버튼에서 환경변수 읽기
-    for (const button of buttons) {
-      const buttonGithubToken = button.getAttribute('data-github-token');
-      const buttonGistId = button.getAttribute('data-gist-id');
-      
-      // 환경변수 검증
-      if (!buttonGithubToken || !buttonGistId || buttonGithubToken === 'undefined' || buttonGistId === 'undefined') {
-        console.warn('GitHub 환경변수가 설정되지 않아 좋아요 기능이 비활성화됩니다.');
-        updateButtonUI(button, 0, false);
-        button.disabled = true;
-        button.title = '좋아요 기능이 일시적으로 비활성화되었습니다.';
-        button.style.opacity = '0.5';
-        continue;
-      }
-      
-      // 각 버튼별로 likeSystem 인스턴스 생성
-      const buttonLikeSystem = new GistLikeSystem(buttonGithubToken, buttonGistId);
-      
-      const postSlug = button.getAttribute('data-post-slug');
-      
-      // 빈 문자열이나 null 체크
-      if (!postSlug || postSlug.trim() === '') {
-        console.error('초기화 시 유효하지 않은 postSlug:', postSlug, 'URL:', window.location.href);
-        updateButtonUI(button, 0, false);
-        continue;
-      }
-      
-      console.log('초기화 중인 postSlug:', postSlug);
-      
-      try {
-        // Gist에서 현재 상태 가져오기
-        const { count, isLiked } = await buttonLikeSystem.getPostLikes(postSlug);
-        
-        // UI 업데이트
-        updateButtonUI(button, count, isLiked);
-        
-        // 클릭 이벤트 추가
-        button.addEventListener('click', () => handleLikeClick(button, postSlug, buttonLikeSystem));
-        
-      } catch (error) {
-        console.error(`${postSlug} 초기화 실패:`, error);
-        // 에러 시 기본값 사용
-        updateButtonUI(button, 0, false);
-        button.addEventListener('click', () => handleLikeClick(button, postSlug, buttonLikeSystem));
-      }
-    }
-  }
-  
-  // 좋아요 클릭 처리
-  async function handleLikeClick(button, postSlug, likeSystemInstance) {
-    // 환경변수 검증
-    if (!likeSystemInstance.githubToken || !likeSystemInstance.gistId) {
-      console.error('GitHub 환경변수가 설정되지 않아 좋아요 기능을 사용할 수 없습니다.');
-      return;
-    }
-    
-    // postSlug 유효성 검사
-    if (!postSlug || postSlug.trim() === '') {
-      console.error('클릭 시 유효하지 않은 postSlug:', postSlug);
-      return;
-    }
-    
-    // 버튼 비활성화
-    button.disabled = true;
-    
-    // 로딩 상태 표시
-    const originalHTML = button.innerHTML;
-    button.innerHTML = `
-      <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      <span class="ml-2">Processing...</span>
-    `;
-    
+  // Get or create user ID for like tracking
+  function getOrCreateUserId(): string {
     try {
-      // 좋아요 토글
-      const { count, isLiked } = await likeSystemInstance.toggleLike(postSlug);
-      
-      // UI 업데이트
-      updateButtonUI(button, count, isLiked);
-      
-      // 애니메이션 효과
-      if (isLiked) {
-        showHeartAnimation(button);
+      let id = localStorage.getItem('blog-uid');
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem('blog-uid', id);
       }
-      
-    } catch (error) {
-      console.error('좋아요 처리 실패:', error);
-      
-      // 에러 시 원래 상태로 복원
-      button.innerHTML = originalHTML;
-      
-    } finally {
-      // 버튼 다시 활성화
-      button.disabled = false;
+      return id;
+    } catch {
+      // Private browsing or storage disabled
+      return crypto.randomUUID();
     }
   }
-  
-  // 버튼 UI 업데이트
-  function updateButtonUI(button, count, isLiked) {
-    try {
-      button.setAttribute('data-liked', isLiked.toString());
-      
-      // 접근성: aria-label 업데이트
-      const likeText = isLiked ? '좋아요 취소' : '좋아요';
-      button.setAttribute('aria-label', `${likeText} (현재 ${count}개)`);
-      
-      // 부드러운 전환을 위한 페이드 효과
-      button.style.opacity = '0.7';
-      
-      setTimeout(() => {
-        // 버튼 내용 업데이트
-        button.innerHTML = `
-          <svg class="like-icon w-4 h-4 sm:w-5 sm:h-5 transition-all duration-200" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-          </svg>
-          <span class="like-count font-medium text-sm sm:text-base transition-all duration-200" aria-live="polite">${count}</span>
-        `;
-        
-        // 스타일 업데이트
-        if (isLiked) {
-          button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-          button.classList.add('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-        } else {
-          button.classList.remove('bg-red-50', 'dark:bg-red-900/20', 'text-red-600', 'dark:text-red-400');
-          button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
-        }
-        
-        // 접근성: 상태 알림
-        const statusElement = document.getElementById('like-status');
-        if (statusElement) {
-          statusElement.textContent = `좋아요 ${count}개${isLiked ? ', 좋아요 표시됨' : ''}`;
-        }
-        
-        // 페이드 인
-        button.style.opacity = '1';
-      }, 100);
-      
-    } catch (error) {
-      console.error('UI 업데이트 실패:', error);
-    }
+
+  // Debounce helper to prevent spam clicks
+  function debounce<T extends (...args: unknown[]) => unknown>(fn: T, delay: number) {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return (...args: Parameters<T>) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn(...args), delay);
+    };
   }
-  
-  // 하트 애니메이션
-  function showHeartAnimation(button) {
-    button.classList.add('animate-pulse');
-    setTimeout(() => button.classList.remove('animate-pulse'), 600);
-    
-    const heart = document.createElement('div');
-    heart.innerHTML = '❤️';
-    heart.style.cssText = `
-      position: absolute;
-      left: 50%;
-      top: -10px;
-      transform: translateX(-50%);
-      z-index: 1000;
-      font-size: 18px;
-      pointer-events: none;
-      animation: heartFloat 1s ease-out forwards;
-    `;
-    
-    // CSS 애니메이션 추가
-    if (!document.querySelector('#heart-style')) {
-      const style = document.createElement('style');
-      style.id = 'heart-style';
-      style.textContent = `
-        @keyframes heartFloat {
-          0% { opacity: 1; transform: translateX(-50%) translateY(0px) scale(1); }
-          50% { transform: translateX(-50%) translateY(-10px) scale(1.2); }
-          100% { opacity: 0; transform: translateX(-50%) translateY(-20px) scale(0.8); }
+
+  async function initLikeButtons() {
+    const userId = getOrCreateUserId();
+
+    document.querySelectorAll<HTMLButtonElement>('.like-btn').forEach(async (btn) => {
+      const slug = btn.dataset.slug;
+      if (!slug) {
+        btn.disabled = true;
+        return;
+      }
+
+      const countEl = btn.querySelector('.count')!;
+      let isLoading = false;
+
+      // Fetch initial state
+      try {
+        const res = await fetch(`/api/likes?slug=${encodeURIComponent(slug)}&userId=${encodeURIComponent(userId)}`);
+        const data = await res.json();
+
+        if (data.disabled) {
+          btn.disabled = true;
+          btn.title = 'Like feature is disabled';
+          countEl.textContent = '0';
+          return;
         }
-      `;
-      document.head.appendChild(style);
-    }
-    
-    button.style.position = 'relative';
-    button.appendChild(heart);
-    
-    setTimeout(() => {
-      if (heart.parentNode) heart.parentNode.removeChild(heart);
-    }, 1000);
-  }
-  
-  // 초기화 - 더 빠른 실행
-  function startInitialization() {
-    // 즉시 실행
-    initializeLikeButtons();
+
+        countEl.textContent = String(data.count || 0);
+        if (data.isLiked) btn.classList.add('liked');
+      } catch {
+        btn.title = 'Failed to load likes';
+        countEl.textContent = '0';
+      }
+
+      // Handle click with debouncing
+      const handleClick = debounce(async () => {
+        if (isLoading) return;
+        isLoading = true;
+        btn.disabled = true;
+
+        try {
+          const res = await fetch('/api/likes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug, userId }),
+          });
+
+          if (res.status === 429) {
+            btn.title = 'Too many requests. Please wait.';
+            return;
+          }
+
+          const data = await res.json();
+          if (data.error) {
+            btn.title = 'Failed to save. Please try again.';
+            return;
+          }
+
+          countEl.textContent = String(data.count);
+          btn.classList.toggle('liked', data.isLiked);
+          btn.title = '';
+        } catch {
+          btn.title = 'Network error. Please try again.';
+        } finally {
+          isLoading = false;
+          btn.disabled = false;
+        }
+      }, 300);
+
+      btn.addEventListener('click', handleClick);
+    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startInitialization);
+    document.addEventListener('DOMContentLoaded', initLikeButtons);
   } else {
-    // 페이지가 이미 로드된 경우 즉시 실행
-    startInitialization();
+    initLikeButtons();
   }
 </script>

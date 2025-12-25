@@ -2,11 +2,14 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import { shouldShowDrafts } from '../../utils/env';
 
+const showDrafts = shouldShowDrafts();
 const allPosts = await getCollection('blog');
-const publishedPosts = allPosts.filter(post => !post.data.draft);
+const publishedPosts = allPosts
+  .filter(post => showDrafts || !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// 태그별 포스트 수 계산
 const tagCounts = publishedPosts.reduce((acc, post) => {
   post.data.tags.forEach(tag => {
     acc[tag] = (acc[tag] || 0) + 1;
@@ -17,45 +20,657 @@ const tagCounts = publishedPosts.reduce((acc, post) => {
 const sortedTags = Object.entries(tagCounts)
   .sort(([,a], [,b]) => b - a)
   .map(([tag, count]) => ({ tag, count }));
+
+const postsByTag = sortedTags.reduce((acc, { tag }) => {
+  acc[tag] = publishedPosts.filter(post => post.data.tags.includes(tag));
+  return acc;
+}, {} as Record<string, typeof publishedPosts>);
+
+// Build connections between tags (tags that appear together in posts)
+const tagConnections: { source: string; target: string; strength: number }[] = [];
+const connectionMap = new Map<string, number>();
+
+publishedPosts.forEach(post => {
+  const tags = post.data.tags;
+  for (let i = 0; i < tags.length; i++) {
+    for (let j = i + 1; j < tags.length; j++) {
+      const key = [tags[i], tags[j]].sort().join('|');
+      connectionMap.set(key, (connectionMap.get(key) || 0) + 1);
+    }
+  }
+});
+
+connectionMap.forEach((strength, key) => {
+  const [source, target] = key.split('|');
+  tagConnections.push({ source, target, strength });
+});
+
+const graphData = {
+  nodes: sortedTags.map(({ tag, count }) => ({ id: tag, count })),
+  links: tagConnections
+};
 ---
 
-<BaseLayout title="태그 - 벨로그 스타일 블로그" description="모든 태그를 확인해보세요.">
+<BaseLayout title="Tags - Jongmin's Dev Blog" description="All tags">
   <Header />
-  
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- 페이지 헤더 -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 dark:text-dark-text mb-4">
-        Tags
-      </h1>
-      <p class="text-gray-600 dark:text-dark-subtext">
-        {sortedTags.length} tags in total.
-      </p>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Tags</h1>
+      <p>{sortedTags.length} {sortedTags.length === 1 ? 'tag' : 'tags'}</p>
     </div>
 
-    <!-- 태그 클라우드 -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {sortedTags.map(({ tag, count }) => (
-        <a 
-          href={`/tags/${tag}`}
-          class="block p-4 bg-white dark:bg-dark-surface rounded-lg border border-gray-200 dark:border-dark-border hover:shadow-md hover:border-primary-300 dark:hover:border-dark-accent transition-all duration-200"
-        >
-          <div class="flex items-center justify-between">
-            <span class="text-lg font-medium text-gray-900 dark:text-dark-text">
-              {tag}
-            </span>
-            <span class="px-2 py-1 text-sm bg-primary-100 dark:bg-dark-accent/20 text-primary-800 dark:text-dark-accent rounded-full">
-              {count}
-            </span>
-          </div>
-        </a>
-      ))}
+    <div class="graph-container">
+      <canvas id="tag-graph"></canvas>
+      <div id="graph-tooltip" class="graph-tooltip"></div>
+      <div class="zoom-controls">
+        <button id="zoom-in" aria-label="Zoom in">+</button>
+        <span id="zoom-level">100%</span>
+        <button id="zoom-out" aria-label="Zoom out">−</button>
+      </div>
+    </div>
+
+    <div id="posts-preview" class="posts-preview">
+      <div class="preview-header">
+        <h2 id="preview-title">Select a tag</h2>
+        <a id="view-all-link" href="#" class="view-all" style="display: none;">View all →</a>
+      </div>
+      <div id="posts-list" class="posts-list">
+        <p class="hint">Click a node above to see related posts</p>
+      </div>
     </div>
 
     {sortedTags.length === 0 && (
-      <div class="text-center py-12">
-        <p class="text-gray-500 dark:text-dark-subtext">No tags yet.</p>
-      </div>
+      <p class="empty">No tags yet.</p>
     )}
   </main>
+
+  <script is:inline define:vars={{ graphData, postsByTag }}>
+    const canvas = document.getElementById('tag-graph');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('graph-tooltip');
+    const container = canvas.parentElement;
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const zoomLevelEl = document.getElementById('zoom-level');
+
+    let width, height;
+    let nodes = [];
+    let links = [];
+    let hoveredNode = null;
+    let selectedNode = null;
+    let isDragging = false;
+    let dragNode = null;
+    let isPanning = false;
+    let panStart = { x: 0, y: 0 };
+
+    // Zoom and pan state
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    const MIN_SCALE = 0.5;
+    const MAX_SCALE = 2.5;
+
+    const isDark = () => document.documentElement.classList.contains('dark');
+
+    function updateZoomDisplay() {
+      zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+    }
+
+    function resize() {
+      width = container.clientWidth;
+      height = 400;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    function initGraph() {
+      const maxCount = Math.max(...graphData.nodes.map(n => n.count));
+      const minCount = Math.min(...graphData.nodes.map(n => n.count));
+      const countRange = maxCount - minCount || 1;
+
+      nodes = graphData.nodes.map((n, i) => {
+        const angle = (i / graphData.nodes.length) * Math.PI * 2;
+        const initRadius = 80 + Math.random() * 40;
+        // More differentiated sizes: min 6px, max 28px
+        const normalizedCount = (n.count - minCount) / countRange;
+        const nodeRadius = 6 + normalizedCount * 22;
+        return {
+          ...n,
+          x: width / 2 + Math.cos(angle) * initRadius,
+          y: height / 2 + Math.sin(angle) * initRadius,
+          vx: 0,
+          vy: 0,
+          radius: nodeRadius
+        };
+      });
+
+      links = graphData.links.map(l => ({
+        source: nodes.find(n => n.id === l.source),
+        target: nodes.find(n => n.id === l.target),
+        strength: l.strength
+      })).filter(l => l.source && l.target);
+
+      // Reset zoom/pan
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      updateZoomDisplay();
+    }
+
+    function simulate() {
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      nodes.forEach(node => {
+        if (node === dragNode) return;
+
+        // Center gravity
+        node.vx += (centerX - node.x) * 0.001;
+        node.vy += (centerY - node.y) * 0.001;
+
+        // Repulsion between nodes
+        nodes.forEach(other => {
+          if (node === other) return;
+          const dx = node.x - other.x;
+          const dy = node.y - other.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const minDist = node.radius + other.radius + 40;
+          if (dist < minDist) {
+            const force = (minDist - dist) / dist * 0.5;
+            node.vx += dx * force;
+            node.vy += dy * force;
+          }
+        });
+      });
+
+      // Link attraction
+      links.forEach(link => {
+        const dx = link.target.x - link.source.x;
+        const dy = link.target.y - link.source.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const targetDist = 100 + (3 - link.strength) * 30;
+        const force = (dist - targetDist) * 0.01;
+
+        if (link.source !== dragNode) {
+          link.source.vx += dx / dist * force;
+          link.source.vy += dy / dist * force;
+        }
+        if (link.target !== dragNode) {
+          link.target.vx -= dx / dist * force;
+          link.target.vy -= dy / dist * force;
+        }
+      });
+
+      // Apply velocity with damping
+      nodes.forEach(node => {
+        if (node === dragNode) return;
+        node.vx *= 0.85;
+        node.vy *= 0.85;
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // Bounds
+        const margin = node.radius + 10;
+        node.x = Math.max(margin, Math.min(width - margin, node.x));
+        node.y = Math.max(margin, Math.min(height - margin, node.y));
+      });
+    }
+
+    function screenToWorld(screenX, screenY) {
+      return {
+        x: (screenX - offsetX) / scale,
+        y: (screenY - offsetY) / scale
+      };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      const dark = isDark();
+      const linkColor = dark ? 'rgba(100, 100, 100, 0.4)' : 'rgba(180, 180, 180, 0.6)';
+      const nodeColor = dark ? '#4a9eff' : '#0066ff';
+      const nodeHoverColor = dark ? '#6bb3ff' : '#3388ff';
+      const textColor = dark ? '#f0f0f0' : '#1a1a1a';
+      const selectedColor = dark ? '#ff6b6b' : '#ff4444';
+
+      // Draw links
+      links.forEach(link => {
+        const isConnected = selectedNode &&
+          (link.source.id === selectedNode.id || link.target.id === selectedNode.id);
+
+        ctx.beginPath();
+        ctx.moveTo(link.source.x, link.source.y);
+        ctx.lineTo(link.target.x, link.target.y);
+        ctx.strokeStyle = isConnected ? (dark ? '#6bb3ff' : '#0066ff') : linkColor;
+        ctx.lineWidth = (isConnected ? 2 : 1) / scale;
+        ctx.stroke();
+      });
+
+      // Draw nodes
+      nodes.forEach(node => {
+        const isHovered = node === hoveredNode;
+        const isSelected = node === selectedNode;
+        const isConnectedToSelected = selectedNode && links.some(l =>
+          (l.source.id === selectedNode.id && l.target.id === node.id) ||
+          (l.target.id === selectedNode.id && l.source.id === node.id)
+        );
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+
+        if (isSelected) {
+          ctx.fillStyle = selectedColor;
+        } else if (isHovered || isConnectedToSelected) {
+          ctx.fillStyle = nodeHoverColor;
+        } else {
+          ctx.fillStyle = nodeColor;
+        }
+
+        ctx.fill();
+
+        // Glow effect for hovered/selected
+        if (isHovered || isSelected) {
+          ctx.shadowColor = ctx.fillStyle;
+          ctx.shadowBlur = 15 / scale;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        // Label - scale font size inversely with zoom for readability
+        const fontSize = Math.max(9, Math.min(14, (10 + node.radius / 4) / Math.sqrt(scale)));
+        ctx.font = `${fontSize}px system-ui, sans-serif`;
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.id, node.x, node.y + node.radius + 12);
+      });
+
+      ctx.restore();
+    }
+
+    function getNodeAt(screenX, screenY) {
+      const world = screenToWorld(screenX, screenY);
+      for (let i = nodes.length - 1; i >= 0; i--) {
+        const node = nodes[i];
+        const dx = world.x - node.x;
+        const dy = world.y - node.y;
+        if (dx * dx + dy * dy < node.radius * node.radius) {
+          return node;
+        }
+      }
+      return null;
+    }
+
+    function zoomAt(centerX, centerY, delta) {
+      const oldScale = scale;
+      scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * delta));
+
+      // Adjust offset to zoom toward mouse position
+      offsetX = centerX - (centerX - offsetX) * (scale / oldScale);
+      offsetY = centerY - (centerY - offsetY) * (scale / oldScale);
+      updateZoomDisplay();
+    }
+
+    function showPosts(tag) {
+      const posts = postsByTag[tag] || [];
+      const previewTitle = document.getElementById('preview-title');
+      const viewAllLink = document.getElementById('view-all-link');
+      const postsList = document.getElementById('posts-list');
+      const dark = isDark();
+
+      if (previewTitle) previewTitle.textContent = `${tag} (${posts.length})`;
+      if (viewAllLink) {
+        viewAllLink.href = `/tags/${tag}`;
+        viewAllLink.style.display = 'inline';
+      }
+
+      if (postsList) {
+        if (posts.length === 0) {
+          postsList.innerHTML = '<p style="color: #888; font-size: 0.9375rem; text-align: center; padding: 1rem 0; margin: 0;">No posts found</p>';
+        } else {
+          const itemBg = dark ? '#2a2a2a' : '#fff';
+          const itemHoverBg = dark ? '#333' : '#e8e8e8';
+          const titleColor = dark ? '#f0f0f0' : '#1a1a1a';
+
+          postsList.innerHTML = posts.slice(0, 5).map(post => `
+            <a href="/posts/${post.slug}" class="post-item"
+               style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: ${itemBg}; border-radius: 8px; text-decoration: none; transition: background 0.15s; margin-bottom: 0.5rem;"
+               onmouseover="this.style.background='${itemHoverBg}'"
+               onmouseout="this.style.background='${itemBg}'">
+              <span style="font-size: 0.9375rem; font-weight: 500; color: ${titleColor};">${post.data.title}</span>
+              <span style="font-size: 0.8125rem; color: #888; flex-shrink: 0; margin-left: 1rem;">${new Date(post.data.pubDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </a>
+          `).join('') + (posts.length > 5 ? `<p style="text-align: center; color: #888; font-size: 0.875rem; margin: 0.5rem 0 0;">+${posts.length - 5} more posts</p>` : '');
+        }
+      }
+    }
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (isPanning) {
+        offsetX += x - panStart.x;
+        offsetY += y - panStart.y;
+        panStart.x = x;
+        panStart.y = y;
+        return;
+      }
+
+      if (isDragging && dragNode) {
+        const world = screenToWorld(x, y);
+        dragNode.x = world.x;
+        dragNode.y = world.y;
+        dragNode.vx = 0;
+        dragNode.vy = 0;
+        return;
+      }
+
+      const node = getNodeAt(x, y);
+      hoveredNode = node;
+      canvas.style.cursor = node ? 'pointer' : 'grab';
+
+      if (node) {
+        tooltip.style.display = 'block';
+        tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+        tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+        tooltip.textContent = `${node.id}: ${node.count} post${node.count > 1 ? 's' : ''}`;
+      } else {
+        tooltip.style.display = 'none';
+      }
+    });
+
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const node = getNodeAt(x, y);
+
+      if (node) {
+        isDragging = true;
+        dragNode = node;
+        canvas.style.cursor = 'grabbing';
+      } else {
+        // Start panning
+        isPanning = true;
+        panStart.x = x;
+        panStart.y = y;
+        canvas.style.cursor = 'grabbing';
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+      dragNode = null;
+      isPanning = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      hoveredNode = null;
+      tooltip.style.display = 'none';
+      isDragging = false;
+      dragNode = null;
+      isPanning = false;
+    });
+
+    canvas.addEventListener('click', (e) => {
+      if (isDragging || isPanning) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const node = getNodeAt(x, y);
+
+      if (node) {
+        selectedNode = node;
+        showPosts(node.id);
+        document.getElementById('posts-preview')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    // Mouse wheel zoom
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const delta = e.deltaY > 0 ? 0.9 : 1.1;
+      zoomAt(x, y, delta);
+    }, { passive: false });
+
+    // Zoom buttons
+    zoomInBtn.addEventListener('click', () => {
+      zoomAt(width / 2, height / 2, 1.2);
+    });
+
+    zoomOutBtn.addEventListener('click', () => {
+      zoomAt(width / 2, height / 2, 0.8);
+    });
+
+    function animate() {
+      simulate();
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    // Theme change observer
+    const observer = new MutationObserver(() => draw());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    window.addEventListener('resize', () => {
+      resize();
+      initGraph();
+    });
+
+    resize();
+    initGraph();
+    animate();
+  </script>
 </BaseLayout>
+
+<style>
+  .main-content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.25rem;
+  }
+
+  :global(.dark) .page-header h1 {
+    color: #f0f0f0;
+  }
+
+  .page-header p {
+    font-size: 0.9375rem;
+    color: #888;
+    margin: 0;
+  }
+
+  .graph-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #fafafa;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  :global(.dark) .graph-container {
+    background: #1a1a1a;
+  }
+
+  #tag-graph {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .graph-tooltip {
+    display: none;
+    position: absolute;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
+  }
+
+  :global(.dark) .graph-tooltip {
+    background: #f0f0f0;
+    color: #1a1a1a;
+  }
+
+  .zoom-controls {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) .zoom-controls {
+    background: rgba(40, 40, 40, 0.9);
+  }
+
+  .zoom-controls button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #e8e8e8;
+    color: #1a1a1a;
+    font-size: 18px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+  }
+
+  .zoom-controls button:hover {
+    background: #d8d8d8;
+  }
+
+  :global(.dark) .zoom-controls button {
+    background: #3a3a3a;
+    color: #f0f0f0;
+  }
+
+  :global(.dark) .zoom-controls button:hover {
+    background: #4a4a4a;
+  }
+
+  .zoom-controls span {
+    font-size: 0.75rem;
+    color: #666;
+    min-width: 40px;
+    text-align: center;
+  }
+
+  :global(.dark) .zoom-controls span {
+    color: #aaa;
+  }
+
+  .posts-preview {
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  :global(.dark) .posts-preview {
+    background: #242424;
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .preview-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+  }
+
+  :global(.dark) .preview-header h2 {
+    color: #f0f0f0;
+  }
+
+  .view-all {
+    font-size: 0.875rem;
+    color: #0066ff;
+    text-decoration: none;
+  }
+
+  .view-all:hover {
+    text-decoration: underline;
+  }
+
+  :global(.dark) .view-all {
+    color: #4a9eff;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hint {
+    color: #888;
+    font-size: 0.9375rem;
+    text-align: center;
+    padding: 1rem 0;
+    margin: 0;
+  }
+
+  .empty {
+    text-align: center;
+    color: #888;
+    padding: 3rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .main-content {
+      padding: 1.5rem 1rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .graph-container {
+      height: 300px;
+    }
+  }
+</style>

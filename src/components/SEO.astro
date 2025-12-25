@@ -28,7 +28,7 @@ const currentUrl = new URL(Astro.url.pathname, siteUrl);
 const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
 const imageUrl = new URL(image, siteUrl);
 
-// 구조화된 데이터 생성
+// Generate structured data
 const structuredData: any = {
   "@context": "https://schema.org",
   "@type": type === "article" ? "BlogPosting" : "WebSite",
@@ -71,17 +71,17 @@ if (type === "website") {
 }
 ---
 
-<!-- 기본 메타 태그 -->
+<!-- Basic meta tags -->
 <meta name="description" content={description} />
 <meta name="author" content={author} />
 <meta name="robots" content="index, follow" />
 <meta name="googlebot" content="index, follow" />
 
-<!-- 언어 및 지역 -->
-<meta name="language" content="ko-KR" />
-<meta name="geo.region" content="KR" />
+<!-- Language and region -->
+<meta name="language" content="en-US" />
+<meta name="geo.region" content="US" />
 
-<!-- 캐노니컬 URL -->
+<!-- Canonical URL -->
 <link rel="canonical" href={canonicalUrl.toString()} />
 
 <!-- Open Graph / Facebook -->
@@ -93,7 +93,7 @@ if (type === "website") {
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:site_name" content="Jongmin Blog" />
-<meta property="og:locale" content="ko_KR" />
+<meta property="og:locale" content="en_US" />
 
 {type === "article" && publishedTime && (
   <>
@@ -113,17 +113,17 @@ if (type === "website") {
 <meta name="twitter:creator" content="@jongmin" />
 <meta name="twitter:site" content="@jongmin" />
 
-<!-- 추가 메타 태그 -->
+<!-- Additional meta tags -->
 <meta name="theme-color" content="#3b82f6" />
 <meta name="msapplication-TileColor" content="#3b82f6" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Jongmin Blog" />
 
-<!-- 구조화된 데이터 -->
+<!-- Structured data -->
 <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
 
-<!-- 추가 구조화된 데이터 (웹사이트 정보) -->
+<!-- Additional structured data (website info) -->
 {type === "website" && (
   <script type="application/ld+json" is:inline set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -147,7 +147,7 @@ if (type === "website") {
 <link rel="dns-prefetch" href="https://api.github.com" />
 <link rel="dns-prefetch" href="https://gist.github.com" />
 
-<!-- Preload critical resources (조건부로 KaTeX 포함) -->
+<!-- Preload critical resources (conditionally includes KaTeX) -->
 {type === "article" && (
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" as="style" />
 )}

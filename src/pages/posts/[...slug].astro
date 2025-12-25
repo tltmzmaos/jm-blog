@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
+import { getRelatedPosts } from '../../utils/relatedPosts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -15,7 +16,7 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content, headings } = await post.render();
 
-// 이전/다음 포스트 찾기
+// Find previous/next posts
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
@@ -32,13 +33,16 @@ const nextPost = currentIndex > 0 ? {
   description: sortedPosts[currentIndex - 1].data.description
 } : undefined;
 
+// Find related posts (tag-based)
+const relatedPosts = getRelatedPosts(post, allPosts, 3);
 ---
 
-<PostLayout 
+<PostLayout
   frontmatter={post.data}
   headings={headings}
   prevPost={prevPost}
   nextPost={nextPost}
+  relatedPosts={relatedPosts}
   content={post.body}
   slug={post.slug}
 >
