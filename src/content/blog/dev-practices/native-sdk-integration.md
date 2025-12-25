@@ -1,6 +1,6 @@
 ---
 title: "Lessons from Integrating Hardware SDKs in Industrial Robotics"
-description: "Practical considerations and patterns learned from working with vendor-provided .NET SDKs in laboratory automation."
+description: "Practical considerations and patterns learned from working with vendor-provided SDKs—both .NET assemblies and COM components—in laboratory automation."
 pubDate: 2025-12-05
 author: "Jongmin Lee"
 tags: ["Software Engineering", "Backend", "Best Practices"]
@@ -9,7 +9,7 @@ draft: false
 
 Most software engineers today work with clean, well-documented APIs: REST endpoints, gRPC services, and NuGet packages with full IntelliSense support.
 
-In industrial robotics and laboratory automation, the integration story is different. Here, you work with vendor-provided SDKs—often delivered as .NET assemblies (C# DLLs)—that serve as the bridge between your software and physical hardware.
+In industrial robotics and laboratory automation, the integration story is different. Here, you work with vendor-provided SDKs—delivered as .NET assemblies, COM components, or both—that serve as the bridge between your software and physical hardware.
 
 These SDKs aren't inherently problematic. They represent years of work by hardware engineers who understand their devices deeply. But they do require a different mindset than consuming a typical web API or open-source library.
 
@@ -20,9 +20,9 @@ This post shares some lessons I've learned while working on these integrations.
 When integrating lab instruments or robotic devices, vendors typically provide:
 
 - .NET assemblies (C# DLLs)
+- COM components (for some legacy or specialized devices)
 - Reference documentation (sometimes dated)
 - Sample applications
-- Occasionally, source code for the samples
 
 The first thing to understand is that these SDKs are designed with different constraints in mind. Hardware vendors prioritize:
 
@@ -212,6 +212,100 @@ public class VendorDeviceAdapter : IDevice
 
 This isolation pays off when vendor SDK updates introduce breaking changes, or when you need to support multiple device vendors behind a unified interface.
 
+## Working with COM Components
+
+Some vendors still provide SDKs as COM components, especially for devices with longer product lifecycles. When working with COM in C#, there are additional considerations.
+
+### COM Interop Basics
+
+Visual Studio can generate interop assemblies from COM type libraries, or you can use late binding for more flexibility:
+
+```csharp
+// Early binding with generated interop assembly
+var device = new VendorDeviceClass();
+device.Initialize();
+
+// Late binding when SDK versions vary across installations
+var deviceType = Type.GetTypeFromProgID("Vendor.Device");
+dynamic device = Activator.CreateInstance(deviceType);
+device.Initialize();
+```
+
+Early binding provides compile-time type safety and IntelliSense; late binding is more forgiving when dealing with version differences across customer sites.
+
+### Threading and Apartment Models
+
+COM components often have specific threading requirements. Single-threaded apartment (STA) components must be called from the thread that created them:
+
+```csharp
+public class ComDeviceWrapper
+{
+    private readonly Thread _staThread;
+    private readonly BlockingCollection<Action> _workQueue = new();
+
+    public ComDeviceWrapper()
+    {
+        _staThread = new Thread(ProcessWorkQueue);
+        _staThread.SetApartmentState(ApartmentState.STA);
+        _staThread.Start();
+    }
+
+    private void ProcessWorkQueue()
+    {
+        // Initialize COM on this thread
+        var device = new VendorDeviceClass();
+
+        foreach (var work in _workQueue.GetConsumingEnumerable())
+        {
+            work();
+        }
+    }
+
+    public Task ExecuteOnStaThread(Action action)
+    {
+        var tcs = new TaskCompletionSource();
+        _workQueue.Add(() =>
+        {
+            action();
+            tcs.SetResult();
+        });
+        return tcs.Task;
+    }
+}
+```
+
+I've seen code work perfectly in a console application but fail mysteriously in a Windows Service—simply because the threading context was different.
+
+### COM Registration and Deployment
+
+COM components require proper registration on the target machine:
+
+- **regsvr32** — Traditional registration method
+- **Registration-free COM** — Manifests that avoid global registration
+- **Installer considerations** — Ensure COM registration happens during deployment
+
+**What helps:** Testing your installer on clean VMs. A missing COM registration is one of the most common deployment issues.
+
+### Error Handling with HRESULTs
+
+COM errors typically surface as HRESULTs wrapped in exceptions:
+
+```csharp
+try
+{
+    comDevice.Execute(command);
+}
+catch (COMException ex)
+{
+    // HRESULT values like 0x80040001 need translation
+    _logger.LogError(ex, "COM error: 0x{HResult:X8}", ex.HResult);
+    throw new DeviceOperationException(
+        TranslateHResult(ex.HResult), ex);
+}
+```
+
+Building a translation layer for common HRESULTs makes debugging much easier.
+
 ## Architectural Patterns That Have Helped
 
 ### The Adapter Layer
@@ -235,7 +329,7 @@ flowchart TB
 
     subgraph sdk["Vendor SDK"]
         direction TB
-        dll[".NET Assemblies"]
+        dll[".NET / COM"]
     end
 
     subgraph hw["Physical Device"]
