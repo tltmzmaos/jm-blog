@@ -46,20 +46,22 @@
     height: 20px;
   }
 
+  /* Light mode: show moon (click to go dark) */
   .sun {
-    display: block;
+    display: none;
   }
 
   .moon {
-    display: none;
+    display: block;
   }
 
+  /* Dark mode: show sun (click to go light) */
   :global(.dark) .sun {
-    display: none;
+    display: block;
   }
 
   :global(.dark) .moon {
-    display: block;
+    display: none;
   }
 </style>
 
