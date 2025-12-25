@@ -2,7 +2,7 @@
 title: "Unsupervised Learning: K-means Clustering and Anomaly Detection"
 description: "Explore core concepts of unsupervised learning, including K-means clustering, optimization strategies, and how anomaly detection systems are designed and evaluated."
 pubDate: "2024-04-09"
-tags: ["dev", "machine-learning", "unsupervised-learning", "clustering"]
+tags: ["Machine Learning", "Unsupervised Learning", "Clustering"]
 author: "Jongmin Lee"
 heroImage: "/1-Unsupervised-learning/Screenshot_2024-04-09_at_5.51.38_PM.png"
 draft: false

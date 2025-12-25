@@ -2,7 +2,7 @@
 title: "Decision Trees and Ensembles: From Splits to Random Forests and XGBoost"
 description: "A complete guide to decision trees, covering entropy, information gain, one-hot encoding, regression trees, and ensemble methods like Random Forest and XGBoost."
 pubDate: "2024-04-03"
-tags: ["dev", "machine-learning", "decision-trees", "xgboost"]
+tags: ["Machine Learning", "Decision Trees", "XGBoost"]
 author: "Jongmin Lee"
 heroImage: "/4-Decision-trees/Screenshot_2024-04-03_at_5.44.16_PM.png"
 draft: false

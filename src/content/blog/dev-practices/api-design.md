@@ -2,7 +2,7 @@
 title: "REST API Design Best Practices: Building APIs That Scale"
 description: "A practical guide to designing clear, consistent, and secure REST APIs with real-world patterns and examples."
 pubDate: "2025-08-07"
-tags: ["dev", "api-design", "rest", "backend", "web-development", "best-practices"]
+tags: ["API Design", "REST", "Backend", "Best Practices"]
 author: "Jongmin Lee"
 heroImage: "/API-Design/api-design-hero.png"
 draft: false

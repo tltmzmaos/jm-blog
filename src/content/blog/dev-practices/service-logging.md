@@ -2,7 +2,7 @@
 title: "Service Logging Best Practices: A Complete Guide to Production-Ready Logging"
 description: "A practical guide to structured logging, correlation IDs, centralized pipelines, and safe operational logging in production systems."
 pubDate: "2025-08-08"
-tags: ["dev", "logging", "monitoring", "observability", "devops", "cloud", "best-practices"]
+tags: ["Logging", "Observability", "DevOps", "Best Practices"]
 author: "Jongmin Lee"
 heroImage: "/Service-Logging/service-logging-hero.png"
 draft: false
