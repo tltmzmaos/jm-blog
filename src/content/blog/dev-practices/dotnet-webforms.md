@@ -2,7 +2,7 @@
 title: ".NET Framework 4.8 WebForms: A Practical Guide"
 description: "A practical guide to WebForms fundamentals, performance, security, and migration planning for enterprise apps."
 pubDate: "2025-08-06"
-tags: ["dev", "dotnet", "webforms", "csharp"]
+tags: [".NET", "WebForms", "C#", "Backend"]
 author: "Jongmin Lee"
 heroImage: "/NET-Framework-WebForms/asp-net-hero.jpg"
 draft: false

@@ -2,7 +2,7 @@
 title: "Logistic Regression: From Sigmoid to Regularization"
 description: "A comprehensive breakdown of logistic regression, sigmoid function, loss functions, and regularization for classification tasks."
 pubDate: "2024-03-24T11:00:00Z"
-tags: ["dev", "machine-learning", "classification"]
+tags: ["Machine Learning", "Classification", "Logistic Regression"]
 author: "Jongmin Lee"
 heroImage: "/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.png"
 draft: false

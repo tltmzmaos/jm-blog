@@ -22,9 +22,20 @@ const sortedTags = Object.entries(tagCounts)
   .map(([tag, count]) => ({ tag, count }));
 
 const postsByTag = sortedTags.reduce((acc, { tag }) => {
-  acc[tag] = publishedPosts.filter(post => post.data.tags.includes(tag));
+  acc[tag] = publishedPosts
+    .filter(post => post.data.tags.includes(tag))
+    .map(post => ({
+      slug: post.slug,
+      data: {
+        title: post.data.title,
+        description: post.data.description,
+        pubDate: post.data.pubDate,
+        heroImage: post.data.heroImage,
+        tags: post.data.tags,
+      }
+    }));
   return acc;
-}, {} as Record<string, typeof publishedPosts>);
+}, {} as Record<string, Array<{ slug: string; data: { title: string; description: string; pubDate: Date; heroImage?: string; tags: string[] } }>>);
 
 // Build connections between tags (tags that appear together in posts)
 const tagConnections: { source: string; target: string; strength: number }[] = [];
@@ -60,23 +71,47 @@ const graphData = {
       <p>{sortedTags.length} {sortedTags.length === 1 ? 'tag' : 'tags'}</p>
     </div>
 
-    <div class="graph-container">
-      <canvas id="tag-graph"></canvas>
-      <div id="graph-tooltip" class="graph-tooltip"></div>
-      <div class="zoom-controls">
-        <button id="zoom-in" aria-label="Zoom in">+</button>
-        <span id="zoom-level">100%</span>
-        <button id="zoom-out" aria-label="Zoom out">−</button>
+    <div class="graph-container" role="img" aria-label="Interactive 3D visualization of blog tags">
+      <div id="three-container"></div>
+      <div id="graph-tooltip" class="graph-tooltip" role="tooltip"></div>
+      <div class="view-controls">
+        <button id="view-toggle" class="view-btn" title="Switch view" aria-label="Switch between 2D and 3D view">
+          <span class="icon-3d" aria-hidden="true">3D</span>
+        </button>
+        <button id="auto-rotate" class="view-btn active" title="Auto rotate" aria-label="Toggle automatic rotation" aria-pressed="true">
+          <span class="icon-rotate" aria-hidden="true">↻</span>
+        </button>
+      </div>
+      <!-- Hub-based color legend -->
+      <div class="category-legend">
+        <div class="legend-item"><span class="legend-dot ml"></span>ML/AI</div>
+        <div class="legend-item"><span class="legend-dot omscs"></span>OMSCS</div>
+        <div class="legend-item"><span class="legend-dot clean"></span>Clean Code</div>
+        <div class="legend-item"><span class="legend-dot dev"></span>Dev</div>
       </div>
     </div>
 
     <div id="posts-preview" class="posts-preview">
       <div class="preview-header">
-        <h2 id="preview-title">Select a tag</h2>
-        <a id="view-all-link" href="#" class="view-all" style="display: none;">View all →</a>
+        <div class="preview-title-wrapper">
+          <span id="tag-badge" class="tag-badge" style="display: none;"></span>
+          <h2 id="preview-title">Select a tag</h2>
+        </div>
+        <a id="view-all-link" href="#" class="view-all-btn" style="display: none;">
+          View all
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
       </div>
       <div id="posts-list" class="posts-list">
-        <p class="hint">Click a node above to see related posts</p>
+        <div class="hint-card">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 16v-4M12 8h.01"/>
+          </svg>
+          <p>Click on a tag sphere above to explore related posts</p>
+        </div>
       </div>
     </div>
 
@@ -85,400 +120,802 @@ const graphData = {
     )}
   </main>
 
+  <!-- Three.js from CDN with SRI (r134 is the last version with bundled three.min.js) -->
+  <script
+    is:inline
+    src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+    integrity="sha384-9EQoUIJYrv09/oYhSxnw1VpLcfPw3BM9dE7+D/3wGUPeLLa7F9Z6OAoD+i/M6FK9"
+    crossorigin="anonymous"
+  ></script>
+
   <script is:inline define:vars={{ graphData, postsByTag }}>
-    const canvas = document.getElementById('tag-graph');
-    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('three-container');
     const tooltip = document.getElementById('graph-tooltip');
-    const container = canvas.parentElement;
-    const zoomInBtn = document.getElementById('zoom-in');
-    const zoomOutBtn = document.getElementById('zoom-out');
-    const zoomLevelEl = document.getElementById('zoom-level');
+    const viewToggle = document.getElementById('view-toggle');
+    const autoRotateBtn = document.getElementById('auto-rotate');
 
-    let width, height;
+    let scene, camera, renderer;
     let nodes = [];
+    let glowMeshes = [];
     let links = [];
-    let hoveredNode = null;
+    let labels = [];
+    let particles;
     let selectedNode = null;
-    let isDragging = false;
-    let dragNode = null;
-    let isPanning = false;
-    let panStart = { x: 0, y: 0 };
-
-    // Zoom and pan state
-    let scale = 1;
-    let offsetX = 0;
-    let offsetY = 0;
-    const MIN_SCALE = 0.5;
-    const MAX_SCALE = 2.5;
+    let hoveredNode = null;
+    let autoRotate = true;
+    let is3D = true;
+    let time = 0;
 
     const isDark = () => document.documentElement.classList.contains('dark');
 
-    function updateZoomDisplay() {
-      zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+    // HTML escape function to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
-    function resize() {
-      width = container.clientWidth;
-      height = 400;
-      canvas.width = width * window.devicePixelRatio;
-      canvas.height = height * window.devicePixelRatio;
-      canvas.style.width = width + 'px';
-      canvas.style.height = height + 'px';
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // Hub tag colors - main tags get distinct colors, connected tags inherit
+    const hubColors = {
+      'Machine Learning': { main: 0x9b59b6, glow: 0xd8b4fe, css: '#9b59b6' },
+      'OMSCS': { main: 0x3498db, glow: 0x85c1e9, css: '#3498db' },
+      'Georgia Tech': { main: 0x3498db, glow: 0x85c1e9, css: '#3498db' },
+      'Clean Code': { main: 0x2ecc71, glow: 0x82e0aa, css: '#2ecc71' },
+      'Clean Architecture': { main: 0x27ae60, glow: 0x82e0aa, css: '#27ae60' },
+      'Software Engineering': { main: 0x16a085, glow: 0x76d7c4, css: '#16a085' },
+      'Best Practices': { main: 0xe67e22, glow: 0xf5b041, css: '#e67e22' },
+      'Backend': { main: 0xe74c3c, glow: 0xf1948a, css: '#e74c3c' },
+      'Neural Networks': { main: 0x8e44ad, glow: 0xbb8fce, css: '#8e44ad' },
+      'TensorFlow': { main: 0xff6f00, glow: 0xffab40, css: '#ff6f00' },
+    };
+
+    const defaultColor = { main: 0x4a9eff, glow: 0x85c1e9, css: '#4a9eff' };
+
+    // Build connection strength map to find hub for each tag
+    function findHubColor(tagId, adjacency) {
+      // If this tag is a hub itself, use its color
+      if (hubColors[tagId]) {
+        return hubColors[tagId];
+      }
+
+      // Find the most strongly connected hub
+      const connections = adjacency[tagId] || [];
+      let bestHub = null;
+      let bestStrength = 0;
+
+      connections.forEach(conn => {
+        if (hubColors[conn.target] && conn.strength > bestStrength) {
+          bestHub = conn.target;
+          bestStrength = conn.strength;
+        }
+      });
+
+      // If connected to a hub, use that hub's color with slight variation
+      if (bestHub) {
+        return hubColors[bestHub];
+      }
+
+      // Check indirect connections (2 hops)
+      for (const conn of connections) {
+        const secondaryConns = adjacency[conn.target] || [];
+        for (const sec of secondaryConns) {
+          if (hubColors[sec.target]) {
+            return hubColors[sec.target];
+          }
+        }
+      }
+
+      return defaultColor;
     }
 
-    function initGraph() {
+    function getTagCategory(tag) {
+      const t = tag.toLowerCase();
+      if (t.includes('machine') || t.includes('neural') || t.includes('learning') ||
+          t.includes('tensorflow') || t.includes('classification') || t.includes('regression') ||
+          t.includes('clustering') || t.includes('xgboost') || t.includes('decision')) {
+        return 'ml';
+      }
+      if (t.includes('omscs') || t.includes('georgia') || t.includes('cs6') || t.includes('ai4r') ||
+          t.includes('robotics') || t.includes('android') || t.includes('sdp')) {
+        return 'omscs';
+      }
+      if (t.includes('clean') || t.includes('solid') || t.includes('robert') || t.includes('martin') ||
+          t.includes('architecture')) {
+        return 'clean';
+      }
+      if (t.includes('api') || t.includes('logging') || t.includes('dotnet') || t.includes('webform') ||
+          t.includes('best practice') || t.includes('devops') || t.includes('backend') ||
+          t.includes('software') || t.includes('testing')) {
+        return 'dev';
+      }
+      return 'default';
+    }
+
+    function init() {
+      const width = container.clientWidth;
+      const height = 500;
+
+      // Scene with fog for depth
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(isDark() ? 0x0d1117 : 0xf8fafc);
+      scene.fog = new THREE.Fog(isDark() ? 0x0d1117 : 0xf8fafc, 150, 400);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+      camera.position.z = 180;
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Ambient light
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+      scene.add(ambientLight);
+
+      // Main directional light
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(50, 50, 50);
+      scene.add(dirLight);
+
+      // Accent lights for dramatic effect
+      const blueLight = new THREE.PointLight(0x4a9eff, 0.6, 200);
+      blueLight.position.set(-80, 40, 60);
+      scene.add(blueLight);
+
+      const purpleLight = new THREE.PointLight(0x9b59b6, 0.4, 200);
+      purpleLight.position.set(80, -40, -60);
+      scene.add(purpleLight);
+
+      // Create starfield particles
+      createParticles();
+
+      // Create nodes
       const maxCount = Math.max(...graphData.nodes.map(n => n.count));
       const minCount = Math.min(...graphData.nodes.map(n => n.count));
       const countRange = maxCount - minCount || 1;
 
-      nodes = graphData.nodes.map((n, i) => {
+      // Build adjacency map for force-directed positioning
+      const adjacency = {};
+      graphData.nodes.forEach(n => { adjacency[n.id] = []; });
+      graphData.links.forEach(link => {
+        adjacency[link.source].push({ target: link.target, strength: link.strength });
+        adjacency[link.target].push({ target: link.source, strength: link.strength });
+      });
+
+      // Initial random positions
+      const positions = {};
+      graphData.nodes.forEach((node, i) => {
         const angle = (i / graphData.nodes.length) * Math.PI * 2;
-        const initRadius = 80 + Math.random() * 40;
-        // More differentiated sizes: min 6px, max 28px
-        const normalizedCount = (n.count - minCount) / countRange;
-        const nodeRadius = 6 + normalizedCount * 22;
-        return {
-          ...n,
-          x: width / 2 + Math.cos(angle) * initRadius,
-          y: height / 2 + Math.sin(angle) * initRadius,
-          vx: 0,
-          vy: 0,
-          radius: nodeRadius
+        const radius = 60 + Math.random() * 30;
+        positions[node.id] = {
+          x: Math.cos(angle) * radius,
+          y: (Math.random() - 0.5) * 80,
+          z: Math.sin(angle) * radius
         };
       });
 
-      links = graphData.links.map(l => ({
-        source: nodes.find(n => n.id === l.source),
-        target: nodes.find(n => n.id === l.target),
-        strength: l.strength
-      })).filter(l => l.source && l.target);
+      // Calculate node radii for collision detection
+      const nodeRadii = {};
+      graphData.nodes.forEach(node => {
+        const normalizedCount = (node.count - minCount) / countRange;
+        nodeRadii[node.id] = 4 + normalizedCount * 8;
+      });
 
-      // Reset zoom/pan
-      scale = 1;
-      offsetX = 0;
-      offsetY = 0;
-      updateZoomDisplay();
-    }
+      // Force-directed layout with collision prevention
+      for (let iter = 0; iter < 80; iter++) {
+        const forces = {};
+        graphData.nodes.forEach(n => { forces[n.id] = { x: 0, y: 0, z: 0 }; });
 
-    function simulate() {
-      const centerX = width / 2;
-      const centerY = height / 2;
+        // Repulsion between all nodes (stronger when overlapping)
+        graphData.nodes.forEach((n1, i) => {
+          graphData.nodes.forEach((n2, j) => {
+            if (i >= j) return;
+            const p1 = positions[n1.id];
+            const p2 = positions[n2.id];
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dz = p2.z - p1.z;
+            const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) || 0.1;
 
-      nodes.forEach(node => {
-        if (node === dragNode) return;
+            // Minimum distance = sum of radii + padding
+            const minDist = nodeRadii[n1.id] + nodeRadii[n2.id] + 8;
 
-        // Center gravity
-        node.vx += (centerX - node.x) * 0.001;
-        node.vy += (centerY - node.y) * 0.001;
+            // Strong repulsion when overlapping, normal repulsion otherwise
+            let repulsion;
+            if (dist < minDist) {
+              // Very strong push when overlapping
+              repulsion = (minDist - dist) * 5 + 800 / (dist * dist);
+            } else {
+              repulsion = 800 / (dist * dist);
+            }
 
-        // Repulsion between nodes
-        nodes.forEach(other => {
-          if (node === other) return;
-          const dx = node.x - other.x;
-          const dy = node.y - other.y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          const minDist = node.radius + other.radius + 40;
-          if (dist < minDist) {
-            const force = (minDist - dist) / dist * 0.5;
-            node.vx += dx * force;
-            node.vy += dy * force;
-          }
+            forces[n1.id].x -= (dx / dist) * repulsion;
+            forces[n1.id].y -= (dy / dist) * repulsion;
+            forces[n1.id].z -= (dz / dist) * repulsion;
+            forces[n2.id].x += (dx / dist) * repulsion;
+            forces[n2.id].y += (dy / dist) * repulsion;
+            forces[n2.id].z += (dz / dist) * repulsion;
+          });
         });
+
+        // Attraction for connected nodes
+        graphData.links.forEach(link => {
+          const p1 = positions[link.source];
+          const p2 = positions[link.target];
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const dz = p2.z - p1.z;
+          const dist = Math.sqrt(dx*dx + dy*dy + dz*dz) || 1;
+
+          // Target distance based on radii
+          const targetDist = nodeRadii[link.source] + nodeRadii[link.target] + 25;
+          const attraction = (dist - targetDist) * 0.02 * link.strength;
+
+          forces[link.source].x += (dx / dist) * attraction;
+          forces[link.source].y += (dy / dist) * attraction;
+          forces[link.source].z += (dz / dist) * attraction;
+          forces[link.target].x -= (dx / dist) * attraction;
+          forces[link.target].y -= (dy / dist) * attraction;
+          forces[link.target].z -= (dz / dist) * attraction;
+        });
+
+        // Apply forces with decreasing damping
+        const damping = 0.5 * (1 - iter / 100);
+        graphData.nodes.forEach(n => {
+          positions[n.id].x += forces[n.id].x * damping;
+          positions[n.id].y += forces[n.id].y * damping;
+          positions[n.id].z += forces[n.id].z * damping;
+        });
+      }
+
+      // Create node meshes
+      graphData.nodes.forEach((node) => {
+        const normalizedCount = (node.count - minCount) / countRange;
+        const nodeRadius = 4 + normalizedCount * 8;
+
+        const category = getTagCategory(node.id);
+        const colors = findHubColor(node.id, adjacency);
+        const pos = positions[node.id];
+
+        const geometry = new THREE.SphereGeometry(nodeRadius, 32, 32);
+        const material = new THREE.MeshPhongMaterial({
+          color: colors.main,
+          emissive: colors.main,
+          emissiveIntensity: 0.3,
+          shininess: 150,
+          transparent: true,
+          opacity: 0.95,
+          specular: 0xffffff
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(pos.x, pos.y, pos.z);
+        mesh.userData = {
+          id: node.id,
+          count: node.count,
+          radius: nodeRadius,
+          originalColor: colors.main,
+          glowColor: colors.glow,
+          category: category,
+          pulsePhase: Math.random() * Math.PI * 2
+        };
+
+        scene.add(mesh);
+        nodes.push(mesh);
+
+        // Outer glow sphere
+        const glowGeometry = new THREE.SphereGeometry(nodeRadius * 1.3, 16, 16);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+          color: colors.glow,
+          transparent: true,
+          opacity: 0.12,
+          side: THREE.BackSide
+        });
+        const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+        glowMesh.position.copy(mesh.position);
+        glowMesh.userData = { parentNode: mesh };
+        scene.add(glowMesh);
+        glowMeshes.push(glowMesh);
       });
 
-      // Link attraction
-      links.forEach(link => {
-        const dx = link.target.x - link.source.x;
-        const dy = link.target.y - link.source.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const targetDist = 100 + (3 - link.strength) * 30;
-        const force = (dist - targetDist) * 0.01;
+      // Create curved links
+      graphData.links.forEach(linkData => {
+        const sourceNode = nodes.find(n => n.userData.id === linkData.source);
+        const targetNode = nodes.find(n => n.userData.id === linkData.target);
 
-        if (link.source !== dragNode) {
-          link.source.vx += dx / dist * force;
-          link.source.vy += dy / dist * force;
-        }
-        if (link.target !== dragNode) {
-          link.target.vx -= dx / dist * force;
-          link.target.vy -= dy / dist * force;
+        if (sourceNode && targetNode) {
+          // Create curved line
+          const midPoint = new THREE.Vector3()
+            .addVectors(sourceNode.position, targetNode.position)
+            .multiplyScalar(0.5);
+          midPoint.y += 10; // Curve upward
+
+          const curve = new THREE.QuadraticBezierCurve3(
+            sourceNode.position,
+            midPoint,
+            targetNode.position
+          );
+          const curvePoints = curve.getPoints(20);
+          const geometry = new THREE.BufferGeometry().setFromPoints(curvePoints);
+
+          const material = new THREE.LineBasicMaterial({
+            color: isDark() ? 0x3d4f5f : 0xbdc3c7,
+            transparent: true,
+            opacity: 0.25,
+            linewidth: linkData.strength
+          });
+
+          const line = new THREE.Line(geometry, material);
+          line.userData = { source: sourceNode, target: targetNode, strength: linkData.strength };
+          scene.add(line);
+          links.push(line);
         }
       });
 
-      // Apply velocity with damping
+      // Create text labels (simplified - no labels for cleaner look, rely on hover)
       nodes.forEach(node => {
-        if (node === dragNode) return;
-        node.vx *= 0.85;
-        node.vy *= 0.85;
-        node.x += node.vx;
-        node.y += node.vy;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 512;
+        canvas.height = 64;
 
-        // Bounds
-        const margin = node.radius + 10;
-        node.x = Math.max(margin, Math.min(width - margin, node.x));
-        node.y = Math.max(margin, Math.min(height - margin, node.y));
-      });
-    }
-
-    function screenToWorld(screenX, screenY) {
-      return {
-        x: (screenX - offsetX) / scale,
-        y: (screenY - offsetY) / scale
-      };
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, width, height);
-      ctx.save();
-      ctx.translate(offsetX, offsetY);
-      ctx.scale(scale, scale);
-
-      const dark = isDark();
-      const linkColor = dark ? 'rgba(100, 100, 100, 0.4)' : 'rgba(180, 180, 180, 0.6)';
-      const nodeColor = dark ? '#4a9eff' : '#0066ff';
-      const nodeHoverColor = dark ? '#6bb3ff' : '#3388ff';
-      const textColor = dark ? '#f0f0f0' : '#1a1a1a';
-      const selectedColor = dark ? '#ff6b6b' : '#ff4444';
-
-      // Draw links
-      links.forEach(link => {
-        const isConnected = selectedNode &&
-          (link.source.id === selectedNode.id || link.target.id === selectedNode.id);
-
-        ctx.beginPath();
-        ctx.moveTo(link.source.x, link.source.y);
-        ctx.lineTo(link.target.x, link.target.y);
-        ctx.strokeStyle = isConnected ? (dark ? '#6bb3ff' : '#0066ff') : linkColor;
-        ctx.lineWidth = (isConnected ? 2 : 1) / scale;
-        ctx.stroke();
-      });
-
-      // Draw nodes
-      nodes.forEach(node => {
-        const isHovered = node === hoveredNode;
-        const isSelected = node === selectedNode;
-        const isConnectedToSelected = selectedNode && links.some(l =>
-          (l.source.id === selectedNode.id && l.target.id === node.id) ||
-          (l.target.id === selectedNode.id && l.source.id === node.id)
-        );
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
-
-        if (isSelected) {
-          ctx.fillStyle = selectedColor;
-        } else if (isHovered || isConnectedToSelected) {
-          ctx.fillStyle = nodeHoverColor;
-        } else {
-          ctx.fillStyle = nodeColor;
-        }
-
-        ctx.fill();
-
-        // Glow effect for hovered/selected
-        if (isHovered || isSelected) {
-          ctx.shadowColor = ctx.fillStyle;
-          ctx.shadowBlur = 15 / scale;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        }
-
-        // Label - scale font size inversely with zoom for readability
-        const fontSize = Math.max(9, Math.min(14, (10 + node.radius / 4) / Math.sqrt(scale)));
-        ctx.font = `${fontSize}px system-ui, sans-serif`;
-        ctx.fillStyle = textColor;
+        ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillStyle = isDark() ? '#ffffff' : '#1a1a1a';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(node.id, node.x, node.y + node.radius + 12);
+
+        // Truncate long labels
+        let label = node.userData.id;
+        if (label.length > 20) {
+          label = label.substring(0, 18) + '...';
+        }
+        ctx.fillText(label, canvas.width / 2, canvas.height / 2);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({
+          map: texture,
+          transparent: true,
+          opacity: 0.9,
+          depthTest: false
+        });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.scale.set(45, 7, 1);
+        sprite.position.copy(node.position);
+        sprite.position.y -= node.userData.radius + 4;  // Closer to sphere
+        sprite.userData = { parentNode: node };
+
+        scene.add(sprite);
+        labels.push(sprite);
       });
 
-      ctx.restore();
+      setupInteractions();
     }
 
-    function getNodeAt(screenX, screenY) {
-      const world = screenToWorld(screenX, screenY);
-      for (let i = nodes.length - 1; i >= 0; i--) {
-        const node = nodes[i];
-        const dx = world.x - node.x;
-        const dy = world.y - node.y;
-        if (dx * dx + dy * dy < node.radius * node.radius) {
-          return node;
-        }
+    function createParticles() {
+      const particleCount = 200;
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 400;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 400;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 400;
+
+        const brightness = 0.3 + Math.random() * 0.4;
+        colors[i * 3] = brightness;
+        colors[i * 3 + 1] = brightness;
+        colors[i * 3 + 2] = brightness + 0.1;
       }
-      return null;
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: 1.5,
+        vertexColors: true,
+        transparent: true,
+        opacity: isDark() ? 0.6 : 0.3
+      });
+
+      particles = new THREE.Points(geometry, material);
+      scene.add(particles);
     }
 
-    function zoomAt(centerX, centerY, delta) {
-      const oldScale = scale;
-      scale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * delta));
+    function setupInteractions() {
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
 
-      // Adjust offset to zoom toward mouse position
-      offsetX = centerX - (centerX - offsetX) * (scale / oldScale);
-      offsetY = centerY - (centerY - offsetY) * (scale / oldScale);
-      updateZoomDisplay();
+      renderer.domElement.addEventListener('mousemove', (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(nodes);
+
+        if (intersects.length > 0) {
+          const node = intersects[0].object;
+          if (hoveredNode !== node) {
+            if (hoveredNode && hoveredNode !== selectedNode) {
+              hoveredNode.material.emissiveIntensity = 0.3;
+              hoveredNode.scale.setScalar(1);
+            }
+            hoveredNode = node;
+            hoveredNode.material.emissiveIntensity = 0.6;
+            hoveredNode.scale.setScalar(1.15);
+          }
+
+          tooltip.style.display = 'block';
+          tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+          tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+          tooltip.innerHTML = `<strong>${escapeHtml(node.userData.id)}</strong><br>${node.userData.count} post${node.userData.count > 1 ? 's' : ''}`;
+          renderer.domElement.style.cursor = 'pointer';
+        } else {
+          if (hoveredNode && hoveredNode !== selectedNode) {
+            hoveredNode.material.emissiveIntensity = 0.3;
+            hoveredNode.scale.setScalar(1);
+          }
+          hoveredNode = null;
+          tooltip.style.display = 'none';
+          renderer.domElement.style.cursor = 'grab';
+        }
+      });
+
+      renderer.domElement.addEventListener('click', (e) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(nodes);
+
+        if (intersects.length > 0) {
+          const node = intersects[0].object;
+
+          // Reset previous selection
+          if (selectedNode) {
+            selectedNode.material.color.setHex(selectedNode.userData.originalColor);
+            selectedNode.material.emissive.setHex(selectedNode.userData.originalColor);
+            selectedNode.material.emissiveIntensity = 0.3;
+            selectedNode.scale.setScalar(1);
+
+            // Reset glow for previous selection
+            const prevGlow = glowMeshes.find(g => g.userData.parentNode === selectedNode);
+            if (prevGlow) {
+              prevGlow.material.color.setHex(selectedNode.userData.glowColor);
+              prevGlow.scale.setScalar(1);
+            }
+          }
+
+          selectedNode = node;
+
+          // Enhanced selection highlight - bright orange/gold that works in both modes
+          const dark = isDark();
+          const highlightCore = 0xffa500;  // Bright orange - visible in both modes
+          const highlightGlow = 0xffcc00;  // Golden yellow glow
+
+          node.material.color.setHex(highlightCore);
+          node.material.emissive.setHex(highlightGlow);
+          node.material.emissiveIntensity = 1.2;
+          node.scale.setScalar(1.4);  // Bigger to stand out
+
+          // Make glow more prominent for selected node
+          const selectedGlow = glowMeshes.find(g => g.userData.parentNode === node);
+          if (selectedGlow) {
+            selectedGlow.material.color.setHex(highlightGlow);
+            selectedGlow.scale.setScalar(1.8);
+            selectedGlow.material.opacity = 0.6;
+          }
+
+          // Highlight connected links
+          links.forEach(link => {
+            const isConnected = link.userData.source === node || link.userData.target === node;
+            link.material.opacity = isConnected ? 0.7 : 0.15;
+            if (isConnected) {
+              link.material.color.setHex(0x4a9eff);
+              link.material.linewidth = 2;
+            } else {
+              link.material.color.setHex(dark ? 0x3d4f5f : 0xbdc3c7);
+            }
+          });
+
+          // Other nodes: connected stay normal, non-connected slightly dimmed
+          nodes.forEach(n => {
+            if (n !== node) {
+              const isConnected = links.some(l =>
+                (l.userData.source === node && l.userData.target === n) ||
+                (l.userData.target === node && l.userData.source === n)
+              );
+              // Less aggressive dimming - non-connected still visible
+              n.material.opacity = isConnected ? 1.0 : 0.5;
+              n.material.emissiveIntensity = isConnected ? 0.4 : 0.2;
+
+              // Connected nodes get slight scale boost
+              if (isConnected) {
+                n.scale.setScalar(1.05);
+              } else {
+                n.scale.setScalar(0.95);
+              }
+            }
+          });
+
+          // Also dim/highlight glows
+          glowMeshes.forEach(glow => {
+            if (glow.userData.parentNode !== node) {
+              const isConnected = links.some(l =>
+                (l.userData.source === node && l.userData.target === glow.userData.parentNode) ||
+                (l.userData.target === node && l.userData.source === glow.userData.parentNode)
+              );
+              glow.material.opacity = isConnected ? 0.15 : 0.03;
+            }
+          });
+
+          showPosts(node.userData.id, node.userData.category);
+        }
+      });
+
+      // Drag rotation
+      let isDragging = false;
+      let prevMouse = { x: 0, y: 0 };
+
+      renderer.domElement.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMouse = { x: e.clientX, y: e.clientY };
+        renderer.domElement.style.cursor = 'grabbing';
+      });
+
+      renderer.domElement.addEventListener('mouseup', () => {
+        isDragging = false;
+        renderer.domElement.style.cursor = hoveredNode ? 'pointer' : 'grab';
+      });
+
+      renderer.domElement.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        scene.rotation.y += (e.clientX - prevMouse.x) * 0.004;
+        scene.rotation.x += (e.clientY - prevMouse.y) * 0.004;
+        prevMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      renderer.domElement.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        camera.position.z = Math.max(80, Math.min(350, camera.position.z + e.deltaY * 0.5));
+      }, { passive: false });
+
+      // View toggle
+      viewToggle.addEventListener('click', () => {
+        is3D = !is3D;
+        viewToggle.querySelector('.icon-3d').textContent = is3D ? '3D' : '2D';
+
+        if (is3D) {
+          // Restore to spherical distribution
+          nodes.forEach((mesh, i) => {
+            const angle = (i / nodes.length) * Math.PI * 2;
+            const radius = 50 + Math.random() * 30;
+            mesh.position.set(
+              Math.cos(angle) * radius,
+              (Math.random() - 0.5) * 60,
+              Math.sin(angle) * radius
+            );
+          });
+        } else {
+          const cols = Math.ceil(Math.sqrt(nodes.length));
+          nodes.forEach((mesh, i) => {
+            mesh.position.set(
+              (i % cols - cols / 2) * 22,
+              (Math.floor(i / cols) - cols / 2) * -22,
+              0
+            );
+          });
+          scene.rotation.set(0, 0, 0);
+        }
+
+        // Update glow positions
+        glowMeshes.forEach(glow => {
+          glow.position.copy(glow.userData.parentNode.position);
+        });
+
+        // Update labels
+        labels.forEach(label => {
+          const node = label.userData.parentNode;
+          label.position.copy(node.position);
+          label.position.y -= node.userData.radius + 4;
+        });
+
+        updateLinks();
+      });
+
+      // Auto rotate toggle
+      autoRotateBtn.addEventListener('click', () => {
+        autoRotate = !autoRotate;
+        autoRotateBtn.classList.toggle('active', autoRotate);
+        autoRotateBtn.setAttribute('aria-pressed', String(autoRotate));
+      });
     }
 
-    function showPosts(tag) {
+    function updateLinks() {
+      links.forEach(link => {
+        const mid = new THREE.Vector3()
+          .addVectors(link.userData.source.position, link.userData.target.position)
+          .multiplyScalar(0.5);
+        mid.y += 10;
+
+        const curve = new THREE.QuadraticBezierCurve3(
+          link.userData.source.position,
+          mid,
+          link.userData.target.position
+        );
+        const points = curve.getPoints(20);
+        link.geometry.setFromPoints(points);
+      });
+    }
+
+    function showPosts(tag, category) {
       const posts = postsByTag[tag] || [];
       const previewTitle = document.getElementById('preview-title');
+      const tagBadge = document.getElementById('tag-badge');
       const viewAllLink = document.getElementById('view-all-link');
       const postsList = document.getElementById('posts-list');
-      const dark = isDark();
 
-      if (previewTitle) previewTitle.textContent = `${tag} (${posts.length})`;
+      // Update title with tag badge
+      if (tagBadge) {
+        tagBadge.textContent = posts.length;
+        tagBadge.className = `tag-badge ${category}`;
+        tagBadge.style.display = 'inline-flex';
+      }
+      if (previewTitle) previewTitle.textContent = tag;
       if (viewAllLink) {
-        viewAllLink.href = `/tags/${tag}`;
-        viewAllLink.style.display = 'inline';
+        viewAllLink.href = `/tags/${encodeURIComponent(tag)}`;
+        viewAllLink.style.display = 'inline-flex';
       }
 
       if (postsList) {
         if (posts.length === 0) {
-          postsList.innerHTML = '<p style="color: #888; font-size: 0.9375rem; text-align: center; padding: 1rem 0; margin: 0;">No posts found</p>';
+          postsList.innerHTML = '<div class="hint-card"><p>No posts found for this tag</p></div>';
         } else {
-          const itemBg = dark ? '#2a2a2a' : '#fff';
-          const itemHoverBg = dark ? '#333' : '#e8e8e8';
-          const titleColor = dark ? '#f0f0f0' : '#1a1a1a';
+          const formatDate = (date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
           postsList.innerHTML = posts.slice(0, 5).map(post => `
-            <a href="/posts/${post.slug}" class="post-item"
-               style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: ${itemBg}; border-radius: 8px; text-decoration: none; transition: background 0.15s; margin-bottom: 0.5rem;"
-               onmouseover="this.style.background='${itemHoverBg}'"
-               onmouseout="this.style.background='${itemBg}'">
-              <span style="font-size: 0.9375rem; font-weight: 500; color: ${titleColor};">${post.data.title}</span>
-              <span style="font-size: 0.8125rem; color: #888; flex-shrink: 0; margin-left: 1rem;">${new Date(post.data.pubDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-            </a>
-          `).join('') + (posts.length > 5 ? `<p style="text-align: center; color: #888; font-size: 0.875rem; margin: 0.5rem 0 0;">+${posts.length - 5} more posts</p>` : '');
+            <article class="post-item">
+              <a href="/posts/${escapeHtml(post.slug)}" class="post-link">
+                ${post.data.heroImage ? `
+                  <div class="thumbnail">
+                    <img src="${escapeHtml(post.data.heroImage)}" alt="" loading="lazy" decoding="async" width="140" height="90" />
+                  </div>
+                ` : ''}
+                <div class="content">
+                  <h2 class="title">${escapeHtml(post.data.title)}</h2>
+                  <p class="description">${escapeHtml(post.data.description || '')}</p>
+                  <div class="meta">
+                    <time datetime="${new Date(post.data.pubDate).toISOString()}">${formatDate(post.data.pubDate)}</time>
+                  </div>
+                </div>
+              </a>
+            </article>
+          `).join('') + (posts.length > 5 ? `
+            <div class="more-indicator">
+              <a href="/tags/${encodeURIComponent(tag)}" class="more-link">
+                View all ${posts.length} posts
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </a>
+            </div>
+          ` : '');
         }
       }
+
+      document.getElementById('posts-preview')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-
-    canvas.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      if (isPanning) {
-        offsetX += x - panStart.x;
-        offsetY += y - panStart.y;
-        panStart.x = x;
-        panStart.y = y;
-        return;
-      }
-
-      if (isDragging && dragNode) {
-        const world = screenToWorld(x, y);
-        dragNode.x = world.x;
-        dragNode.y = world.y;
-        dragNode.vx = 0;
-        dragNode.vy = 0;
-        return;
-      }
-
-      const node = getNodeAt(x, y);
-      hoveredNode = node;
-      canvas.style.cursor = node ? 'pointer' : 'grab';
-
-      if (node) {
-        tooltip.style.display = 'block';
-        tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
-        tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
-        tooltip.textContent = `${node.id}: ${node.count} post${node.count > 1 ? 's' : ''}`;
-      } else {
-        tooltip.style.display = 'none';
-      }
-    });
-
-    canvas.addEventListener('mousedown', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const node = getNodeAt(x, y);
-
-      if (node) {
-        isDragging = true;
-        dragNode = node;
-        canvas.style.cursor = 'grabbing';
-      } else {
-        // Start panning
-        isPanning = true;
-        panStart.x = x;
-        panStart.y = y;
-        canvas.style.cursor = 'grabbing';
-      }
-    });
-
-    canvas.addEventListener('mouseup', () => {
-      isDragging = false;
-      dragNode = null;
-      isPanning = false;
-    });
-
-    canvas.addEventListener('mouseleave', () => {
-      hoveredNode = null;
-      tooltip.style.display = 'none';
-      isDragging = false;
-      dragNode = null;
-      isPanning = false;
-    });
-
-    canvas.addEventListener('click', (e) => {
-      if (isDragging || isPanning) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const node = getNodeAt(x, y);
-
-      if (node) {
-        selectedNode = node;
-        showPosts(node.id);
-        document.getElementById('posts-preview')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    });
-
-    // Mouse wheel zoom
-    canvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      zoomAt(x, y, delta);
-    }, { passive: false });
-
-    // Zoom buttons
-    zoomInBtn.addEventListener('click', () => {
-      zoomAt(width / 2, height / 2, 1.2);
-    });
-
-    zoomOutBtn.addEventListener('click', () => {
-      zoomAt(width / 2, height / 2, 0.8);
-    });
 
     function animate() {
-      simulate();
-      draw();
       requestAnimationFrame(animate);
+      time += 0.01;
+
+      if (autoRotate && is3D) {
+        scene.rotation.y += 0.0004;
+      }
+
+      // Pulse animation for nodes
+      nodes.forEach((node) => {
+        const pulse = Math.sin(time * 2 + node.userData.pulsePhase) * 0.05 + 1;
+        if (node !== selectedNode && node !== hoveredNode) {
+          node.scale.setScalar(pulse);
+        }
+      });
+
+      // Update glow positions and pulse (glow follows parent directly)
+      glowMeshes.forEach((glow) => {
+        const parent = glow.userData.parentNode;
+        // Simply copy position - both are in same coordinate space
+        glow.position.copy(parent.position);
+
+        // Subtle glow pulse
+        const pulse = Math.sin(time * 1.5 + parent.userData.pulsePhase) * 0.03 + 0.12;
+        glow.material.opacity = pulse;
+      });
+
+      // Rotate particles slowly
+      if (particles) {
+        particles.rotation.y += 0.0001;
+        particles.rotation.x += 0.00005;
+      }
+
+      // Update labels
+      labels.forEach(label => {
+        const node = label.userData.parentNode;
+        const worldPos = new THREE.Vector3();
+        node.getWorldPosition(worldPos);
+        label.position.copy(worldPos);
+        label.position.y -= node.userData.radius + 4;
+      });
+
+      updateLinks();
+      renderer.render(scene, camera);
     }
 
-    // Theme change observer
-    const observer = new MutationObserver(() => draw());
+    // Theme observer
+    const observer = new MutationObserver(() => {
+      if (scene) {
+        const dark = isDark();
+        scene.background = new THREE.Color(dark ? 0x0d1117 : 0xf8fafc);
+        scene.fog.color = new THREE.Color(dark ? 0x0d1117 : 0xf8fafc);
+
+        if (particles) {
+          particles.material.opacity = dark ? 0.6 : 0.3;
+        }
+
+        links.forEach(link => {
+          if (link.material.opacity < 0.5) {
+            link.material.color.setHex(dark ? 0x3d4f5f : 0xbdc3c7);
+          }
+        });
+      }
+    });
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-    window.addEventListener('resize', () => {
-      resize();
-      initGraph();
+    // Resize handler
+    const handleResize = () => {
+      const width = container.clientWidth;
+      camera.aspect = width / 500;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, 500);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on page unload to prevent memory leaks
+    window.addEventListener('beforeunload', () => {
+      observer.disconnect();
+      window.removeEventListener('resize', handleResize);
+
+      // Dispose Three.js resources
+      if (renderer) {
+        renderer.dispose();
+      }
+      if (scene) {
+        scene.traverse(obj => {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) {
+            if (Array.isArray(obj.material)) {
+              obj.material.forEach(mat => mat.dispose());
+            } else {
+              obj.material.dispose();
+            }
+          }
+        });
+      }
     });
 
-    resize();
-    initGraph();
+    init();
     animate();
   </script>
 </BaseLayout>
 
 <style>
   .main-content {
-    max-width: 720px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
   }
@@ -507,19 +944,26 @@ const graphData = {
   .graph-container {
     position: relative;
     width: 100%;
-    height: 400px;
-    background: #fafafa;
-    border-radius: 12px;
+    height: 500px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 20px;
     margin-bottom: 2rem;
     overflow: hidden;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
   }
 
   :global(.dark) .graph-container {
-    background: #1a1a1a;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
-  #tag-graph {
-    display: block;
+  #three-container {
     width: 100%;
     height: 100%;
   }
@@ -527,97 +971,168 @@ const graphData = {
   .graph-tooltip {
     display: none;
     position: absolute;
-    background: #1a1a1a;
+    background: rgba(26, 26, 26, 0.95);
     color: #fff;
-    padding: 0.375rem 0.75rem;
-    border-radius: 6px;
-    font-size: 0.8125rem;
+    padding: 0.625rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
     pointer-events: none;
     white-space: nowrap;
     z-index: 10;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    line-height: 1.4;
   }
 
   :global(.dark) .graph-tooltip {
-    background: #f0f0f0;
+    background: rgba(248, 250, 252, 0.95);
     color: #1a1a1a;
   }
 
-  .zoom-controls {
+  .view-controls {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
+    bottom: 16px;
+    right: 16px;
     display: flex;
-    align-items: center;
     gap: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 6px 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  :global(.dark) .zoom-controls {
-    background: rgba(40, 40, 40, 0.9);
-  }
-
-  .zoom-controls button {
-    width: 28px;
-    height: 28px;
+  .view-btn {
+    width: 42px;
+    height: 42px;
     border: none;
-    background: #e8e8e8;
+    background: rgba(255, 255, 255, 0.95);
     color: #1a1a1a;
-    font-size: 18px;
-    font-weight: 500;
-    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .zoom-controls button:hover {
-    background: #d8d8d8;
+  .view-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
-  :global(.dark) .zoom-controls button {
-    background: #3a3a3a;
+  .view-btn.active {
+    background: linear-gradient(135deg, #4a9eff, #3b82f6);
+    color: white;
+  }
+
+  :global(.dark) .view-btn {
+    background: rgba(45, 55, 72, 0.95);
     color: #f0f0f0;
   }
 
-  :global(.dark) .zoom-controls button:hover {
-    background: #4a4a4a;
+  :global(.dark) .view-btn.active {
+    background: linear-gradient(135deg, #4a9eff, #3b82f6);
   }
 
-  .zoom-controls span {
+  .icon-rotate {
+    font-size: 20px;
+  }
+
+  .category-legend {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 14px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) .category-legend {
+    background: rgba(45, 55, 72, 0.9);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.75rem;
     color: #666;
-    min-width: 40px;
-    text-align: center;
   }
 
-  :global(.dark) .zoom-controls span {
-    color: #aaa;
+  :global(.dark) .legend-item {
+    color: #a0aec0;
   }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.ml { background: #9b59b6; }
+  .legend-dot.omscs { background: #3498db; }
+  .legend-dot.clean { background: #2ecc71; }
+  .legend-dot.dev { background: #e67e22; }
 
   .posts-preview {
-    background: #f5f5f5;
-    border-radius: 12px;
-    padding: 1.25rem;
+    background: #fff;
+    border-radius: 20px;
+    padding: 1.75rem;
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
   }
 
   :global(.dark) .posts-preview {
-    background: #242424;
+    background: #1a1f2e;
+    border-color: #2d3748;
   }
 
   .preview-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
   }
 
+  :global(.dark) .preview-header {
+    border-color: #2d3748;
+  }
+
+  .preview-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .tag-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    border-radius: 12px;
+    background: #4a9eff;
+  }
+
+  .tag-badge.ml { background: linear-gradient(135deg, #9b59b6, #764ba2); }
+  .tag-badge.omscs { background: linear-gradient(135deg, #3498db, #2563eb); }
+  .tag-badge.clean { background: linear-gradient(135deg, #2ecc71, #10b981); }
+  .tag-badge.dev { background: linear-gradient(135deg, #e67e22, #f97316); }
+  .tag-badge.default { background: linear-gradient(135deg, #4a9eff, #3b82f6); }
+
   .preview-header h2 {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #1a1a1a;
     margin: 0;
@@ -627,18 +1142,23 @@ const graphData = {
     color: #f0f0f0;
   }
 
-  .view-all {
+  .view-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.5rem 1rem;
     font-size: 0.875rem;
-    color: #0066ff;
-    text-decoration: none;
-  }
-
-  .view-all:hover {
-    text-decoration: underline;
-  }
-
-  :global(.dark) .view-all {
+    font-weight: 500;
     color: #4a9eff;
+    text-decoration: none;
+    background: rgba(74, 158, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .view-all-btn:hover {
+    background: rgba(74, 158, 255, 0.2);
+    transform: translateX(2px);
   }
 
   .posts-list {
@@ -646,12 +1166,134 @@ const graphData = {
     flex-direction: column;
   }
 
-  .hint {
-    color: #888;
-    font-size: 0.9375rem;
+  .hint-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
     text-align: center;
-    padding: 1rem 0;
+    color: #9ca3af;
+  }
+
+  .hint-card p {
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+  }
+
+  /* Homepage-style post list (same as PostListItem.astro) - using :global for dynamic content */
+  :global(.posts-list .post-item) {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  :global(.dark .posts-list .post-item) {
+    border-bottom-color: #333;
+  }
+
+  :global(.posts-list .post-link) {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem 0;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+
+  :global(.posts-list .post-link:hover) {
+    opacity: 0.75;
+  }
+
+  :global(.posts-list .thumbnail) {
+    flex-shrink: 0;
+    width: 140px;
+    height: 90px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  :global(.posts-list .thumbnail img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  :global(.posts-list .content) {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  :global(.posts-list .title) {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: #1a1a1a;
     margin: 0;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.dark .posts-list .title) {
+    color: #f0f0f0;
+  }
+
+  :global(.posts-list .description) {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.dark .posts-list .description) {
+    color: #888;
+  }
+
+  :global(.posts-list .meta) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8125rem;
+    color: #888;
+    margin-top: auto;
+  }
+
+  :global(.posts-list .more-indicator) {
+    text-align: center;
+    padding: 1rem;
+  }
+
+  :global(.posts-list .more-link) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #4a9eff;
+    text-decoration: none;
+    background: rgba(74, 158, 255, 0.1);
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  :global(.posts-list .more-link:hover) {
+    background: rgba(74, 158, 255, 0.2);
+  }
+
+  :global(.posts-list .more-link svg) {
+    transition: transform 0.2s;
+  }
+
+  :global(.posts-list .more-link:hover svg) {
+    transform: translateX(4px);
   }
 
   .empty {
@@ -670,7 +1312,35 @@ const graphData = {
     }
 
     .graph-container {
-      height: 300px;
+      height: 400px;
+    }
+
+    .category-legend {
+      top: 12px;
+      left: 12px;
+      padding: 8px 10px;
+      gap: 8px;
+    }
+
+    .legend-item {
+      font-size: 0.6875rem;
+    }
+
+    :global(.posts-list .post-link) {
+      gap: 0.875rem;
+    }
+
+    :global(.posts-list .thumbnail) {
+      width: 112px;
+      height: 72px;
+    }
+
+    :global(.posts-list .title) {
+      font-size: 0.9375rem;
+    }
+
+    :global(.posts-list .description) {
+      -webkit-line-clamp: 1;
     }
   }
 </style>

@@ -2,7 +2,7 @@
 title: "Training Neural Networks: Activation Functions, Backpropagation, and TensorFlow Implementation"
 description: "Explore how neural networks are trained with gradient descent, softmax, and backpropagation using TensorFlow. Understand activation functions and multiclass classification techniques."
 pubDate: "2024-03-28"
-tags: ["dev", "machine-learning", "neural-networks", "tensorflow"]
+tags: ["Machine Learning", "Neural Networks", "TensorFlow"]
 author: "Jongmin Lee"
 heroImage: "/2-Neural-network-training/Screenshot_2024-03-28_at_8.20.09_PM.png"
 draft: false

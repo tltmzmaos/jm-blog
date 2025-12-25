@@ -2,7 +2,7 @@
 title: "Understanding Neural Networks: From Biology to TensorFlow"
 description: "A comprehensive guide to neural networks, forward propagation, TensorFlow implementation, and efficient matrix computations."
 pubDate: "2024-03-26T12:00:00Z"
-tags: ["dev", "machine-learning", "neural-networks"]
+tags: ["Machine Learning", "Neural Networks", "TensorFlow"]
 author: "Jongmin Lee"
 heroImage: "/1-Neural-Networks/Screenshot_2024-03-26_at_7.54.28_PM.png"
 draft: false
