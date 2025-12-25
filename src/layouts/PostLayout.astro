@@ -402,6 +402,26 @@ const formatDate = (date: Date) => {
     border-top-color: #333;
   }
 
+  /* Mermaid diagram container */
+  .article-content :global(.mermaid-container) {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+
+  :global(.dark) .article-content :global(.mermaid-container) {
+    background: #1f1f1f;
+  }
+
+  .article-content :global(.mermaid-container svg) {
+    max-width: 100%;
+    height: auto;
+  }
+
   .article-content :global(table) {
     width: 100%;
     border-collapse: collapse;
@@ -698,5 +718,36 @@ const formatDate = (date: Date) => {
 
       pre.appendChild(btn);
     });
+
+    // Initialize Mermaid diagrams
+    const mermaidBlocks = document.querySelectorAll('.article-content pre[data-language="mermaid"]');
+    if (mermaidBlocks.length > 0) {
+      import('mermaid').then(({ default: mermaid }) => {
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+          securityLevel: 'strict',
+        });
+
+        mermaidBlocks.forEach((pre, index) => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+
+          const container = document.createElement('div');
+          container.className = 'mermaid-container';
+
+          // Get text content and clean it up
+          const mermaidCode = code.textContent || '';
+          const id = `mermaid-${index}`;
+
+          mermaid.render(id, mermaidCode).then(({ svg }) => {
+            container.innerHTML = svg;
+            pre.replaceWith(container);
+          }).catch((err) => {
+            console.error('Mermaid rendering failed:', err);
+          });
+        });
+      });
+    }
   });
 </script>
