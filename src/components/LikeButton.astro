@@ -106,12 +106,12 @@ const gistId = import.meta.env.PUBLIC_GIST_ID;
       try {
         let userId = localStorage.getItem('blog-user-id');
         if (!userId) {
-          userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+          userId = 'user_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
           localStorage.setItem('blog-user-id', userId);
         }
         return userId;
       } catch {
-        return 'anonymous_' + Math.random().toString(36).substr(2, 9);
+        return 'anonymous_' + Math.random().toString(36).substring(2, 11);
       }
     }
 
