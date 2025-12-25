@@ -58,6 +58,8 @@ jobs:
         env:
           SITE: ${{ steps.pages.outputs.origin }}
           BASE_URL: ${{ steps.pages.outputs.base_path }}/
+          PUBLIC_GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}
+          PUBLIC_GIST_ID: ${{ secrets.PUBLIC_GIST_ID }}
 
       - name: Generate robots.txt
         run: |
