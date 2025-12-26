@@ -88,12 +88,12 @@
   }
 
   :global(.dark) .search-trigger {
-    color: #888;
+    color: #808080;
   }
 
   :global(.dark) .search-trigger:hover {
-    color: #f0f0f0;
-    background: #333;
+    color: #d4d4d4;
+    background: #2a2d2e;
   }
 
   /* Modal */
@@ -156,7 +156,7 @@
   }
 
   :global(.dark) .search-panel {
-    background: #1e1e1e;
+    background: #252526;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   }
 
@@ -170,7 +170,7 @@
   }
 
   :global(.dark) .search-header {
-    border-bottom-color: #333;
+    border-bottom-color: #3c3c3c;
   }
 
   .header-icon {
@@ -179,7 +179,7 @@
   }
 
   :global(.dark) .header-icon {
-    color: #58a6ff;
+    color: #569cd6;
   }
 
   .search-input {
@@ -193,7 +193,7 @@
   }
 
   :global(.dark) .search-input {
-    color: #f0f0f0;
+    color: #d4d4d4;
   }
 
   .search-input::placeholder {
@@ -213,7 +213,8 @@
   }
 
   :global(.dark) .close-hint {
-    background: #333;
+    background: #2a2d2e;
+    color: #808080;
   }
 
   /* Body */
@@ -280,8 +281,8 @@
   }
 
   :global(.dark) .search-footer {
-    border-top-color: #333;
-    background: #1a1a1a;
+    border-top-color: #3c3c3c;
+    background: #1e1e1e;
   }
 
   .footer-hint {
@@ -302,8 +303,8 @@
   }
 
   :global(.dark) .footer-hint kbd {
-    background: #2a2a2a;
-    border-color: #444;
+    background: #2a2d2e;
+    border-color: #3c3c3c;
   }
 
   /* Mobile */
@@ -406,19 +407,19 @@
     if (!resultsContainer) return;
 
     const isDark = document.documentElement.classList.contains('dark');
-    const borderColor = isDark ? '#2a2a2a' : '#f0f0f0';
-    const titleColor = isDark ? '#f0f0f0' : '#1a1a1a';
-    const descColor = isDark ? '#888' : '#666';
+    const borderColor = isDark ? '#3c3c3c' : '#f0f0f0';
+    const titleColor = isDark ? '#d4d4d4' : '#1a1a1a';
+    const descColor = isDark ? '#808080' : '#666';
 
     resultsContainer.innerHTML = items.map((post, index) => {
       let tagsHtml = '';
       if (post.tags && post.tags.length) {
         tagsHtml = '<div style="display: flex; gap: 0.5rem; margin-top: 0.375rem;">' +
           post.tags.slice(0, 3).map(tag =>
-            `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(88, 166, 255, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#58a6ff' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
+            `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(86, 156, 214, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#569cd6' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
           ).join('') + '</div>';
       }
-      return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2a2a' : '#f5f5f5') : 'transparent'};">
+      return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent'};">
         <div style="font-size: 0.9375rem; font-weight: 600; color: ${titleColor}; margin-bottom: 0.25rem;">${escapeHtml(post.title)}</div>
         <div style="font-size: 0.8125rem; color: ${descColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(post.description)}</div>
         ${tagsHtml}</a>`;
@@ -432,7 +433,7 @@
     const items = resultsContainer.querySelectorAll('.search-result');
     items.forEach((el, i) => {
       const isSelected = i === selectedIndex;
-      (el as HTMLElement).style.background = isSelected ? (isDark ? '#2a2a2a' : '#f5f5f5') : 'transparent';
+      (el as HTMLElement).style.background = isSelected ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent';
       if (isSelected) el.scrollIntoView({ block: 'nearest' });
     });
   }

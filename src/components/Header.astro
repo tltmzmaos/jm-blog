@@ -26,14 +26,14 @@ const isActive = (path: string) => {
       <ThemeToggle />
     </div>
 
-    <button class="mobile-menu-btn" aria-label="Open menu">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <button class="mobile-menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M3 12h18M3 6h18M3 18h18"/>
       </svg>
     </button>
   </div>
 
-  <nav class="mobile-nav">
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
     <a href={baseUrl} class:list={["mobile-nav-link", { active: isActive('/') }]}>Home</a>
     <a href={`${baseUrl}tags`} class:list={["mobile-nav-link", { active: isActive('/tags') }]}>Tags</a>
     <a href={`${baseUrl}about`} class:list={["mobile-nav-link", { active: isActive('/about') }]}>About</a>
@@ -51,8 +51,8 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .header {
-    background: rgba(26, 26, 26, 0.95);
-    border-bottom-color: #333;
+    background: rgba(30, 30, 30, 0.95);
+    border-bottom-color: #3c3c3c;
   }
 
   .header-inner {
@@ -75,7 +75,7 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .logo {
-    color: #f0f0f0;
+    color: #d4d4d4;
   }
 
   .nav {
@@ -98,12 +98,12 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .nav-link {
-    color: #888;
+    color: #808080;
   }
 
   :global(.dark) .nav-link:hover {
-    color: #f0f0f0;
-    background: #2a2a2a;
+    color: #d4d4d4;
+    background: #2a2d2e;
   }
 
   .nav-link.active {
@@ -112,7 +112,7 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .nav-link.active {
-    color: #58a6ff;
+    color: #569cd6;
   }
 
   .actions {
@@ -132,7 +132,7 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .mobile-menu-btn {
-    color: #888;
+    color: #808080;
   }
 
   .mobile-nav {
@@ -142,7 +142,7 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .mobile-nav {
-    border-top-color: #333;
+    border-top-color: #3c3c3c;
   }
 
   .mobile-nav-link {
@@ -159,8 +159,8 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .mobile-nav-link {
-    color: #888;
-    border-bottom-color: #333;
+    color: #808080;
+    border-bottom-color: #3c3c3c;
   }
 
   .mobile-nav-link.active {
@@ -169,7 +169,7 @@ const isActive = (path: string) => {
   }
 
   :global(.dark) .mobile-nav-link.active {
-    color: #58a6ff;
+    color: #569cd6;
   }
 
   @media (max-width: 768px) {
@@ -197,7 +197,9 @@ const isActive = (path: string) => {
     const menuBtn = document.querySelector('.mobile-menu-btn');
 
     menuBtn?.addEventListener('click', () => {
-      header?.classList.toggle('open');
+      const isOpen = header?.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', String(isOpen));
+      menuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     });
   });
 </script>

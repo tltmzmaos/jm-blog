@@ -782,7 +782,7 @@ const graphData = {
               <a href="/posts/${escapeHtml(post.slug)}" class="post-link">
                 ${post.data.heroImage ? `
                   <div class="thumbnail">
-                    <img src="${escapeHtml(post.data.heroImage)}" alt="" loading="lazy" decoding="async" width="140" height="90" />
+                    <img src="${escapeHtml(post.data.heroImage)}" alt="Thumbnail for ${escapeHtml(post.data.title)}" loading="lazy" decoding="async" width="140" height="90" />
                   </div>
                 ` : ''}
                 <div class="content">
@@ -932,7 +932,7 @@ const graphData = {
   }
 
   :global(.dark) .page-header h1 {
-    color: #f0f0f0;
+    color: #d4d4d4;
   }
 
   .page-header p {
@@ -956,7 +956,7 @@ const graphData = {
   }
 
   :global(.dark) .graph-container {
-    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+    background: linear-gradient(135deg, #1e1e1e 0%, #252526 100%);
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.3),
       0 2px 4px -1px rgba(0, 0, 0, 0.2),
@@ -1025,8 +1025,8 @@ const graphData = {
   }
 
   :global(.dark) .view-btn {
-    background: rgba(45, 55, 72, 0.95);
-    color: #f0f0f0;
+    background: rgba(42, 45, 46, 0.95);
+    color: #d4d4d4;
   }
 
   :global(.dark) .view-btn.active {
@@ -1051,7 +1051,7 @@ const graphData = {
   }
 
   :global(.dark) .category-legend {
-    background: rgba(45, 55, 72, 0.9);
+    background: rgba(37, 37, 38, 0.9);
   }
 
   .legend-item {
@@ -1063,7 +1063,7 @@ const graphData = {
   }
 
   :global(.dark) .legend-item {
-    color: #a0aec0;
+    color: #808080;
   }
 
   .legend-dot {
@@ -1088,8 +1088,8 @@ const graphData = {
   }
 
   :global(.dark) .posts-preview {
-    background: #1a1f2e;
-    border-color: #2d3748;
+    background: #252526;
+    border-color: #3c3c3c;
   }
 
   .preview-header {
@@ -1102,7 +1102,7 @@ const graphData = {
   }
 
   :global(.dark) .preview-header {
-    border-color: #2d3748;
+    border-color: #3c3c3c;
   }
 
   .preview-title-wrapper {

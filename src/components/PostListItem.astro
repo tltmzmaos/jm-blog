@@ -27,7 +27,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
       <div class="thumbnail">
         <img
           src={heroImage}
-          alt=""
+          alt={`Thumbnail for ${title}`}
           loading="lazy"
           decoding="async"
           width="120"
@@ -63,7 +63,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .post-item {
-    border-bottom-color: #333;
+    border-bottom-color: #3c3c3c;
   }
 
   .post-link {
@@ -87,6 +87,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .thumbnail {
+    background: #252526;
   }
 
   .thumbnail img {
@@ -117,7 +118,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .title {
-    color: #f0f0f0;
+    color: #d4d4d4;
   }
 
   .description {
@@ -132,7 +133,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .description {
-    color: #888;
+    color: #808080;
   }
 
   .meta {
@@ -159,8 +160,8 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .tag {
-    background: #2a2a2a;
-    color: #888;
+    background: #2a2d2e;
+    color: #808080;
   }
 
   .tag-more {
@@ -169,8 +170,8 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   }
 
   :global(.dark) .tag-more {
-    background: #333;
-    color: #888;
+    background: #3c3c3c;
+    color: #808080;
   }
 
   @media (max-width: 640px) {

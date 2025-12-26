@@ -36,7 +36,7 @@ const {
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#1e1e1e" media="(prefers-color-scheme: dark)" />
 
     <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
@@ -135,8 +135,8 @@ const {
   }
 
   .dark body {
-    background: #1a1a1a;
-    color: #f0f0f0;
+    background: #1e1e1e;
+    color: #d4d4d4;
   }
 
   /* Dark mode transition animation */
@@ -164,8 +164,8 @@ const {
   }
 
   .dark ::selection {
-    background: #58a6ff;
-    color: #1a1a1a;
+    background: #264f78;
+    color: #ffffff;
   }
 
   /* Focus styles */
@@ -175,7 +175,7 @@ const {
   }
 
   .dark :focus-visible {
-    outline-color: #58a6ff;
+    outline-color: #569cd6;
   }
 
   /* Scrollbar */
@@ -198,27 +198,27 @@ const {
   }
 
   .dark ::-webkit-scrollbar-track {
-    background: #242424;
+    background: #252526;
   }
 
   .dark ::-webkit-scrollbar-thumb {
-    background: #444;
+    background: #3c3c3c;
   }
 
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #4f4f4f;
   }
 
   /* Code blocks */
   .dark pre[class*="language-"],
   .dark .shiki {
-    background: #161b22 !important;
-    border: 1px solid #30363d !important;
+    background: #1e1e1e !important;
+    border: 1px solid #3c3c3c !important;
   }
 
   .dark code[class*="language-"],
   .dark .shiki code {
-    color: #f0f6fc !important;
+    color: #d4d4d4 !important;
   }
 
   /* Reduced motion preference */
