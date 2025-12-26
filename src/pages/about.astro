@@ -3,75 +3,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 ---
 
-<BaseLayout title="About - Jongmin" description="Software engineer passionate about backend systems, lab automation, and continuous learning.">
+<BaseLayout title="About - Jongmin" description="Software engineer working on lab automation. From Korea to California, building systems that work.">
   <Header />
 
-  <main class="main-content">
-    <h1>About</h1>
-
-    <section class="intro">
-      <h2>Hey, I'm Jongmin 👋</h2>
-      <p>
-        I'm a software engineer who recently made the jump from automotive to biotech.
-        After 4.5 years building backend systems for the automotive industry, I'm now working
-        on lab automation at a biotech company—basically helping robots do science.
-      </p>
-      <p style="margin-top: 1rem;">
-        I studied CS at UC Irvine and I'm currently chipping away at Georgia Tech's OMSCS program
-        (slowly but surely). Most of my professional experience has been in the .NET ecosystem,
-        though I enjoy picking up whatever tools make sense for the job.
-      </p>
-    </section>
-
-    <section class="interests">
-      <h2>What I'm Into</h2>
-      <ul>
-        <li><strong>Building things that work</strong> — Clean APIs, reliable services, code that doesn't wake me up at 3am</li>
-        <li><strong>Automation</strong> — If I have to do something twice, I'm probably scripting it</li>
-        <li><strong>Learning in public</strong> — This blog is my attempt to document what I learn and think through problems</li>
-        <li><strong>The intersection of software and physical systems</strong> — There's something satisfying about code that moves real things</li>
-      </ul>
-    </section>
-
-    <section class="stack">
-      <h2>What I Work With</h2>
-      <p class="stack-note">Primarily .NET these days, but I'm tool-agnostic. Here's what I've been using:</p>
-      <div class="stack-grid">
-        <div class="stack-item">
-          <strong>Day-to-day</strong>
-          <span>C#, .NET Framework, .NET 8, SQL Server</span>
+  <main class="about-page">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="avatar">
+          <span class="avatar-text">JL</span>
         </div>
-        <div class="stack-item">
-          <strong>Infrastructure</strong>
-          <span>IIS, Docker, GitHub Actions, AWS</span>
-        </div>
-        <div class="stack-item">
-          <strong>Sometimes</strong>
-          <span>React, Vite, Python, TypeScript, Swift</span>
-        </div>
-        <div class="stack-item">
-          <strong>Learning</strong>
-          <span>ML/AI concepts</span>
+        <div class="hero-text">
+          <h1>Jongmin Lee</h1>
+          <p class="tagline">Software Engineer</p>
+          <p class="location">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Bay Area, CA
+          </p>
         </div>
       </div>
-    </section>
 
-    <section class="contact">
-      <h2>Say Hi</h2>
-      <p style="margin-bottom: 1rem;">Always happy to chat about software, career stuff, or whatever. Best way to reach me:</p>
-      <div class="links">
-        <a href="mailto:tltmzmaos@gmail.com" class="link-btn email" aria-label="Email">
+      <div class="social-links">
+        <a href="mailto:tltmzmaos@gmail.com" class="social-btn" aria-label="Email">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="2" y="4" width="20" height="16" rx="2"/>
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
           </svg>
         </a>
-        <a href="https://github.com/tltmzmaos" target="_blank" rel="noopener" class="link-btn github" aria-label="GitHub">
+        <a href="https://github.com/tltmzmaos" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
           </svg>
         </a>
-        <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener" class="link-btn linkedin" aria-label="LinkedIn">
+        <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
           </svg>
@@ -79,173 +46,299 @@ import Header from '../components/Header.astro';
       </div>
     </section>
 
-    <section class="blog-info">
-      <h2>About This Blog</h2>
-      <p>
-        Built with Astro because I wanted something fast and simple.
-        This is where I write about things I'm learning, problems I've solved (or haven't),
-        and occasionally ramble about tech topics that interest me.
-      </p>
-      <p style="margin-top: 0.75rem;">
-        No SEO optimization, no engagement metrics—just notes for myself that might help someone else.
-      </p>
-    </section>
+    <!-- Main Content -->
+    <article class="content">
+      <section class="intro">
+        <p>
+          I write about problems I run into at work, things I learn while studying, and
+          decisions I make along the way. If you're navigating a similar path in software
+          engineering, I hope some of it is useful.
+        </p>
+      </section>
+
+      <section class="narrative">
+        <h2>Background</h2>
+        <p>
+          I came to the US from South Korea in 2016 after military service, starting college
+          a bit later than most. Studied Computer Science at UC Irvine, then spent about 4.5
+          years in the automotive industry — from internal tools to customer-facing products
+          — working on vehicle diagnostics.
+        </p>
+        <p>
+          In 2025, I moved to the Bay Area and joined a biotech company focused on laboratory
+          automation. Day to day, I work on software that coordinates lab robots and integrates
+          with scientific instruments. Different domain, same underlying challenge: making
+          complex systems behave predictably.
+        </p>
+        <p>
+          I'm also pursuing a master's degree through Georgia Tech's OMSCS program, focusing
+          on AI and machine learning — to broaden the range of problems I can tackle as a
+          software engineer.
+        </p>
+      </section>
+
+      <section class="values">
+        <h2>Perspective</h2>
+        <p>
+          Most of my experience comes from building internal tools and production systems
+          where reliability matters more than novelty. I've learned that good communication
+          is often as important as good code — especially when working with cross-functional
+          teams or systems that other people depend on.
+        </p>
+      </section>
+
+      <section class="personal">
+        <h2>Outside of Work</h2>
+        <p>
+          When I'm not coding, I'm usually listening to music or watching YouTube. Nothing
+          fancy — just the usual ways to unwind.
+        </p>
+      </section>
+
+      <section class="contact">
+        <h2>Get in Touch</h2>
+        <p>
+          If you have questions, want to talk about software engineering, or just want to
+          say hi, feel free to reach out via <a href="mailto:tltmzmaos@gmail.com">email</a> or
+          connect with me on <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener">LinkedIn</a>.
+        </p>
+      </section>
+    </article>
   </main>
 </BaseLayout>
 
 <style>
-  .main-content {
-    max-width: 720px;
+  .about-page {
+    max-width: 680px;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
   }
 
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    margin: 0 0 2rem;
-  }
-
-  :global(.dark) h1 {
-    color: #f0f0f0;
-  }
-
-  section {
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 2rem 0 2.5rem;
+    border-bottom: 1px solid #eee;
     margin-bottom: 2.5rem;
   }
 
-  h2 {
-    font-size: 1.25rem;
+  :global(.dark) .hero {
+    border-bottom-color: #333;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0066ff 0%, #5b21b6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 102, 255, 0.25);
+  }
+
+  .avatar-text {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-text h1 {
+    font-size: 1.625rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+  }
+
+  :global(.dark) .hero-text h1 {
+    color: #f0f0f0;
+  }
+
+  .tagline {
+    font-size: 1.0625rem;
+    color: #666;
+    margin: 0.25rem 0 0;
+  }
+
+  :global(.dark) .tagline {
+    color: #999;
+  }
+
+  .location {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: #888;
+    margin: 0.375rem 0 0;
+  }
+
+  :global(.dark) .location {
+    color: #777;
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.625rem;
+  }
+
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    color: #555;
+    transition: all 0.2s;
+  }
+
+  :global(.dark) .social-btn {
+    background: #2a2a2a;
+    color: #aaa;
+  }
+
+  .social-btn:hover {
+    background: #0066ff;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .social-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Content */
+  .content {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: #333;
+  }
+
+  :global(.dark) .content {
+    color: #ccc;
+  }
+
+  .content section {
+    margin-bottom: 2.5rem;
+  }
+
+  .content section:last-child {
+    margin-bottom: 0;
+  }
+
+  .content h2 {
+    font-size: 1.375rem;
     font-weight: 600;
     color: #1a1a1a;
     margin: 0 0 1rem;
   }
 
-  :global(.dark) h2 {
+  :global(.dark) .content h2 {
     color: #f0f0f0;
   }
 
-  p {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #444;
-    margin: 0;
+  .content p {
+    margin: 0 0 1rem;
   }
 
-  :global(.dark) p {
-    color: #b0b0b0;
+  .content p:last-child {
+    margin-bottom: 0;
   }
 
-  ul {
-    margin: 0;
-    padding-left: 1.25rem;
-  }
-
-  li {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #444;
-    margin: 0.5rem 0;
-  }
-
-  :global(.dark) li {
-    color: #b0b0b0;
-  }
-
-  .stack-note {
-    font-size: 0.9375rem;
-    margin-bottom: 1rem;
-  }
-
-  .stack-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .stack-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    padding: 1rem;
-    background: #f5f5f5;
-    border-radius: 8px;
-  }
-
-  :global(.dark) .stack-item {
-    background: #242424;
-  }
-
-  .stack-item strong {
-    font-size: 0.875rem;
-    color: #888;
-  }
-
-  .stack-item span {
-    font-size: 0.9375rem;
-    color: #1a1a1a;
-  }
-
-  :global(.dark) .stack-item span {
-    color: #f0f0f0;
-  }
-
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .link-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    color: #fff;
+  .content a {
+    color: #0066ff;
     text-decoration: none;
-    border-radius: 50%;
-    transition: transform 0.15s, box-shadow 0.15s;
   }
 
-  .link-btn svg {
-    width: 22px;
-    height: 22px;
+  .content a:hover {
+    text-decoration: underline;
   }
 
-  .link-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  :global(.dark) .content a {
+    color: #58a6ff;
   }
 
-  .link-btn.email {
-    background: #0066ff;
+  /* Intro section */
+  .intro {
+    font-size: 1.125rem;
+    color: #555;
+    margin-bottom: 2rem;
   }
 
-  .link-btn.github {
-    background: #333;
+  :global(.dark) .intro {
+    color: #aaa;
   }
 
-  :global(.dark) .link-btn.github {
-    background: #555;
+  .intro p {
+    margin: 0;
   }
 
-  .link-btn.linkedin {
-    background: #0077b5;
+  /* Values section */
+  .values h2 {
+    margin-top: 0;
   }
 
+  /* Personal section */
+  .personal {
+    color: #555;
+  }
+
+  :global(.dark) .personal {
+    color: #999;
+  }
+
+  /* Contact section */
+  .contact {
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+  }
+
+  :global(.dark) .contact {
+    border-top-color: #333;
+  }
+
+  /* Responsive */
   @media (max-width: 640px) {
-    .main-content {
+    .about-page {
       padding: 1.5rem 1rem 3rem;
     }
 
-    h1 {
+    .hero {
+      padding: 1.5rem 0 2rem;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+    }
+
+    .avatar-text {
       font-size: 1.5rem;
     }
 
-    .stack-grid {
-      grid-template-columns: 1fr;
+    .hero-text h1 {
+      font-size: 1.375rem;
+    }
+
+    .content {
+      font-size: 1rem;
+    }
+
+    .content h2 {
+      font-size: 1.25rem;
     }
   }
 </style>
