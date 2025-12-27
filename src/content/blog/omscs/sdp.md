@@ -3,7 +3,7 @@ title: "SDP: Software Development Process - OMSCS 2025 Fall"
 description: "Key software engineering concepts from Georgia Tech OMSCS SDP (CS 6300): lifecycle models, UML, testing, Android development, and team collaboration."
 pubDate: 2025-12-19
 author: "Jongmin Lee"
-tags: ["Software Engineering", "OMSCS", "Georgia Tech", "UML", "Testing", "Android", "Agile", "CS6300", "Fall 2025"]
+tags: ["Software Engineering", "OMSCS", "UML", "Testing", "Android", "Agile", "CS6300"]
 heroImage: "/SDP/sdp-hero.png"
 draft: false
 ---

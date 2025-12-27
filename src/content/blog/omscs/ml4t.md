@@ -3,7 +3,7 @@ title: "ML4T: Machine Learning for Trading - OMSCS 2024 Fall"
 description: "Key ML-for-trading concepts from Georgia Tech OMSCS ML4T (CS 7646): portfolio theory, signals, risk, and evaluation."
 pubDate: 2024-12-19
 author: "Jongmin Lee"
-tags: ["Machine Learning", "Portfolio Theory", "ML4T", "CS7646", "Fall 2024", "OMSCS", "Georgia Tech"]
+tags: ["Machine Learning", "Portfolio Theory", "ML4T", "CS7646", "OMSCS"]
 heroImage: "/ML4T/ml4t-hero.png"
 ---
 

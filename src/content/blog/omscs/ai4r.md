@@ -3,7 +3,7 @@ title: "AI4R: Artificial Intelligence for Robotics - OMSCS 2025 Spring"
 description: "Key robotics AI concepts from Georgia Tech OMSCS AI4R (CS 7638): localization, planning, perception, control, and SLAM."
 pubDate: 2025-05-19
 author: "Jongmin Lee"
-tags: ["Artificial Intelligence", "Robotics", "OMSCS", "Georgia Tech", "SLAM", "Path Planning", "Kalman Filter", "Particle Filter"]
+tags: ["Artificial Intelligence", "Robotics", "OMSCS", "SLAM", "Path Planning", "Kalman Filter", "Particle Filter"]
 heroImage: "/AI4R/ai4r-hero.png"
 draft: false
 ---
