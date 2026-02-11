@@ -10,30 +10,47 @@ const allPosts = await getCollection('blog');
 const sortedPosts = allPosts
   .filter(post => showDrafts || !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const INITIAL_COUNT = 10;
 ---
 
 <BaseLayout title="Jongmin's Dev Blog" description="Sharing development experiences and technical insights">
   <Header />
 
   <main class="main-content">
-    <section class="posts">
-      {sortedPosts.map((post) => (
-        <PostListItem
-          title={post.data.title}
-          description={post.data.description}
-          pubDate={post.data.pubDate}
-          heroImage={post.data.heroImage}
-          slug={post.slug}
-          tags={post.data.tags}
-        />
+    <section class="posts" id="posts">
+      {sortedPosts.map((post, i) => (
+        <div class:list={['post-wrapper', { hidden: i >= INITIAL_COUNT }]}>
+          <PostListItem
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            heroImage={post.data.heroImage}
+            slug={post.slug}
+            tags={post.data.tags}
+          />
+        </div>
       ))}
 
       {sortedPosts.length === 0 && (
         <p class="empty">No posts yet.</p>
       )}
     </section>
+
+    {sortedPosts.length > INITIAL_COUNT && (
+      <div class="load-more" id="load-sentinel">
+        <span class="load-text">Scroll for more</span>
+      </div>
+    )}
   </main>
 </BaseLayout>
+
+<noscript>
+  <style>
+    .post-wrapper.hidden { display: block !important; }
+    .load-more { display: none !important; }
+  </style>
+</noscript>
 
 <style>
   .main-content {
@@ -47,6 +64,39 @@ const sortedPosts = allPosts
     flex-direction: column;
   }
 
+  .post-wrapper.hidden {
+    display: none;
+  }
+
+  .post-wrapper.reveal {
+    animation: fadeIn 0.3s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .load-more {
+    text-align: center;
+    padding: 2rem 0 1rem;
+  }
+
+  .load-text {
+    font-size: 0.8125rem;
+    color: #999;
+  }
+
+  .load-more.done {
+    display: none;
+  }
+
   .empty {
     text-align: center;
     color: #888;
@@ -57,9 +107,46 @@ const sortedPosts = allPosts
     .main-content {
       padding: 1.5rem 1rem;
     }
-
-    .hero h1 {
-      font-size: 1.5rem;
-    }
   }
 </style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const sentinel = document.getElementById('load-sentinel');
+    if (!sentinel) return;
+
+    const posts = document.querySelectorAll<HTMLElement>('.post-wrapper');
+    const BATCH = 10;
+    let shown = 0;
+
+    // Count initially visible posts
+    posts.forEach(p => { if (!p.classList.contains('hidden')) shown++; });
+
+    if (shown >= posts.length) {
+      sentinel.classList.add('done');
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+
+      let revealed = 0;
+      for (let i = shown; i < posts.length && revealed < BATCH; i++) {
+        posts[i].classList.remove('hidden');
+        posts[i].classList.add('reveal');
+        revealed++;
+      }
+      shown += revealed;
+
+      if (shown >= posts.length) {
+        sentinel.classList.add('done');
+        observer.disconnect();
+      }
+    }, { rootMargin: '200px' });
+
+    observer.observe(sentinel);
+
+    // Cleanup on page swap
+    document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+  });
+</script>
