@@ -7,7 +7,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
-  site: 'https://jongminlee.dev',
+  site: 'https://jongmin.me',
   base: '/',
   integrations: [
     tailwind({

@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+---
+
+<BaseLayout title="Page Not Found">
+  <Header />
+  <main class="not-found">
+    <div class="content">
+      <h1>404</h1>
+      <p>This page doesn't exist.</p>
+      <a href="/" class="back-link">Back to home</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 64px);
+    padding: 2rem;
+  }
+
+  .content {
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem;
+    line-height: 1;
+  }
+
+  :global(.dark) h1 {
+    color: #d4d4d4;
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: #666;
+    margin: 0 0 2rem;
+  }
+
+  :global(.dark) p {
+    color: #808080;
+  }
+
+  .back-link {
+    display: inline-block;
+    padding: 0.625rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #fff;
+    background: #0066ff;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .back-link:hover {
+    background: #0052cc;
+  }
+
+  :global(.dark) .back-link {
+    background: #58a6ff;
+    color: #1e1e1e;
+  }
+
+  :global(.dark) .back-link:hover {
+    background: #79b8ff;
+  }
+</style>

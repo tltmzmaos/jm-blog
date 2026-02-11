@@ -23,7 +23,7 @@ const {
   canonical
 } = Astro.props;
 
-const siteUrl = Astro.site || "https://jongminlee.dev";
+const siteUrl = Astro.site || "https://jongmin.me";
 const currentUrl = new URL(Astro.url.pathname, siteUrl);
 const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
 const imageUrl = new URL(image, siteUrl);

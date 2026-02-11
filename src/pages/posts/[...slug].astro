@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getRelatedPosts } from '../../utils/relatedPosts';
+import { getSeriesInfo } from '../../utils/seriesPosts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -35,6 +36,9 @@ const nextPost = currentIndex > 0 ? {
 
 // Find related posts (tag-based)
 const relatedPosts = getRelatedPosts(post, allPosts, 3);
+
+// Detect series membership
+const seriesInfo = getSeriesInfo(post, allPosts);
 ---
 
 <PostLayout
@@ -43,6 +47,7 @@ const relatedPosts = getRelatedPosts(post, allPosts, 3);
   prevPost={prevPost}
   nextPost={nextPost}
   relatedPosts={relatedPosts}
+  seriesInfo={seriesInfo}
   content={post.body}
   slug={post.slug}
 >
