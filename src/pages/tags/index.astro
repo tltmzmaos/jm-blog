@@ -7,18 +7,21 @@ import { shouldShowDrafts } from '../../utils/env';
 const showDrafts = shouldShowDrafts();
 const allPosts = await getCollection('blog');
 const publishedPosts = allPosts
-  .filter(post => showDrafts || !post.data.draft)
+  .filter((post) => showDrafts || !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const tagCounts = publishedPosts.reduce((acc, post) => {
-  post.data.tags.forEach(tag => {
-    acc[tag] = (acc[tag] || 0) + 1;
-  });
-  return acc;
-}, {} as Record<string, number>);
+const tagCounts = publishedPosts.reduce(
+  (acc, post) => {
+    post.data.tags.forEach((tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+    });
+    return acc;
+  },
+  {} as Record<string, number>
+);
 
 const sortedTags = Object.entries(tagCounts)
-  .sort(([,a], [,b]) => b - a)
+  .sort(([, a], [, b]) => b - a)
   .map(([tag, count]) => ({ tag, count }));
 
 const maxCount = sortedTags[0]?.count || 1;
@@ -38,16 +41,24 @@ const baseUrl = import.meta.env.BASE_URL;
 <BaseLayout title="Tags - Jongmin's Dev Blog" description="Browse all tags">
   <Header />
 
-  <main class="main-content">
+  <main class="main-content" id="main-content">
     <div class="page-header">
       <div class="header-row">
         <h1>Tags</h1>
         <span class="tag-total">{sortedTags.length} tags</span>
       </div>
       <div class="search-box">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
+        <svg
+          class="search-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
         </svg>
         <input
           type="text"
@@ -59,26 +70,28 @@ const baseUrl = import.meta.env.BASE_URL;
       </div>
     </div>
 
-    <div class="no-results" hidden>
-      No tags found
-    </div>
+    <div class="no-results" hidden>No tags found</div>
 
     <div class="tag-cloud">
-      {sortedTags.map(({ tag, count }) => (
-        <a
-          href={`${baseUrl}tags/${encodeURIComponent(tag)}`}
-          class:list={['tag', `tag-${getTagWeight(count)}`]}
-          data-tag={tag.toLowerCase()}
-        >
-          <span class="tag-name">{tag}</span>
-          <span class="tag-count">{count}</span>
-        </a>
-      ))}
+      {
+        sortedTags.map(({ tag, count }) => (
+          <a
+            href={`${baseUrl}tags/${encodeURIComponent(tag)}`}
+            class:list={['tag', `tag-${getTagWeight(count)}`]}
+            data-tag={tag.toLowerCase()}
+          >
+            <span class="tag-name">{tag}</span>
+            <span class="tag-count">{count}</span>
+          </a>
+        ))
+      }
     </div>
   </main>
 
   <script>
-    const searchInput = document.getElementById('tag-search') as HTMLInputElement;
+    const searchInput = document.getElementById(
+      'tag-search'
+    ) as HTMLInputElement;
     const tags = document.querySelectorAll('.tag');
     const noResults = document.querySelector('.no-results') as HTMLElement;
 
@@ -99,7 +112,7 @@ const baseUrl = import.meta.env.BASE_URL;
       const q = query.toLowerCase().trim();
       let visibleCount = 0;
 
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         const tagName = tag.getAttribute('data-tag') || '';
         const matches = !q || tagName.includes(q);
         (tag as HTMLElement).style.display = matches ? '' : 'none';

@@ -8,25 +8,32 @@ import { shouldShowDrafts } from '../../utils/env';
 export async function getStaticPaths() {
   const showDrafts = shouldShowDrafts();
   const allPosts = await getCollection('blog');
-  const publishedPosts = allPosts.filter(post => showDrafts || !post.data.draft);
+  const publishedPosts = allPosts.filter(
+    (post) => showDrafts || !post.data.draft
+  );
 
-  const uniqueTags = [...new Set(publishedPosts.flatMap(post => post.data.tags))];
+  const uniqueTags = [
+    ...new Set(publishedPosts.flatMap((post) => post.data.tags)),
+  ];
 
-  return uniqueTags.map(tag => {
+  return uniqueTags.map((tag) => {
     const filteredPosts = publishedPosts
-      .filter(post => post.data.tags.includes(tag))
+      .filter((post) => post.data.tags.includes(tag))
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
     // Find related tags (co-occurring tags, excluding current)
-    const relatedTagCounts = filteredPosts.reduce((acc, post) => {
-      post.data.tags.forEach(t => {
-        if (t !== tag) acc[t] = (acc[t] || 0) + 1;
-      });
-      return acc;
-    }, {} as Record<string, number>);
+    const relatedTagCounts = filteredPosts.reduce(
+      (acc, post) => {
+        post.data.tags.forEach((t) => {
+          if (t !== tag) acc[t] = (acc[t] || 0) + 1;
+        });
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const relatedTags = Object.entries(relatedTagCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 8)
       .map(([t]) => t);
 
@@ -48,44 +55,51 @@ const baseUrl = import.meta.env.BASE_URL;
 >
   <Header />
 
-  <main class="main-content">
+  <main class="main-content" id="main-content">
     <div class="page-header">
       <a href="/tags" class="back-link">← All Tags</a>
       <h1>
         <span class="tag-badge">{tag}</span>
-        <span class="count">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</span>
+        <span class="count"
+          >{posts.length} {posts.length === 1 ? 'post' : 'posts'}</span
+        >
       </h1>
     </div>
 
     <section class="posts">
-      {posts.map((post) => (
-        <PostListItem
-          title={post.data.title}
-          description={post.data.description}
-          pubDate={post.data.pubDate}
-          heroImage={post.data.heroImage}
-          slug={post.slug}
-          tags={post.data.tags}
-        />
-      ))}
+      {
+        posts.map((post) => (
+          <PostListItem
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            heroImage={post.data.heroImage}
+            slug={post.slug}
+            tags={post.data.tags}
+          />
+        ))
+      }
 
-      {posts.length === 0 && (
-        <p class="empty">No posts found with this tag.</p>
-      )}
+      {posts.length === 0 && <p class="empty">No posts found with this tag.</p>}
     </section>
 
-    {relatedTags.length > 0 && (
-      <section class="related-tags">
-        <h2>Related Tags</h2>
-        <div class="related-list">
-          {relatedTags.map((t) => (
-            <a href={`${baseUrl}tags/${encodeURIComponent(t)}`} class="related-tag">
-              {t}
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
+    {
+      relatedTags.length > 0 && (
+        <section class="related-tags">
+          <h2>Related Tags</h2>
+          <div class="related-list">
+            {relatedTags.map((t) => (
+              <a
+                href={`${baseUrl}tags/${encodeURIComponent(t)}`}
+                class="related-tag"
+              >
+                {t}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </main>
 </BaseLayout>
 

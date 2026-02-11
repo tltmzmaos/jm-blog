@@ -8,47 +8,56 @@ import { shouldShowDrafts } from '../utils/env';
 const showDrafts = shouldShowDrafts();
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts
-  .filter(post => showDrafts || !post.data.draft)
+  .filter((post) => showDrafts || !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const INITIAL_COUNT = 10;
 ---
 
-<BaseLayout title="Jongmin's Dev Blog" description="Sharing development experiences and technical insights">
+<BaseLayout
+  title="Jongmin's Dev Blog"
+  description="Sharing development experiences and technical insights"
+>
   <Header />
 
-  <main class="main-content">
+  <main class="main-content" id="main-content">
     <section class="posts" id="posts">
-      {sortedPosts.map((post, i) => (
-        <div class:list={['post-wrapper', { hidden: i >= INITIAL_COUNT }]}>
-          <PostListItem
-            title={post.data.title}
-            description={post.data.description}
-            pubDate={post.data.pubDate}
-            heroImage={post.data.heroImage}
-            slug={post.slug}
-            tags={post.data.tags}
-          />
-        </div>
-      ))}
+      {
+        sortedPosts.map((post, i) => (
+          <div class:list={['post-wrapper', { hidden: i >= INITIAL_COUNT }]}>
+            <PostListItem
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              heroImage={post.data.heroImage}
+              slug={post.slug}
+              tags={post.data.tags}
+            />
+          </div>
+        ))
+      }
 
-      {sortedPosts.length === 0 && (
-        <p class="empty">No posts yet.</p>
-      )}
+      {sortedPosts.length === 0 && <p class="empty">No posts yet.</p>}
     </section>
 
-    {sortedPosts.length > INITIAL_COUNT && (
-      <div class="load-more" id="load-sentinel">
-        <span class="load-text">Scroll for more</span>
-      </div>
-    )}
+    {
+      sortedPosts.length > INITIAL_COUNT && (
+        <div class="load-more" id="load-sentinel">
+          <span class="load-text">Scroll for more</span>
+        </div>
+      )
+    }
   </main>
 </BaseLayout>
 
 <noscript>
   <style>
-    .post-wrapper.hidden { display: block !important; }
-    .load-more { display: none !important; }
+    .post-wrapper.hidden {
+      display: block !important;
+    }
+    .load-more {
+      display: none !important;
+    }
   </style>
 </noscript>
 
@@ -120,33 +129,42 @@ const INITIAL_COUNT = 10;
     let shown = 0;
 
     // Count initially visible posts
-    posts.forEach(p => { if (!p.classList.contains('hidden')) shown++; });
+    posts.forEach((p) => {
+      if (!p.classList.contains('hidden')) shown++;
+    });
 
     if (shown >= posts.length) {
       sentinel.classList.add('done');
       return;
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
 
-      let revealed = 0;
-      for (let i = shown; i < posts.length && revealed < BATCH; i++) {
-        posts[i].classList.remove('hidden');
-        posts[i].classList.add('reveal');
-        revealed++;
-      }
-      shown += revealed;
+        let revealed = 0;
+        for (let i = shown; i < posts.length && revealed < BATCH; i++) {
+          posts[i].classList.remove('hidden');
+          posts[i].classList.add('reveal');
+          revealed++;
+        }
+        shown += revealed;
 
-      if (shown >= posts.length) {
-        sentinel.classList.add('done');
-        observer.disconnect();
-      }
-    }, { rootMargin: '200px' });
+        if (shown >= posts.length) {
+          sentinel.classList.add('done');
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
 
     observer.observe(sentinel);
 
     // Cleanup on page swap
-    document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => observer.disconnect(),
+      { once: true }
+    );
   });
 </script>

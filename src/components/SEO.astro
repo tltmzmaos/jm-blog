@@ -9,64 +9,97 @@ export interface Props {
   tags?: string[];
   author?: string;
   canonical?: string;
+  slug?: string;
 }
 
 const {
   title,
   description = "Jongmin's development blog - Sharing insights about web development, machine learning, and programming.",
-  image = "/og-image.jpg",
-  type = "website",
+  image = '/og-image.jpg',
+  type = 'website',
   publishedTime,
   modifiedTime,
   tags = [],
-  author = "Jongmin",
-  canonical
+  author = 'Jongmin',
+  canonical,
+  slug,
 } = Astro.props;
 
-const siteUrl = Astro.site || "https://jongmin.me";
+const siteUrl = Astro.site || 'https://jongmin.me';
 const currentUrl = new URL(Astro.url.pathname, siteUrl);
 const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
 const imageUrl = new URL(image, siteUrl);
 
 // Generate structured data
 const structuredData: any = {
-  "@context": "https://schema.org",
-  "@type": type === "article" ? "BlogPosting" : "WebSite",
-  "headline": title,
-  "description": description,
-  "image": imageUrl.toString(),
-  "url": currentUrl.toString(),
-  "datePublished": publishedTime,
-  "dateModified": modifiedTime || publishedTime,
-  "author": {
-    "@type": "Person",
-    "name": author,
-    "url": siteUrl.toString()
+  '@context': 'https://schema.org',
+  '@type': type === 'article' ? 'BlogPosting' : 'WebSite',
+  headline: title,
+  description: description,
+  image: imageUrl.toString(),
+  url: currentUrl.toString(),
+  datePublished: publishedTime,
+  dateModified: modifiedTime || publishedTime,
+  author: {
+    '@type': 'Person',
+    name: author,
+    url: siteUrl.toString(),
   },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Jongmin Blog",
-    "url": siteUrl.toString(),
-    "logo": {
-      "@type": "ImageObject",
-      "url": new URL("/logo.svg", siteUrl).toString()
-    }
-  }
+  publisher: {
+    '@type': 'Organization',
+    name: 'Jongmin Blog',
+    url: siteUrl.toString(),
+    logo: {
+      '@type': 'ImageObject',
+      url: new URL('/logo.svg', siteUrl).toString(),
+    },
+  },
 };
 
-if (type === "article" && tags.length > 0) {
-  structuredData.keywords = tags.join(", ");
+if (type === 'article' && tags.length > 0) {
+  structuredData.keywords = tags.join(', ');
 }
 
-if (type === "website") {
-  structuredData["@type"] = "WebSite";
+// Breadcrumb structured data for articles
+const breadcrumbData =
+  type === 'article'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: siteUrl.toString(),
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Posts',
+            item: new URL('/posts/', siteUrl).toString(),
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: title,
+            item: slug
+              ? new URL(`/posts/${slug}/`, siteUrl).toString()
+              : currentUrl.toString(),
+          },
+        ],
+      }
+    : null;
+
+if (type === 'website') {
+  structuredData['@type'] = 'WebSite';
   structuredData.potentialAction = {
-    "@type": "SearchAction",
-    "target": {
-      "@type": "EntryPoint",
-      "urlTemplate": `${siteUrl}/search?q={search_term_string}`
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${siteUrl}/search?q={search_term_string}`,
     },
-    "query-input": "required name=search_term_string"
+    'query-input': 'required name=search_term_string',
   };
 }
 ---
@@ -95,14 +128,20 @@ if (type === "website") {
 <meta property="og:site_name" content="Jongmin Blog" />
 <meta property="og:locale" content="en_US" />
 
-{type === "article" && publishedTime && (
-  <>
-    <meta property="article:published_time" content={publishedTime} />
-    <meta property="article:author" content={author} />
-    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
-    {tags.map(tag => <meta property="article:tag" content={tag} />)}
-  </>
-)}
+{
+  type === 'article' && publishedTime && (
+    <>
+      <meta property="article:published_time" content={publishedTime} />
+      <meta property="article:author" content={author} />
+      {modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {tags.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))}
+    </>
+  )
+}
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
@@ -121,26 +160,44 @@ if (type === "website") {
 <meta name="apple-mobile-web-app-title" content="Jongmin Blog" />
 
 <!-- Structured data -->
-<script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />
+<script
+  type="application/ld+json"
+  is:inline
+  set:html={JSON.stringify(structuredData)}
+/>
+
+{
+  breadcrumbData && (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(breadcrumbData)}
+    />
+  )
+}
 
 <!-- Additional structured data (website info) -->
-{type === "website" && (
-  <script type="application/ld+json" is:inline set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Jongmin Blog",
-    "url": siteUrl.toString(),
-    "logo": new URL("/logo.svg", siteUrl).toString(),
-    "sameAs": [
-      "https://github.com/tltmzmaos",
-      "https://linkedin.com/in/jongmin"
-    ]
-  })} />
-)}
+{
+  type === 'website' && (
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Jongmin Blog',
+        url: siteUrl.toString(),
+        logo: new URL('/logo.svg', siteUrl).toString(),
+        sameAs: [
+          'https://github.com/tltmzmaos',
+          'https://linkedin.com/in/jongmin',
+        ],
+      })}
+    />
+  )
+}
 
 <!-- Preconnect to external domains -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
 <!-- DNS prefetch for better performance -->
@@ -148,9 +205,15 @@ if (type === "website") {
 <link rel="dns-prefetch" href="https://gist.github.com" />
 
 <!-- Preload critical resources (conditionally includes KaTeX) -->
-{type === "article" && (
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" as="style" />
-)}
+{
+  type === 'article' && (
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+      as="style"
+    />
+  )
+}
 
 <!-- Resource hints for better performance -->
 <link rel="prefetch" href="/api/posts.json" />
