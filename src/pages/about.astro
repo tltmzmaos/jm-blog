@@ -50,9 +50,11 @@ import Header from '../components/Header.astro';
     <article class="content">
       <section class="intro">
         <p>
-          I write about problems I run into at work, things I learn while studying, and
-          decisions I make along the way. If you're navigating a similar path in software
-          engineering, I hope some of it is useful.
+          I write mostly about lab automation these days — it's what I work on, so that's
+          where most of the problems and lessons come from. I also write about applying AI
+          to industrial software and working with large codebases. I use AI tools like
+          Claude Code to help with research and drafting. If you're navigating a similar
+          path in software engineering, I hope some of it is useful.
         </p>
       </section>
 
@@ -60,47 +62,24 @@ import Header from '../components/Header.astro';
         <h2>Background</h2>
         <p>
           I came to the US from South Korea in 2016 after military service, starting college
-          a bit later than most. Studied Computer Science at UC Irvine, then spent about 4.5
-          years in the automotive industry — from internal tools to customer-facing products
-          — working on vehicle diagnostics.
+          a bit later than most. Studied Computer Science at UC Irvine.
         </p>
         <p>
-          In 2025, I moved to the Bay Area and joined a biotech company focused on laboratory
-          automation. Day to day, I work on software that coordinates lab robots and integrates
-          with scientific instruments. Different domain, same underlying challenge: making
-          complex systems behave predictably.
+          After graduating, I spent about 4.5 years in the automotive industry working on
+          vehicle diagnostics. Most of my time went into thinking about data at scale — how
+          to process high volumes reliably, maintain consistency across systems, and ensure
+          data integrity when many things can go wrong.
+        </p>
+        <p>
+          Recently, I moved to the Bay Area and joined a biotech company focused on laboratory
+          automation. The challenges here are different: I work on a single application that
+          handles orchestration, scheduling, and equipment integration. The focus is on
+          understanding a large codebase, maintaining code quality as features grow, and
+          making sure new functionality fits well with existing patterns.
         </p>
         <p>
           I'm also pursuing a master's degree through Georgia Tech's OMSCS program, focusing
-          on AI and machine learning — to broaden the range of problems I can tackle as a
-          software engineer.
-        </p>
-      </section>
-
-      <section class="values">
-        <h2>Perspective</h2>
-        <p>
-          Most of my experience comes from building internal tools and production systems
-          where reliability matters more than novelty. I've learned that good communication
-          is often as important as good code — especially when working with cross-functional
-          teams or systems that other people depend on.
-        </p>
-      </section>
-
-      <section class="personal">
-        <h2>Outside of Work</h2>
-        <p>
-          When I'm not coding, I'm usually listening to music or watching YouTube. Nothing
-          fancy — just the usual ways to unwind.
-        </p>
-      </section>
-
-      <section class="contact">
-        <h2>Get in Touch</h2>
-        <p>
-          If you have questions, want to talk about software engineering, or just want to
-          say hi, feel free to reach out via <a href="mailto:tltmzmaos@gmail.com">email</a> or
-          connect with me on <a href="https://linkedin.com/in/jml1228" target="_blank" rel="noopener">LinkedIn</a>.
+          on AI and machine learning.
         </p>
       </section>
     </article>
@@ -284,30 +263,6 @@ import Header from '../components/Header.astro';
 
   .intro p {
     margin: 0;
-  }
-
-  /* Values section */
-  .values h2 {
-    margin-top: 0;
-  }
-
-  /* Personal section */
-  .personal {
-    color: #555;
-  }
-
-  :global(.dark) .personal {
-    color: #808080;
-  }
-
-  /* Contact section */
-  .contact {
-    padding-top: 1.5rem;
-    border-top: 1px solid #eee;
-  }
-
-  :global(.dark) .contact {
-    border-top-color: #3c3c3c;
   }
 
   /* Responsive */

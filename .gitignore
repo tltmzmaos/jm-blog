@@ -41,6 +41,13 @@ GUIDE_*.md
 .vscode/settings.json
 .vscode/launch.json
 
+# Claude Code
+CLAUDE.md
+
+# planning / working documents
+llm-project-roadmap.md
+text-to-protocol-architecture.md
+
 # temporary files
 *.tmp
 *.temp
