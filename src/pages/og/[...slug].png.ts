@@ -7,12 +7,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.slug },
-    props: { title: post.data.title, description: post.data.description, tags: post.data.tags },
+    props: {
+      title: post.data.title,
+      description: post.data.description,
+      tags: post.data.tags,
+    },
   }));
 };
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, tags } = props as { title: string; description: string; tags: string[] };
+  const { title, tags } = props as {
+    title: string;
+    description: string;
+    tags: string[];
+  };
 
   const svg = await satori(
     {
@@ -52,7 +60,11 @@ export const GET: APIRoute = async ({ props }) => {
                   ? {
                       type: 'div',
                       props: {
-                        style: { display: 'flex', gap: '8px', marginTop: '8px' },
+                        style: {
+                          display: 'flex',
+                          gap: '8px',
+                          marginTop: '8px',
+                        },
                         children: tags.slice(0, 3).map((tag: string) => ({
                           type: 'span',
                           props: {
@@ -109,13 +121,17 @@ export const GET: APIRoute = async ({ props }) => {
       fonts: [
         {
           name: 'Inter',
-          data: await fetch('https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf').then((r) => r.arrayBuffer()),
+          data: await fetch(
+            'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf'
+          ).then((r) => r.arrayBuffer()),
           weight: 400,
           style: 'normal',
         },
         {
           name: 'Inter',
-          data: await fetch('https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYMZhrib2Bg-4.ttf').then((r) => r.arrayBuffer()),
+          data: await fetch(
+            'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYMZhrib2Bg-4.ttf'
+          ).then((r) => r.arrayBuffer()),
           weight: 700,
           style: 'normal',
         },

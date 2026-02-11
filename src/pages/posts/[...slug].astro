@@ -19,20 +19,28 @@ const { Content, headings } = await post.render();
 
 // Find previous/next posts
 const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const currentIndex = sortedPosts.findIndex(p => p.slug === post.slug);
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+const currentIndex = sortedPosts.findIndex((p) => p.slug === post.slug);
 
-const prevPost = currentIndex < sortedPosts.length - 1 ? {
-  slug: sortedPosts[currentIndex + 1].slug,
-  title: sortedPosts[currentIndex + 1].data.title,
-  description: sortedPosts[currentIndex + 1].data.description
-} : undefined;
+const prevPost =
+  currentIndex < sortedPosts.length - 1
+    ? {
+        slug: sortedPosts[currentIndex + 1].slug,
+        title: sortedPosts[currentIndex + 1].data.title,
+        description: sortedPosts[currentIndex + 1].data.description,
+      }
+    : undefined;
 
-const nextPost = currentIndex > 0 ? {
-  slug: sortedPosts[currentIndex - 1].slug,
-  title: sortedPosts[currentIndex - 1].data.title,
-  description: sortedPosts[currentIndex - 1].data.description
-} : undefined;
+const nextPost =
+  currentIndex > 0
+    ? {
+        slug: sortedPosts[currentIndex - 1].slug,
+        title: sortedPosts[currentIndex - 1].data.title,
+        description: sortedPosts[currentIndex - 1].data.description,
+      }
+    : undefined;
 
 // Find related posts (tag-based)
 const relatedPosts = getRelatedPosts(post, allPosts, 3);
@@ -53,4 +61,3 @@ const seriesInfo = getSeriesInfo(post, allPosts);
 >
   <Content />
 </PostLayout>
-

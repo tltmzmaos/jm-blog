@@ -27,7 +27,7 @@ function extractPartNumber(slug: string): number | null {
 function formatSeriesName(dir: string): string {
   return dir
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
 
@@ -48,11 +48,11 @@ export function getSeriesInfo(
 
   // Find all posts in the same directory with a part number
   const seriesPosts = allPosts
-    .filter(post => {
+    .filter((post) => {
       if (!post.slug.startsWith(dir + '/')) return false;
       return extractPartNumber(post.slug) !== null;
     })
-    .map(post => ({
+    .map((post) => ({
       slug: post.slug,
       title: post.data.title,
       partNumber: extractPartNumber(post.slug)!,

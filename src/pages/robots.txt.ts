@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 export const GET: APIRoute = async ({ site }) => {
   const baseUrl = site?.toString() || 'https://jongminlee.dev';
   const siteUrl = baseUrl.replace(/\/$/, '');
-  
+
   const robotsTxt = `User-agent: *
 Allow: /
 
@@ -36,7 +36,7 @@ Allow: /`;
   return new Response(robotsTxt, {
     headers: {
       'Content-Type': 'text/plain',
-      'Cache-Control': 'public, max-age=86400'
-    }
+      'Cache-Control': 'public, max-age=86400',
+    },
   });
 };

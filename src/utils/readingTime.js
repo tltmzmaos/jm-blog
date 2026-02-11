@@ -26,17 +26,17 @@ export function calculateReadingTime(content) {
   const englishWords = (cleanText.match(/[a-zA-Z]+/g) || []).length;
   const numbers = (cleanText.match(/\d+/g) || []).length;
 
-  const textWords = (koreanChars * 0.5) + englishWords + numbers;
+  const textWords = koreanChars * 0.5 + englishWords + numbers;
   const imageTime = imageCount * 0.25;
   const codeTime = codeBlockCount * 0.5;
 
-  const totalMinutes = (textWords / wordsPerMinute) + imageTime + codeTime;
+  const totalMinutes = textWords / wordsPerMinute + imageTime + codeTime;
   const minutes = Math.max(1, Math.ceil(totalMinutes));
 
   return {
     minutes,
     words: Math.round(textWords),
-    text: `${minutes} min read`
+    text: `${minutes} min read`,
   };
 }
 

@@ -22,16 +22,16 @@ export function getRelatedPosts(
   }
 
   const scored = allPosts
-    .filter(post => post.slug !== currentPost.slug)
-    .map(post => {
+    .filter((post) => post.slug !== currentPost.slug)
+    .map((post) => {
       const postTags = post.data.tags || [];
-      const commonTags = currentTags.filter(tag => postTags.includes(tag));
+      const commonTags = currentTags.filter((tag) => postTags.includes(tag));
       return {
         post,
-        score: commonTags.length
+        score: commonTags.length,
       };
     })
-    .filter(item => item.score > 0)
+    .filter((item) => item.score > 0)
     .sort((a, b) => {
       // Sort by common tag count first, then by newest
       if (b.score !== a.score) {
@@ -41,9 +41,9 @@ export function getRelatedPosts(
     })
     .slice(0, limit);
 
-  return scored.map(item => ({
+  return scored.map((item) => ({
     slug: item.post.slug,
     title: item.post.data.title,
-    description: item.post.data.description
+    description: item.post.data.description,
   }));
 }

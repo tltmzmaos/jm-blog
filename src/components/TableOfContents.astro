@@ -6,33 +6,48 @@ export interface Props {
 const { headings } = Astro.props;
 
 // Show only h2, h3
-const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 ---
 
-{filteredHeadings.length > 0 && (
-  <aside class="toc-sidebar" aria-label="Table of Contents">
-    <div class="toc-container">
-      <div class="toc-header">
-        <svg class="toc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 6h16M4 12h16M4 18h10"/>
-        </svg>
-        <span class="toc-title">Contents</span>
+{
+  filteredHeadings.length > 0 && (
+    <aside class="toc-sidebar" aria-label="Table of Contents">
+      <div class="toc-container">
+        <div class="toc-header">
+          <svg
+            class="toc-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+          <span class="toc-title">Contents</span>
+        </div>
+        <nav class="toc">
+          <ul class="toc-list">
+            {filteredHeadings.map((heading, index) => (
+              <li
+                class={`toc-item depth-${heading.depth}`}
+                style={`--index: ${index}`}
+              >
+                <a
+                  href={`#${heading.slug}`}
+                  class="toc-link"
+                  data-slug={heading.slug}
+                >
+                  <span class="toc-indicator" />
+                  <span class="toc-text">{heading.text}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-      <nav class="toc">
-        <ul class="toc-list">
-          {filteredHeadings.map((heading, index) => (
-            <li class={`toc-item depth-${heading.depth}`} style={`--index: ${index}`}>
-              <a href={`#${heading.slug}`} class="toc-link" data-slug={heading.slug}>
-                <span class="toc-indicator"></span>
-                <span class="toc-text">{heading.text}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
-  </aside>
-)}
+    </aside>
+  )
+}
 
 <style>
   .toc-sidebar {
@@ -262,15 +277,19 @@ const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
     const controller = new AbortController();
     const signal = controller.signal;
 
-    document.addEventListener('astro:before-swap', () => controller.abort(), { once: true });
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+    });
 
     const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
     if (tocLinks.length === 0) return;
 
-    const headingElements = Array.from(tocLinks).map((link) => {
-      const slug = link.dataset.slug;
-      return document.getElementById(slug || '');
-    }).filter(Boolean) as HTMLElement[];
+    const headingElements = Array.from(tocLinks)
+      .map((link) => {
+        const slug = link.dataset.slug;
+        return document.getElementById(slug || '');
+      })
+      .filter(Boolean) as HTMLElement[];
 
     if (headingElements.length === 0) return;
 
@@ -296,7 +315,10 @@ const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
           if (toc) {
             const linkRect = link.getBoundingClientRect();
             const tocRect = toc.getBoundingClientRect();
-            if (linkRect.top < tocRect.top || linkRect.bottom > tocRect.bottom) {
+            if (
+              linkRect.top < tocRect.top ||
+              linkRect.bottom > tocRect.bottom
+            ) {
               link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
             }
           }
@@ -318,7 +340,10 @@ const filteredHeadings = headings.filter(h => h.depth >= 2 && h.depth <= 3);
       });
     });
 
-    window.addEventListener('scroll', updateActiveLink, { passive: true, signal });
+    window.addEventListener('scroll', updateActiveLink, {
+      passive: true,
+      signal,
+    });
     updateActiveLink();
   });
 </script>

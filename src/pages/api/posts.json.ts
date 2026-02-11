@@ -5,9 +5,9 @@ export const GET: APIRoute = async () => {
   const posts = await getCollection('blog');
 
   const postsData = posts
-    .filter(post => !post.data.draft)
+    .filter((post) => !post.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .map(post => ({
+    .map((post) => ({
       slug: post.slug,
       title: post.data.title,
       description: post.data.description,

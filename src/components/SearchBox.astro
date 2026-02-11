@@ -1,21 +1,48 @@
 ---
+
 ---
 
 <div class="search-wrapper">
-  <button class="search-trigger" type="button" aria-label="Search" id="search-trigger">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
+  <button
+    class="search-trigger"
+    type="button"
+    aria-label="Search"
+    id="search-trigger"
+  >
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
     </svg>
   </button>
 
-  <div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="Search">
+  <div
+    class="search-modal"
+    id="search-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Search"
+  >
     <div class="search-backdrop" id="search-backdrop"></div>
     <div class="search-panel">
       <div class="search-header">
-        <svg class="header-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
+        <svg
+          class="header-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
         </svg>
         <input
           type="text"
@@ -32,23 +59,45 @@
         <div class="search-count" id="search-count"></div>
         <div class="search-results" id="search-results"></div>
         <div class="search-loading" id="search-loading">
-          <div class="skeleton-item"><div class="skeleton-title"></div><div class="skeleton-desc"></div></div>
-          <div class="skeleton-item"><div class="skeleton-title short"></div><div class="skeleton-desc"></div></div>
-          <div class="skeleton-item"><div class="skeleton-title"></div><div class="skeleton-desc short"></div></div>
+          <div class="skeleton-item">
+            <div class="skeleton-title"></div><div class="skeleton-desc"></div>
+          </div>
+          <div class="skeleton-item">
+            <div class="skeleton-title short"></div><div class="skeleton-desc">
+            </div>
+          </div>
+          <div class="skeleton-item">
+            <div class="skeleton-title"></div><div class="skeleton-desc short">
+            </div>
+          </div>
         </div>
         <div class="search-empty" id="search-empty">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
           </svg>
           <p>Type to search posts</p>
         </div>
         <div class="search-no-results" id="search-no-results">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
-            <line x1="9" y1="9" x2="9.01" y2="9"/>
-            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M8 15s1.5-2 4-2 4 2 4 2"></path>
+            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+            <line x1="15" y1="9" x2="15.01" y2="9"></line>
           </svg>
           <p>No results found</p>
         </div>
@@ -85,7 +134,9 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition: color 0.15s, background 0.15s;
+    transition:
+      color 0.15s,
+      background 0.15s;
   }
 
   .search-trigger:hover {
@@ -119,8 +170,12 @@
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .search-backdrop {
@@ -129,7 +184,9 @@
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    transition: background 0.2s ease, backdrop-filter 0.2s ease;
+    transition:
+      background 0.2s ease,
+      backdrop-filter 0.2s ease;
   }
 
   :global(.dark) .search-backdrop {
@@ -309,8 +366,13 @@
   }
 
   @keyframes shimmer {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
   }
 
   .search-empty,
@@ -445,7 +507,7 @@
         keys: [
           { name: 'title', weight: 2 },
           { name: 'description', weight: 1 },
-          { name: 'tags', weight: 1.5 }
+          { name: 'tags', weight: 1.5 },
         ],
         threshold: 0.3,
       });
@@ -481,7 +543,10 @@
       resultsContainer.classList.remove('has-results');
     }
     searchBody?.classList.remove('has-query', 'no-results');
-    if (searchCount) { searchCount.textContent = ''; searchCount.classList.remove('visible'); }
+    if (searchCount) {
+      searchCount.textContent = '';
+      searchCount.classList.remove('visible');
+    }
     results = [];
     selectedIndex = -1;
   }
@@ -497,19 +562,27 @@
     const titleColor = isDark ? '#d4d4d4' : '#1a1a1a';
     const descColor = isDark ? '#808080' : '#666';
 
-    resultsContainer.innerHTML = items.map((post, index) => {
-      let tagsHtml = '';
-      if (post.tags && post.tags.length) {
-        tagsHtml = '<div style="display: flex; gap: 0.5rem; margin-top: 0.375rem;">' +
-          post.tags.slice(0, 3).map(tag =>
-            `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(86, 156, 214, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#569cd6' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
-          ).join('') + '</div>';
-      }
-      return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent'};">
+    resultsContainer.innerHTML = items
+      .map((post, index) => {
+        let tagsHtml = '';
+        if (post.tags && post.tags.length) {
+          tagsHtml =
+            '<div style="display: flex; gap: 0.5rem; margin-top: 0.375rem;">' +
+            post.tags
+              .slice(0, 3)
+              .map(
+                (tag) =>
+                  `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(86, 156, 214, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#569cd6' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
+              )
+              .join('') +
+            '</div>';
+        }
+        return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent'};">
         <div style="font-size: 0.9375rem; font-weight: 600; color: ${titleColor}; margin-bottom: 0.25rem;">${escapeHtml(post.title)}</div>
         <div style="font-size: 0.8125rem; color: ${descColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(post.description)}</div>
         ${tagsHtml}</a>`;
-    }).join('');
+      })
+      .join('');
   }
 
   // Update selection highlight
@@ -519,7 +592,11 @@
     const items = resultsContainer.querySelectorAll('.search-result');
     items.forEach((el, i) => {
       const isSelected = i === selectedIndex;
-      (el as HTMLElement).style.background = isSelected ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent';
+      (el as HTMLElement).style.background = isSelected
+        ? isDark
+          ? '#2a2d2e'
+          : '#f5f5f5'
+        : 'transparent';
       if (isSelected) el.scrollIntoView({ block: 'nearest' });
     });
   }
@@ -530,21 +607,28 @@
       searchBody?.classList.remove('has-query', 'no-results');
       resultsContainer?.classList.remove('has-results');
       if (resultsContainer) resultsContainer.innerHTML = '';
-      if (searchCount) { searchCount.textContent = ''; searchCount.classList.remove('visible'); }
+      if (searchCount) {
+        searchCount.textContent = '';
+        searchCount.classList.remove('visible');
+      }
       results = [];
       selectedIndex = -1;
       return;
     }
 
     searchBody?.classList.add('has-query');
-    const found = fuse.search(query).slice(0, 8).map(r => r.item);
+    const found = fuse
+      .search(query)
+      .slice(0, 8)
+      .map((r) => r.item);
     const totalFound = fuse.search(query).length;
 
     if (found.length > 0) {
       searchBody?.classList.remove('no-results');
       resultsContainer?.classList.add('has-results');
       if (searchCount) {
-        searchCount.textContent = totalFound === 1 ? '1 result' : `${totalFound} results`;
+        searchCount.textContent =
+          totalFound === 1 ? '1 result' : `${totalFound} results`;
         searchCount.classList.add('visible');
       }
       renderResults(found);
@@ -552,7 +636,10 @@
       searchBody?.classList.add('no-results');
       resultsContainer?.classList.remove('has-results');
       if (resultsContainer) resultsContainer.innerHTML = '';
-      if (searchCount) { searchCount.textContent = ''; searchCount.classList.remove('visible'); }
+      if (searchCount) {
+        searchCount.textContent = '';
+        searchCount.classList.remove('visible');
+      }
       results = [];
     }
   }
