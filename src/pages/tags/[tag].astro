@@ -17,15 +17,29 @@ export async function getStaticPaths() {
       .filter(post => post.data.tags.includes(tag))
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
+    // Find related tags (co-occurring tags, excluding current)
+    const relatedTagCounts = filteredPosts.reduce((acc, post) => {
+      post.data.tags.forEach(t => {
+        if (t !== tag) acc[t] = (acc[t] || 0) + 1;
+      });
+      return acc;
+    }, {} as Record<string, number>);
+
+    const relatedTags = Object.entries(relatedTagCounts)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 8)
+      .map(([t]) => t);
+
     return {
       params: { tag },
-      props: { posts: filteredPosts },
+      props: { posts: filteredPosts, relatedTags },
     };
   });
 }
 
 const { tag } = Astro.params;
-const { posts } = Astro.props;
+const { posts, relatedTags } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -51,6 +65,7 @@ const { posts } = Astro.props;
           pubDate={post.data.pubDate}
           heroImage={post.data.heroImage}
           slug={post.slug}
+          tags={post.data.tags}
         />
       ))}
 
@@ -58,6 +73,19 @@ const { posts } = Astro.props;
         <p class="empty">No posts found with this tag.</p>
       )}
     </section>
+
+    {relatedTags.length > 0 && (
+      <section class="related-tags">
+        <h2>Related Tags</h2>
+        <div class="related-list">
+          {relatedTags.map((t) => (
+            <a href={`${baseUrl}tags/${encodeURIComponent(t)}`} class="related-tag">
+              {t}
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
   </main>
 </BaseLayout>
 
@@ -120,6 +148,60 @@ const { posts } = Astro.props;
     text-align: center;
     color: #888;
     padding: 3rem 0;
+  }
+
+  /* Related Tags */
+  .related-tags {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  :global(.dark) .related-tags {
+    border-top-color: #3c3c3c;
+  }
+
+  .related-tags h2 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 1rem;
+  }
+
+  :global(.dark) .related-tags h2 {
+    color: #d4d4d4;
+  }
+
+  .related-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .related-tag {
+    padding: 0.3rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #555;
+    background: #f0f0f0;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  :global(.dark) .related-tag {
+    color: #bbb;
+    background: #252525;
+  }
+
+  .related-tag:hover {
+    background: #e0e0e0;
+    color: #000;
+  }
+
+  :global(.dark) .related-tag:hover {
+    background: #333;
+    color: #fff;
   }
 
   @media (max-width: 640px) {

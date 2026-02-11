@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import SEO from '../components/SEO.astro';
 
 export interface Props {
@@ -87,6 +88,8 @@ const {
 
     <title>{title}</title>
 
+    <ClientRouter />
+
     <!-- Prevent dark mode flash -->
     <script is:inline>
       (function() {
@@ -97,6 +100,14 @@ const {
           document.documentElement.classList.add('dark');
           document.documentElement.style.colorScheme = 'dark';
         }
+
+        // Preserve theme across View Transitions page swaps
+        document.addEventListener('astro:before-swap', (e) => {
+          const t = localStorage.getItem('theme');
+          const dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          e.newDocument.documentElement.classList.toggle('dark', dark);
+          e.newDocument.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        });
 
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
           if (!localStorage.getItem('theme')) {

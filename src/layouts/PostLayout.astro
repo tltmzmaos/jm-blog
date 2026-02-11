@@ -388,6 +388,12 @@ const formatDate = (date: Date) => {
     color: #d4d4d4;
   }
 
+  .article-content :global(h2),
+  .article-content :global(h3),
+  .article-content :global(h4) {
+    position: relative;
+  }
+
   .article-content :global(h2) {
     font-size: 1.5rem;
     font-weight: 600;
@@ -411,6 +417,41 @@ const formatDate = (date: Date) => {
 
   :global(.dark) .article-content :global(h3) {
     color: #d4d4d4;
+  }
+
+  .article-content :global(.heading-anchor) {
+    margin-left: 0.375rem;
+    font-size: 0.85em;
+    font-weight: 400;
+    color: #ccc;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .article-content :global(h2:hover .heading-anchor),
+  .article-content :global(h3:hover .heading-anchor),
+  .article-content :global(h4:hover .heading-anchor),
+  .article-content :global(.heading-anchor:focus) {
+    opacity: 1;
+  }
+
+  .article-content :global(.heading-anchor:hover) {
+    color: #0066ff;
+  }
+
+  :global(.dark) .article-content :global(.heading-anchor) {
+    color: #555;
+  }
+
+  :global(.dark) .article-content :global(.heading-anchor:hover) {
+    color: #58a6ff;
+  }
+
+  @media (hover: none) {
+    .article-content :global(.heading-anchor) {
+      opacity: 1;
+    }
   }
 
   .article-content :global(p) {
@@ -992,7 +1033,13 @@ const formatDate = (date: Date) => {
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('astro:page-load', () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    // Clean up scroll listeners on page swap
+    document.addEventListener('astro:before-swap', () => controller.abort(), { once: true });
+
     // Reading progress bar
     const progressBar = document.querySelector('.reading-progress') as HTMLElement;
     const article = document.querySelector('.article-content');
@@ -1012,12 +1059,24 @@ const formatDate = (date: Date) => {
         progressBar.style.width = `${progress}%`;
       };
 
-      window.addEventListener('scroll', updateProgress, { passive: true });
+      window.addEventListener('scroll', updateProgress, { passive: true, signal });
       updateProgress();
     }
 
+    // Heading anchor links
+    document.querySelectorAll('.article-content h2[id], .article-content h3[id], .article-content h4[id]').forEach(heading => {
+      if (heading.querySelector('.heading-anchor')) return;
+      const anchor = document.createElement('a');
+      anchor.href = `#${heading.id}`;
+      anchor.className = 'heading-anchor';
+      anchor.setAttribute('aria-label', `Link to ${heading.textContent}`);
+      anchor.textContent = '#';
+      heading.appendChild(anchor);
+    });
+
     // Code block: language badge + copy button
     document.querySelectorAll('.article-content pre').forEach((pre) => {
+      if (pre.querySelector('.code-header')) return;
       const code = pre.querySelector('code');
       const lang = pre.getAttribute('data-language') ||
         code?.className.match(/language-(\w+)/)?.[1] || '';
@@ -1062,7 +1121,7 @@ const formatDate = (date: Date) => {
       const toggleBackToTop = () => {
         backToTop.classList.toggle('visible', window.scrollY > 400);
       };
-      window.addEventListener('scroll', toggleBackToTop, { passive: true });
+      window.addEventListener('scroll', toggleBackToTop, { passive: true, signal });
       backToTop.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -1085,7 +1144,6 @@ const formatDate = (date: Date) => {
     const mermaidBlocks = document.querySelectorAll('.article-content pre[data-language="mermaid"]');
     if (mermaidBlocks.length > 0) {
       import('mermaid').then(({ default: mermaid }) => {
-        // Always use default (light) theme for best text visibility
         mermaid.initialize({
           startOnLoad: false,
           theme: 'default',
@@ -1099,7 +1157,6 @@ const formatDate = (date: Date) => {
           const container = document.createElement('div');
           container.className = 'mermaid-container';
 
-          // Get text content and clean it up
           const mermaidCode = code.textContent || '';
           const id = `mermaid-${index}`;
 

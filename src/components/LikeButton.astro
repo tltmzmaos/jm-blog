@@ -290,9 +290,5 @@ const gistId = import.meta.env.PUBLIC_GIST_ID;
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initLikeButtons);
-  } else {
-    initLikeButtons();
-  }
+  document.addEventListener('astro:page-load', initLikeButtons);
 </script>
