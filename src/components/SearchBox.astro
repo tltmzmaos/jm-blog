@@ -31,6 +31,11 @@
       <div class="search-body" id="search-body">
         <div class="search-count" id="search-count"></div>
         <div class="search-results" id="search-results"></div>
+        <div class="search-loading" id="search-loading">
+          <div class="skeleton-item"><div class="skeleton-title"></div><div class="skeleton-desc"></div></div>
+          <div class="skeleton-item"><div class="skeleton-title short"></div><div class="skeleton-desc"></div></div>
+          <div class="skeleton-item"><div class="skeleton-title"></div><div class="skeleton-desc short"></div></div>
+        </div>
         <div class="search-empty" id="search-empty">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="11" cy="11" r="8"/>
@@ -121,14 +126,14 @@
   .search-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(0.9px) saturate(1.05);
-    -webkit-backdrop-filter: blur(0.9px) saturate(1.05);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transition: background 0.2s ease, backdrop-filter 0.2s ease;
   }
 
   :global(.dark) .search-backdrop {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
   }
 
   .search-panel {
@@ -247,6 +252,65 @@
 
   .search-results.has-results {
     display: block;
+  }
+
+  /* Loading Skeleton */
+  .search-loading {
+    display: none;
+    padding: 0.5rem 0;
+  }
+
+  .search-body.loading .search-loading {
+    display: block;
+  }
+
+  .search-body.loading .search-empty {
+    display: none;
+  }
+
+  .skeleton-item {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  :global(.dark) .skeleton-item {
+    border-bottom-color: #3c3c3c;
+  }
+
+  .skeleton-title,
+  .skeleton-desc {
+    height: 14px;
+    border-radius: 4px;
+    background: #e8e8e8;
+    animation: shimmer 1.5s infinite;
+  }
+
+  :global(.dark) .skeleton-title,
+  :global(.dark) .skeleton-desc {
+    background: #333;
+  }
+
+  .skeleton-title {
+    width: 70%;
+    margin-bottom: 0.625rem;
+  }
+
+  .skeleton-title.short {
+    width: 50%;
+  }
+
+  .skeleton-desc {
+    width: 90%;
+    height: 12px;
+  }
+
+  .skeleton-desc.short {
+    width: 60%;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
 
   .search-empty,
@@ -372,6 +436,7 @@
   // Load posts data
   async function loadPosts() {
     if (postsData.length > 0) return;
+    searchBody?.classList.add('loading');
     try {
       const response = await fetch('/api/posts.json');
       if (!response.ok) throw new Error('Failed to fetch posts');
@@ -386,6 +451,8 @@
       });
     } catch (error) {
       console.error('Search: Failed to load posts:', error);
+    } finally {
+      searchBody?.classList.remove('loading');
     }
   }
 

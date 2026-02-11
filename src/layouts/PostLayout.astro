@@ -282,7 +282,7 @@ const formatDate = (date: Date) => {
   .series-nav {
     margin-top: 1.25rem;
     padding: 1rem 1.25rem;
-    background: #f8f9fa;
+    background: #f5f5f5;
     border: 1px solid #e5e5e5;
     border-radius: 8px;
   }
@@ -726,28 +726,25 @@ const formatDate = (date: Date) => {
 
   .related-posts {
     margin-top: 2rem;
-    padding: 1.25rem;
-    background: #fafafa;
-    border: 1px solid #e6e6e6;
-    border-radius: 12px;
+    padding-top: 1.25rem;
+    border-top: 1px dashed #e5e5e5;
   }
 
   :global(.dark) .related-posts {
-    background: #252526;
-    border-color: #3c3c3c;
+    border-top-color: #3c3c3c;
   }
 
   .section-title {
-    font-size: 0.95rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #222;
+    color: #888;
     margin: 0 0 0.75rem;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
   :global(.dark) .section-title {
-    color: #d4d4d4;
+    color: #808080;
   }
 
   .related-posts ul {
@@ -762,32 +759,30 @@ const formatDate = (date: Date) => {
   .related-posts li a {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
-    padding: 0.75rem;
-    background: #ffffff;
-    border: 1px solid #e3e3e3;
-    border-radius: 6px;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    background: #f5f5f5;
+    border-radius: 8px;
     text-decoration: none;
     transition: background 0.15s;
   }
 
   .related-posts li a:hover {
-    background: #f5f5f5;
+    background: #eee;
   }
 
   :global(.dark) .related-posts li a {
-    background: #2a2d2e;
-    border-color: #3c3c3c;
+    background: #252526;
   }
 
   :global(.dark) .related-posts li a:hover {
-    background: #333536;
+    background: #2a2d2e;
   }
 
   .related-title {
     font-size: 0.9375rem;
     font-weight: 500;
-    color: #111;
+    color: #1a1a1a;
   }
 
   :global(.dark) .related-title {
@@ -796,7 +791,8 @@ const formatDate = (date: Date) => {
 
   .related-desc {
     font-size: 0.8125rem;
-    color: #4f4f4f;
+    color: #888;
+    line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
