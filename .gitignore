@@ -43,6 +43,7 @@ GUIDE_*.md
 
 # Claude Code
 CLAUDE.md
+.claude/
 
 # planning / working documents
 llm-project-roadmap.md
