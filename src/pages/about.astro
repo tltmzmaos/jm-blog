@@ -159,9 +159,9 @@ const techStack = [
     <article class="content">
       <section class="intro reveal">
         <p>
-          This is where I organize and share what I'm learning, building,
-          and thinking about. The experiences and opinions are mine —
-          the structure and polish come from working with AI.
+          This is where I organize and share what I'm learning, building, and
+          thinking about. The experiences and opinions are mine — the structure
+          and polish come from working with AI.
         </p>
       </section>
 
@@ -689,8 +689,7 @@ const techStack = [
     // ── Name scramble ──
     function scramble(el: HTMLElement) {
       const original = el.textContent || '';
-      const pool =
-        'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+      const pool = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
       const duration = 700;
       const start = performance.now();
 
@@ -728,9 +727,8 @@ const techStack = [
     }
 
     // ── Particle field ──
-    const canvas = document.querySelector<HTMLCanvasElement>(
-      '.particles-canvas'
-    );
+    const canvas =
+      document.querySelector<HTMLCanvasElement>('.particles-canvas');
     const hero = canvas?.closest<HTMLElement>('.hero');
     let cleanupParticles: (() => void) | null = null;
 
