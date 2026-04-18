@@ -129,28 +129,16 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    color: #666;
+    color: var(--color-text-secondary);
     background: transparent;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    transition:
-      color 0.15s,
-      background 0.15s;
+    transition: color 0.15s ease;
   }
 
   .search-trigger:hover {
-    color: #1a1a1a;
-    background: #f0f0f0;
-  }
-
-  :global(.dark) .search-trigger {
-    color: #808080;
-  }
-
-  :global(.dark) .search-trigger:hover {
-    color: #d4d4d4;
-    background: #2a2d2e;
+    color: var(--color-accent);
   }
 
   /* Modal */
@@ -181,7 +169,7 @@
   .search-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(255, 255, 255, 0.6);
+    background: color-mix(in srgb, var(--color-bg) 60%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     transition:
@@ -189,18 +177,15 @@
       backdrop-filter 0.2s ease;
   }
 
-  :global(.dark) .search-backdrop {
-    background: rgba(0, 0, 0, 0.6);
-  }
-
   .search-panel {
     position: relative;
     width: 100%;
     max-width: 560px;
     max-height: 70vh;
-    background: #fff;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-light);
     border-radius: 16px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -219,7 +204,6 @@
   }
 
   :global(.dark) .search-panel {
-    background: #252526;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   }
 
@@ -229,38 +213,27 @@
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  :global(.dark) .search-header {
-    border-bottom-color: #3c3c3c;
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   .header-icon {
     flex-shrink: 0;
-    color: #0066ff;
-  }
-
-  :global(.dark) .header-icon {
-    color: #569cd6;
+    color: var(--color-accent);
   }
 
   .search-input {
     flex: 1;
     font-size: 1.125rem;
     font-weight: 500;
-    color: #1a1a1a;
+    font-family: inherit;
+    color: var(--color-text);
     background: transparent;
     border: none;
     outline: none;
   }
 
-  :global(.dark) .search-input {
-    color: #d4d4d4;
-  }
-
   .search-input::placeholder {
-    color: #999;
+    color: var(--color-text-muted);
     font-weight: 400;
   }
 
@@ -268,16 +241,11 @@
     flex-shrink: 0;
     padding: 0.25rem 0.5rem;
     font-size: 0.6875rem;
-    font-family: inherit;
-    color: #888;
-    background: #f0f0f0;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
     border: none;
     border-radius: 4px;
-  }
-
-  :global(.dark) .close-hint {
-    background: #2a2d2e;
-    color: #808080;
   }
 
   /* Body */
@@ -290,13 +258,10 @@
   .search-count {
     display: none;
     padding: 0.5rem 1.25rem;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: #888;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  :global(.dark) .search-count {
-    border-bottom-color: #3c3c3c;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   .search-count.visible {
@@ -309,6 +274,51 @@
 
   .search-results.has-results {
     display: block;
+  }
+
+  .search-results :global(.search-result) {
+    display: block;
+    padding: 0.875rem 1.25rem;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border-light);
+    transition: background 0.1s ease;
+  }
+
+  .search-results :global(.search-result:hover),
+  .search-results :global(.search-result.selected) {
+    background: var(--color-bg-secondary);
+  }
+
+  .search-results :global(.sr-title) {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+  }
+
+  .search-results :global(.sr-desc) {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .search-results :global(.sr-tags) {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 0.375rem;
+  }
+
+  .search-results :global(.sr-tag) {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
   }
 
   /* Loading Skeleton */
@@ -327,24 +337,15 @@
 
   .skeleton-item {
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
-  :global(.dark) .skeleton-item {
-    border-bottom-color: #3c3c3c;
+    border-bottom: 1px solid var(--color-border-light);
   }
 
   .skeleton-title,
   .skeleton-desc {
     height: 14px;
     border-radius: 4px;
-    background: #e8e8e8;
+    background: var(--color-bg-secondary);
     animation: shimmer 1.5s infinite;
-  }
-
-  :global(.dark) .skeleton-title,
-  :global(.dark) .skeleton-desc {
-    background: #333;
   }
 
   .skeleton-title {
@@ -383,7 +384,7 @@
     justify-content: center;
     gap: 1rem;
     padding: 3rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .search-empty svg,
@@ -419,35 +420,26 @@
     justify-content: center;
     gap: 1.5rem;
     padding: 0.75rem 1rem;
-    border-top: 1px solid #e5e5e5;
-    background: #fafafa;
-  }
-
-  :global(.dark) .search-footer {
-    border-top-color: #3c3c3c;
-    background: #1e1e1e;
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-bg-secondary);
   }
 
   .footer-hint {
     display: flex;
     align-items: center;
     gap: 0.375rem;
+    font-family: var(--font-mono);
     font-size: 0.75rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .footer-hint kbd {
     padding: 0.125rem 0.375rem;
     font-size: 0.6875rem;
     font-family: inherit;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
-  }
-
-  :global(.dark) .footer-hint kbd {
-    background: #2a2d2e;
-    border-color: #3c3c3c;
   }
 
   /* Mobile */
@@ -476,27 +468,11 @@
     tags: string[];
   }
 
-  // State
+  // Module-level cache (persists across view transitions)
   let postsData: Post[] = [];
   let fuse: Fuse<Post> | null = null;
-  let selectedIndex = -1;
-  let results: Post[] = [];
 
-  // DOM elements
-  const trigger = document.getElementById('search-trigger');
-  const modal = document.getElementById('search-modal');
-  const backdrop = document.getElementById('search-backdrop');
-  const input = document.getElementById('search-input') as HTMLInputElement;
-  const resultsContainer = document.getElementById('search-results');
-  const searchBody = document.getElementById('search-body');
-  const searchCount = document.getElementById('search-count');
-
-  if (modal && modal.parentElement !== document.body) {
-    document.body.appendChild(modal);
-  }
-
-  // Load posts data
-  async function loadPosts() {
+  async function loadPosts(searchBody: HTMLElement | null) {
     if (postsData.length > 0) return;
     searchBody?.classList.add('loading');
     try {
@@ -518,180 +494,186 @@
     }
   }
 
-  // Escape HTML for XSS prevention
   function escapeHtml(text: string): string {
     const div = document.createElement('div');
     div.textContent = text || '';
     return div.innerHTML;
   }
 
-  // Open modal
-  function openModal() {
-    modal?.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    loadPosts();
-    setTimeout(() => input?.focus(), 50);
-  }
+  function initSearch() {
+    const trigger = document.getElementById('search-trigger');
+    const modal = document.getElementById('search-modal');
+    const backdrop = document.getElementById('search-backdrop');
+    const input = document.getElementById('search-input') as HTMLInputElement | null;
+    const resultsContainer = document.getElementById('search-results');
+    const searchBody = document.getElementById('search-body');
+    const searchCount = document.getElementById('search-count');
 
-  // Close modal
-  function closeModal() {
-    modal?.classList.remove('open');
-    document.body.style.overflow = '';
-    if (input) input.value = '';
-    if (resultsContainer) {
-      resultsContainer.innerHTML = '';
-      resultsContainer.classList.remove('has-results');
+    if (!trigger || !modal || !input) return;
+
+    // Keep modal under body so fixed positioning escapes stacking contexts
+    if (modal.parentElement !== document.body) {
+      document.body.appendChild(modal);
     }
-    searchBody?.classList.remove('has-query', 'no-results');
-    if (searchCount) {
-      searchCount.textContent = '';
-      searchCount.classList.remove('visible');
-    }
-    results = [];
-    selectedIndex = -1;
-  }
 
-  // Render results
-  function renderResults(items: Post[]) {
-    results = items;
-    selectedIndex = items.length > 0 ? 0 : -1;
-    if (!resultsContainer) return;
+    let selectedIndex = -1;
+    let results: Post[] = [];
 
-    const isDark = document.documentElement.classList.contains('dark');
-    const borderColor = isDark ? '#3c3c3c' : '#f0f0f0';
-    const titleColor = isDark ? '#d4d4d4' : '#1a1a1a';
-    const descColor = isDark ? '#808080' : '#666';
+    const openModal = () => {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      loadPosts(searchBody);
+      setTimeout(() => input.focus(), 50);
+    };
 
-    resultsContainer.innerHTML = items
-      .map((post, index) => {
-        let tagsHtml = '';
-        if (post.tags && post.tags.length) {
-          tagsHtml =
-            '<div style="display: flex; gap: 0.5rem; margin-top: 0.375rem;">' +
-            post.tags
-              .slice(0, 3)
-              .map(
-                (tag) =>
-                  `<span style="font-size: 0.6875rem; padding: 0.125rem 0.375rem; background: ${isDark ? 'rgba(86, 156, 214, 0.15)' : '#e8f4ff'}; color: ${isDark ? '#569cd6' : '#0066ff'}; border-radius: 4px;">${escapeHtml(tag)}</span>`
-              )
-              .join('') +
-            '</div>';
-        }
-        return `<a href="/posts/${post.slug}" class="search-result${index === 0 ? ' selected' : ''}" data-index="${index}" style="display: block; padding: 1rem 1.25rem; text-decoration: none; border-bottom: 1px solid ${borderColor}; transition: background 0.1s; background: ${index === 0 ? (isDark ? '#2a2d2e' : '#f5f5f5') : 'transparent'};">
-        <div style="font-size: 0.9375rem; font-weight: 600; color: ${titleColor}; margin-bottom: 0.25rem;">${escapeHtml(post.title)}</div>
-        <div style="font-size: 0.8125rem; color: ${descColor}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(post.description)}</div>
-        ${tagsHtml}</a>`;
-      })
-      .join('');
-  }
-
-  // Update selection highlight
-  function updateSelection() {
-    if (!resultsContainer) return;
-    const isDark = document.documentElement.classList.contains('dark');
-    const items = resultsContainer.querySelectorAll('.search-result');
-    items.forEach((el, i) => {
-      const isSelected = i === selectedIndex;
-      (el as HTMLElement).style.background = isSelected
-        ? isDark
-          ? '#2a2d2e'
-          : '#f5f5f5'
-        : 'transparent';
-      if (isSelected) el.scrollIntoView({ block: 'nearest' });
-    });
-  }
-
-  // Handle search
-  function handleSearch(query: string) {
-    if (!fuse || query.length < 2) {
+    const closeModal = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      input.value = '';
+      if (resultsContainer) {
+        resultsContainer.innerHTML = '';
+        resultsContainer.classList.remove('has-results');
+      }
       searchBody?.classList.remove('has-query', 'no-results');
-      resultsContainer?.classList.remove('has-results');
-      if (resultsContainer) resultsContainer.innerHTML = '';
       if (searchCount) {
         searchCount.textContent = '';
         searchCount.classList.remove('visible');
       }
       results = [];
       selectedIndex = -1;
-      return;
-    }
+    };
 
-    searchBody?.classList.add('has-query');
-    const found = fuse
-      .search(query)
-      .slice(0, 8)
-      .map((r) => r.item);
-    const totalFound = fuse.search(query).length;
+    const renderResults = (items: Post[]) => {
+      results = items;
+      selectedIndex = items.length > 0 ? 0 : -1;
+      if (!resultsContainer) return;
 
-    if (found.length > 0) {
-      searchBody?.classList.remove('no-results');
-      resultsContainer?.classList.add('has-results');
-      if (searchCount) {
-        searchCount.textContent =
-          totalFound === 1 ? '1 result' : `${totalFound} results`;
-        searchCount.classList.add('visible');
+      resultsContainer.innerHTML = items
+        .map((post, index) => {
+          const tagsHtml = post.tags?.length
+            ? '<div class="sr-tags">' +
+              post.tags
+                .slice(0, 3)
+                .map((tag) => `<span class="sr-tag">${escapeHtml(tag)}</span>`)
+                .join('') +
+              '</div>'
+            : '';
+          return `<a href="/posts/${post.slug}" class="search-result${
+            index === 0 ? ' selected' : ''
+          }" data-index="${index}">
+            <div class="sr-title">${escapeHtml(post.title)}</div>
+            <div class="sr-desc">${escapeHtml(post.description)}</div>
+            ${tagsHtml}
+          </a>`;
+        })
+        .join('');
+    };
+
+    const updateSelection = () => {
+      if (!resultsContainer) return;
+      const items = resultsContainer.querySelectorAll('.search-result');
+      items.forEach((el, i) => {
+        el.classList.toggle('selected', i === selectedIndex);
+        if (i === selectedIndex) el.scrollIntoView({ block: 'nearest' });
+      });
+    };
+
+    const handleSearch = (query: string) => {
+      if (!fuse || query.length < 2) {
+        searchBody?.classList.remove('has-query', 'no-results');
+        resultsContainer?.classList.remove('has-results');
+        if (resultsContainer) resultsContainer.innerHTML = '';
+        if (searchCount) {
+          searchCount.textContent = '';
+          searchCount.classList.remove('visible');
+        }
+        results = [];
+        selectedIndex = -1;
+        return;
       }
-      renderResults(found);
-    } else {
-      searchBody?.classList.add('no-results');
-      resultsContainer?.classList.remove('has-results');
-      if (resultsContainer) resultsContainer.innerHTML = '';
-      if (searchCount) {
-        searchCount.textContent = '';
-        searchCount.classList.remove('visible');
+
+      searchBody?.classList.add('has-query');
+      const matches = fuse.search(query);
+      const found = matches.slice(0, 8).map((r) => r.item);
+
+      if (found.length > 0) {
+        searchBody?.classList.remove('no-results');
+        resultsContainer?.classList.add('has-results');
+        if (searchCount) {
+          searchCount.textContent =
+            matches.length === 1 ? '1 result' : `${matches.length} results`;
+          searchCount.classList.add('visible');
+        }
+        renderResults(found);
+      } else {
+        searchBody?.classList.add('no-results');
+        resultsContainer?.classList.remove('has-results');
+        if (resultsContainer) resultsContainer.innerHTML = '';
+        if (searchCount) {
+          searchCount.textContent = '';
+          searchCount.classList.remove('visible');
+        }
+        results = [];
       }
-      results = [];
-    }
+    };
+
+    const onTrigger = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openModal();
+    };
+    const onBackdrop = () => closeModal();
+    const onInput = (e: Event) =>
+      handleSearch((e.target as HTMLInputElement).value.trim());
+    const onInputKey = (e: KeyboardEvent) => {
+      if (results.length === 0) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+        updateSelection();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        updateSelection();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const target = results[selectedIndex];
+        if (target) window.location.href = `/posts/${target.slug}`;
+      }
+    };
+    const onGlobalKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeModal();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        modal.classList.contains('open') ? closeModal() : openModal();
+      }
+    };
+    const onResultsClick = () => closeModal();
+
+    trigger.addEventListener('click', onTrigger);
+    backdrop?.addEventListener('click', onBackdrop);
+    input.addEventListener('input', onInput);
+    input.addEventListener('keydown', onInputKey);
+    document.addEventListener('keydown', onGlobalKey);
+    resultsContainer?.addEventListener('click', onResultsClick);
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        trigger.removeEventListener('click', onTrigger);
+        backdrop?.removeEventListener('click', onBackdrop);
+        input.removeEventListener('input', onInput);
+        input.removeEventListener('keydown', onInputKey);
+        document.removeEventListener('keydown', onGlobalKey);
+        resultsContainer?.removeEventListener('click', onResultsClick);
+        // Reset overflow in case we're navigating away while modal is open
+        document.body.style.overflow = '';
+      },
+      { once: true }
+    );
   }
 
-  // Event listeners
-  trigger?.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    openModal();
-  });
-
-  backdrop?.addEventListener('click', closeModal);
-
-  input?.addEventListener('input', (e) => {
-    const query = (e.target as HTMLInputElement).value.trim();
-    handleSearch(query);
-  });
-
-  input?.addEventListener('keydown', (e) => {
-    if (results.length === 0) return;
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
-      updateSelection();
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      selectedIndex = Math.max(selectedIndex - 1, 0);
-      updateSelection();
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (selectedIndex >= 0 && results[selectedIndex]) {
-        window.location.href = `/posts/${results[selectedIndex].slug}`;
-      }
-    }
-  });
-
-  // Global keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal?.classList.contains('open')) {
-      closeModal();
-    }
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault();
-      if (modal?.classList.contains('open')) {
-        closeModal();
-      } else {
-        openModal();
-      }
-    }
-  });
-
-  // Click on result
-  resultsContainer?.addEventListener('click', closeModal);
+  document.addEventListener('astro:page-load', initSearch);
 </script>
