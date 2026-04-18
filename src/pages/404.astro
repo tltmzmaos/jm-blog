@@ -55,22 +55,13 @@ import Header from '../components/Header.astro';
     font-size: 0.875rem;
     font-weight: 500;
     color: #fff;
-    background: #0066ff;
+    background: var(--color-accent);
     border-radius: 8px;
     text-decoration: none;
     transition: background 0.15s;
   }
 
   .back-link:hover {
-    background: #0052cc;
-  }
-
-  :global(.dark) .back-link {
-    background: #58a6ff;
-    color: #1e1e1e;
-  }
-
-  :global(.dark) .back-link:hover {
-    background: #79b8ff;
+    background: var(--color-accent-hover);
   }
 </style>

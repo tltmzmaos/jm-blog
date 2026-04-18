@@ -71,8 +71,8 @@ export const GET: APIRoute = async ({ props }) => {
                             style: {
                               fontSize: '18px',
                               padding: '4px 12px',
-                              backgroundColor: 'rgba(88, 166, 255, 0.15)',
-                              color: '#58a6ff',
+                              backgroundColor: 'rgba(217, 138, 102, 0.18)',
+                              color: '#d98a66',
                               borderRadius: '6px',
                             },
                             children: tag,
