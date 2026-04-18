@@ -52,6 +52,14 @@ const {
     <!-- DNS Prefetch for external resources -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
+    <!-- Serif display font (Fraunces) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&display=swap"
+    />
+
     <!-- SEO -->
     <SEO
       title={title}
@@ -202,14 +210,20 @@ const {
     --color-bg-secondary: #f5f5f5;
     --color-bg-tertiary: #fafafa;
     --color-text: #1a1a1a;
-    --color-text-secondary: #666666;
-    --color-text-muted: #888888;
+    --color-text-secondary: #5c5148;
+    --color-text-muted: #8a8178;
     --color-border: #e5e5e5;
     --color-border-light: #f0f0f0;
-    --color-accent: #0066ff;
-    --color-accent-hover: #0052cc;
+    --color-accent: #a8583a;
+    --color-accent-hover: #8c4a30;
     --color-code-bg: #1e1e1e;
     --color-code-border: #3c3c3c;
+    --font-serif:
+      'Fraunces', 'Iowan Old Style', 'Apple Garamond', 'Baskerville',
+      'Times New Roman', serif;
+    --font-mono:
+      ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas,
+      monospace;
   }
 
   .dark {
@@ -217,12 +231,12 @@ const {
     --color-bg-secondary: #252526;
     --color-bg-tertiary: #2a2d2e;
     --color-text: #d4d4d4;
-    --color-text-secondary: #808080;
-    --color-text-muted: #888888;
+    --color-text-secondary: #9a9389;
+    --color-text-muted: #7a7168;
     --color-border: #3c3c3c;
     --color-border-light: #333333;
-    --color-accent: #58a6ff;
-    --color-accent-hover: #79b8ff;
+    --color-accent: #d98a66;
+    --color-accent-hover: #e5a485;
     --color-code-bg: #1e1e1e;
     --color-code-border: #3c3c3c;
   }
@@ -239,11 +253,14 @@ const {
       'Segoe UI',
       Roboto,
       sans-serif;
+    font-feature-settings:
+      'ss01',
+      'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.6;
+    line-height: 1.65;
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
@@ -279,7 +296,7 @@ const {
   }
 
   .dark ::selection {
-    background: #264f78;
+    background: color-mix(in srgb, var(--color-accent) 45%, #000);
     color: #ffffff;
   }
 
