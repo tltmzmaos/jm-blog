@@ -21,7 +21,6 @@ export async function getStaticPaths() {
       .filter((post) => post.data.tags.includes(tag))
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-    // Find related tags (co-occurring tags, excluding current)
     const relatedTagCounts = filteredPosts.reduce(
       (acc, post) => {
         post.data.tags.forEach((t) => {
@@ -49,24 +48,21 @@ const { posts, relatedTags } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout
-  title={`${tag} - Jongmin's Dev Blog`}
-  description={`Posts tagged with ${tag}`}
->
+<BaseLayout title={`${tag} — Jongmin Lee`} description={`Posts tagged ${tag}.`}>
   <Header />
 
   <main class="main-content" id="main-content">
-    <div class="page-header">
-      <a href="/tags" class="back-link">← All Tags</a>
-      <h1>
-        <span class="tag-badge">{tag}</span>
-        <span class="count"
-          >{posts.length} {posts.length === 1 ? 'post' : 'posts'}</span
-        >
-      </h1>
-    </div>
+    <header class="page-header">
+      <p class="eyebrow">— Tag</p>
+      <h1>{tag}</h1>
+      <p class="count">
+        {posts.length}
+        {posts.length === 1 ? 'post' : 'posts'}
+      </p>
+      <a href={`${baseUrl}tags`} class="back-link">← All tags</a>
+    </header>
 
-    <section class="posts">
+    <section class="posts" aria-label={`Posts tagged ${tag}`}>
       {
         posts.map((post) => (
           <PostListItem
@@ -86,17 +82,20 @@ const baseUrl = import.meta.env.BASE_URL;
     {
       relatedTags.length > 0 && (
         <section class="related-tags">
-          <h2>Related Tags</h2>
-          <div class="related-list">
-            {relatedTags.map((t) => (
-              <a
-                href={`${baseUrl}tags/${encodeURIComponent(t)}`}
-                class="related-tag"
-              >
-                {t}
-              </a>
+          <h2 class="section-label">Related</h2>
+          <p class="related-list">
+            {relatedTags.map((t, i) => (
+              <>
+                {i > 0 && <span class="dot"> · </span>}
+                <a
+                  href={`${baseUrl}tags/${encodeURIComponent(t)}`}
+                  class="related-tag"
+                >
+                  {t}
+                </a>
+              </>
             ))}
-          </div>
+          </p>
         </section>
       )
     }
@@ -107,48 +106,56 @@ const baseUrl = import.meta.env.BASE_URL;
   .main-content {
     max-width: 720px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 3.5rem 1.5rem 4rem;
   }
 
+  /* ═══ Header ═══ */
   .page-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 
-  .back-link {
-    display: inline-block;
-    font-size: 0.875rem;
-    color: var(--color-accent);
-    margin-bottom: 1rem;
-    text-decoration: none;
-  }
-
-  .back-link:hover {
-    text-decoration: underline;
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem;
   }
 
   .page-header h1 {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0;
-  }
-
-  .tag-badge {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #1a1a1a;
-  }
-
-  :global(.dark) .tag-badge {
-    color: #d4d4d4;
+    font-family: var(--font-serif);
+    font-size: clamp(1.875rem, 4.5vw, 2.625rem);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.015em;
+    color: var(--color-text);
+    margin: 0 0 0.5rem;
+    line-height: 1.15;
   }
 
   .count {
-    font-size: 0.875rem;
-    font-weight: 400;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin: 0 0 1.25rem;
   }
 
+  .back-link {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* ═══ Posts ═══ */
   .posts {
     display: flex;
     flex-direction: column;
@@ -156,71 +163,51 @@ const baseUrl = import.meta.env.BASE_URL;
 
   .empty {
     text-align: center;
-    color: #888;
+    color: var(--color-text-muted);
     padding: 3rem 0;
   }
 
-  /* Related Tags */
+  /* ═══ Related ═══ */
   .related-tags {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--color-border-light);
   }
 
-  :global(.dark) .related-tags {
-    border-top-color: #3c3c3c;
-  }
-
-  .related-tags h2 {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #1a1a1a;
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
     margin: 0 0 1rem;
   }
 
-  :global(.dark) .related-tags h2 {
-    color: #d4d4d4;
-  }
-
   .related-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    margin: 0;
+    line-height: 1.8;
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
   }
 
   .related-tag {
-    padding: 0.3rem 0.625rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: #555;
-    background: #f0f0f0;
-    border-radius: 6px;
+    color: var(--color-text);
     text-decoration: none;
-    transition: all 0.15s;
-  }
-
-  :global(.dark) .related-tag {
-    color: #bbb;
-    background: #252525;
+    transition: color 0.15s ease;
   }
 
   .related-tag:hover {
-    background: #e0e0e0;
-    color: #000;
+    color: var(--color-accent);
   }
 
-  :global(.dark) .related-tag:hover {
-    background: #333;
-    color: #fff;
+  .dot {
+    color: var(--color-border);
   }
 
   @media (max-width: 640px) {
     .main-content {
-      padding: 1.5rem 1rem;
-    }
-
-    .tag-badge {
-      font-size: 1.25rem;
+      padding: 2.5rem 1.25rem 3rem;
     }
   }
 </style>

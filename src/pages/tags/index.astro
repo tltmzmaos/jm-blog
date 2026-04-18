@@ -10,32 +10,63 @@ const publishedPosts = allPosts
   .filter((post) => showDrafts || !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-const tagCounts = publishedPosts.reduce(
-  (acc, post) => {
-    post.data.tags.forEach((tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-    });
-    return acc;
-  },
-  {} as Record<string, number>
-);
+// Gather count + latest post date per tag
+const tagMap = new Map<string, { count: number; latest: Date }>();
+for (const post of publishedPosts) {
+  for (const tag of post.data.tags) {
+    const entry = tagMap.get(tag);
+    if (!entry) {
+      tagMap.set(tag, { count: 1, latest: post.data.pubDate });
+    } else {
+      entry.count += 1;
+      if (post.data.pubDate.valueOf() > entry.latest.valueOf()) {
+        entry.latest = post.data.pubDate;
+      }
+    }
+  }
+}
 
-// Alphabetical order, but weight still based on popularity
-const sortedTags = Object.entries(tagCounts)
+const sortedTags = [...tagMap.entries()]
   .sort(([a], [b]) => a.localeCompare(b))
-  .map(([tag, count]) => ({ tag, count }));
+  .map(([tag, { count, latest }]) => ({ tag, count, latest }));
 
-const maxCount = Math.max(...sortedTags.map((t) => t.count), 1);
+const topTags = [...sortedTags].sort((a, b) => b.count - a.count).slice(0, 3);
+
+const formatShort = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(
+    d
+  );
+
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title="Tags - Jongmin's Dev Blog" description="Browse all tags">
+<BaseLayout title="Tags — Jongmin Lee" description="Browse all tags.">
   <Header />
 
   <main class="main-content" id="main-content">
-    <div class="page-header">
+    <header class="page-header">
+      <p class="eyebrow">— Index</p>
       <h1>Tags</h1>
-    </div>
+      {
+        topTags.length > 0 && (
+          <p class="top-tags">
+            Most written about ·{' '}
+            {topTags.map((t, i) => (
+              <>
+                {i > 0 && <span class="dot">, </span>}
+                <a
+                  href={`${baseUrl}tags/${encodeURIComponent(t.tag)}`}
+                  class="top-tag"
+                >
+                  {t.tag}
+                </a>
+              </>
+            ))}
+            .
+          </p>
+        )
+      }
+    </header>
 
     <div class="search-box">
       <svg
@@ -59,65 +90,139 @@ const baseUrl = import.meta.env.BASE_URL;
       <kbd class="shortcut">/</kbd>
     </div>
 
-    <div class="tag-cloud" id="tag-cloud">
+    <ul class="tag-list" id="tag-list">
       {
-        sortedTags.map(({ tag, count }, i) => {
-          const w = count / maxCount;
+        sortedTags.map(({ tag, count, latest }) => {
+          const dateText = `latest · ${formatShort(latest)}`;
           return (
-            <a
-              href={`${baseUrl}tags/${encodeURIComponent(tag)}`}
-              class="tag"
-              data-tag={tag.toLowerCase()}
-              style={`--w: ${w}; --d: ${i * 20}ms`}
-            >
-              {tag}
-              <span class="count">{count}</span>
-            </a>
+            <li class="tag-item" data-tag={tag.toLowerCase()}>
+              <a href={`${baseUrl}tags/${encodeURIComponent(tag)}`} class="tag">
+                <span class="tag-name">{tag}</span>
+                <span class="tag-count" data-count={count}>
+                  {count}
+                </span>
+                <span class="tag-latest" data-final={dateText}>
+                  {dateText}
+                </span>
+              </a>
+            </li>
           );
         })
       }
-    </div>
+    </ul>
   </main>
 </BaseLayout>
 
 <script>
   document.addEventListener('astro:page-load', () => {
-    const cloud = document.getElementById('tag-cloud');
+    const list = document.getElementById('tag-list');
     const searchInput = document.getElementById(
       'tag-search'
     ) as HTMLInputElement | null;
-    const tags = cloud?.querySelectorAll<HTMLElement>('.tag');
-    if (!cloud || !tags?.length) return;
+    const items = list?.querySelectorAll<HTMLElement>('.tag-item');
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
 
-    // Hover dim: when any tag is hovered, dim the rest
-    cloud.addEventListener('mouseover', (e) => {
-      const target = (e.target as HTMLElement).closest('.tag');
-      if (target) cloud.classList.add('has-hover');
-    });
-    cloud.addEventListener('mouseout', (e) => {
-      const target = (e.target as HTMLElement).closest('.tag');
-      if (target) cloud.classList.remove('has-hover');
+    const DIGIT_POOL = '0123456789';
+    const ALPHA_POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+
+    function scramble(
+      el: HTMLElement,
+      finalText: string,
+      opts: { duration?: number; digitsOnly?: boolean } = {}
+    ) {
+      const duration = opts.duration ?? 600;
+      const chars = finalText.split('');
+      const start = performance.now();
+
+      // Cancel any in-flight scramble
+      const anyEl = el as HTMLElement & { _scrambleRaf?: number };
+      if (anyEl._scrambleRaf) cancelAnimationFrame(anyEl._scrambleRaf);
+
+      const step = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        let out = '';
+        for (let i = 0; i < chars.length; i++) {
+          const ch = chars[i];
+          if (ch === ' ' || ch === '·' || ch === '.') {
+            out += ch;
+            continue;
+          }
+          const threshold = (i / Math.max(chars.length - 1, 1)) * 0.6 + 0.18;
+          if (t > threshold) {
+            out += ch;
+          } else {
+            const pool = opts.digitsOnly
+              ? DIGIT_POOL
+              : /\d/.test(ch)
+                ? DIGIT_POOL
+                : ALPHA_POOL;
+            out += pool[Math.floor(Math.random() * pool.length)];
+          }
+        }
+        el.textContent = out;
+        if (t < 1) {
+          anyEl._scrambleRaf = requestAnimationFrame(step);
+        } else {
+          el.textContent = finalText;
+          anyEl._scrambleRaf = undefined;
+        }
+      };
+      anyEl._scrambleRaf = requestAnimationFrame(step);
+    }
+
+    // Count scramble on load
+    const counts = list?.querySelectorAll<HTMLElement>('.tag-count');
+    if (counts?.length && !reducedMotion) {
+      counts.forEach((el, idx) => {
+        const target = el.dataset.count || '0';
+        const delay = Math.min(idx * 18, 220);
+        el.textContent = '';
+        setTimeout(
+          () =>
+            scramble(el, target, {
+              duration: 420 + target.length * 80,
+              digitsOnly: true,
+            }),
+          delay
+        );
+      });
+    }
+
+    // Hover scramble on latest date
+    const tags = list?.querySelectorAll<HTMLElement>('.tag');
+    tags?.forEach((tagEl) => {
+      const latestEl = tagEl.querySelector<HTMLElement>('.tag-latest');
+      if (!latestEl) return;
+      const finalText = latestEl.dataset.final || latestEl.textContent || '';
+      tagEl.addEventListener('mouseenter', () => {
+        if (reducedMotion) {
+          latestEl.textContent = finalText;
+          return;
+        }
+        scramble(latestEl, finalText, { duration: 560 });
+      });
     });
 
-    // Search
-    function filterTags(q: string) {
+    if (!list || !items?.length) return;
+
+    const filterTags = (q: string) => {
       const query = q.toLowerCase().trim();
-      for (const el of tags!) {
+      for (const el of items) {
         const tag = el.dataset.tag || '';
         el.classList.toggle(
           'filtered',
           query.length > 0 && !tag.includes(query)
         );
       }
-    }
+    };
 
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        filterTags(searchInput.value);
-      });
-    }
+    searchInput?.addEventListener('input', () => {
+      filterTags(searchInput.value);
+    });
 
-    document.addEventListener('keydown', (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === '/' && document.activeElement !== searchInput) {
         e.preventDefault();
         searchInput?.focus();
@@ -127,7 +232,14 @@ const baseUrl = import.meta.env.BASE_URL;
         searchInput.blur();
         filterTags('');
       }
-    });
+    };
+    document.addEventListener('keydown', onKey);
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => document.removeEventListener('keydown', onKey),
+      { once: true }
+    );
   });
 </script>
 
@@ -135,19 +247,59 @@ const baseUrl = import.meta.env.BASE_URL;
   .main-content {
     max-width: 720px;
     margin: 0 auto;
-    padding: 3rem 1.5rem 4rem;
+    padding: 3.5rem 1.5rem 4rem;
   }
 
+  /* ═══ Header ═══ */
   .page-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem;
   }
 
   .page-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4.5vw, 2.625rem);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.015em;
     color: var(--color-text);
+    margin: 0 0 1.25rem;
+    line-height: 1.15;
+  }
+
+  .top-tags {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
     margin: 0;
-    letter-spacing: -0.03em;
+    max-width: 54ch;
+  }
+
+  .top-tag {
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1px;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .top-tag:hover {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+  }
+
+  .dot {
+    color: var(--color-text-secondary);
   }
 
   /* ═══ Search ═══ */
@@ -163,7 +315,7 @@ const baseUrl = import.meta.env.BASE_URL;
     transform: translateY(-50%);
     color: var(--color-text-muted);
     pointer-events: none;
-    transition: color 0.15s;
+    transition: color 0.15s ease;
   }
 
   .search-box:has(#tag-search:focus) .search-icon {
@@ -181,7 +333,7 @@ const baseUrl = import.meta.env.BASE_URL;
     border-bottom: 1px solid var(--color-border-light);
     border-radius: 0;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s ease;
   }
 
   #tag-search::placeholder {
@@ -199,9 +351,9 @@ const baseUrl = import.meta.env.BASE_URL;
     transform: translateY(-50%);
     padding: 0.125rem 0.375rem;
     font-size: 0.6875rem;
-    font-family: inherit;
+    font-family: var(--font-mono);
     color: var(--color-text-muted);
-    background: var(--color-border-light);
+    background: var(--color-bg-secondary);
     border-radius: 4px;
     pointer-events: none;
     transition: opacity 0.15s;
@@ -211,118 +363,99 @@ const baseUrl = import.meta.env.BASE_URL;
     opacity: 0;
   }
 
-  /* ═══ Tag Cloud ═══ */
-  .tag-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.25rem 0.625rem;
-    line-height: 1.6;
+  /* ═══ Tag list ═══ */
+  .tag-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0 2rem;
+  }
+
+  .tag-item {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .tag-item.filtered {
+    display: none;
   }
 
   .tag {
-    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    column-gap: 1rem;
+    padding: 0.75rem 0;
     text-decoration: none;
     color: var(--color-text);
-    white-space: nowrap;
-
-    /* Size & weight driven by --w (0..1) */
-    font-size: calc(0.875rem + 1rem * var(--w));
-    font-weight: calc(400 + 300 * var(--w));
-    letter-spacing: calc(-0.005em - 0.02em * var(--w));
-
-    /* Entry */
-    opacity: 0;
-    animation: fade-in 0.3s ease-out forwards;
-    animation-delay: var(--d);
-
-    /* Hover */
-    transition:
-      color 0.3s,
-      opacity 0.3s,
-      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  /* Underline that grows on hover */
-  .tag::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -3px;
-    width: 0;
-    height: 1.5px;
-    background: var(--color-accent);
-    transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: color 0.15s ease;
   }
 
   .tag:hover {
     color: var(--color-accent);
-    transform: translateX(3px);
   }
 
-  .tag:hover::after {
-    width: 100%;
+  .tag-name {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    grid-column: 1;
+    grid-row: 1;
   }
 
-  /* Dim siblings on hover */
-  .tag-cloud.has-hover .tag {
-    opacity: 0.35;
-  }
-
-  .tag-cloud.has-hover .tag:hover {
-    opacity: 1;
-  }
-
-  .tag.filtered {
-    opacity: 0.04 !important;
-    pointer-events: none;
-  }
-
-  /* Count — appears on hover */
-  .count {
-    display: inline-block;
-    font-size: 0.6875rem;
-    font-weight: 400;
+  .tag-count {
+    grid-column: 2;
+    grid-row: 1;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
     color: var(--color-text-muted);
-    vertical-align: super;
-    margin-left: 0.1875rem;
+    letter-spacing: 0.04em;
+    min-width: 1.5ch;
+    text-align: right;
+  }
+
+  .tag-latest {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
     opacity: 0;
-    transform: translateY(4px) scale(0.9);
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-3px);
     transition:
-      opacity 0.2s 0.05s,
-      transform 0.25s 0.05s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity 0.2s ease,
+      max-height 0.25s ease,
+      transform 0.25s ease;
   }
 
-  .tag:hover .count {
+  .tag:hover .tag-latest {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    max-height: 1.6em;
+    transform: translateY(0);
+    margin-top: 0.25rem;
   }
 
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* ═══ Responsive ═══ */
   @media (max-width: 640px) {
     .main-content {
-      padding: 2rem 1rem 3rem;
+      padding: 2.5rem 1.25rem 3rem;
     }
 
-    .page-header h1 {
-      font-size: 1.75rem;
+    .tag-list {
+      grid-template-columns: 1fr;
+      gap: 0;
     }
+  }
 
-    .tag {
-      font-size: calc(0.8125rem + 0.75rem * var(--w));
-    }
-
-    .tag-cloud {
-      gap: 0.1875rem 0.5rem;
+  @media (prefers-reduced-motion: reduce) {
+    .tag-latest {
+      transition: none;
     }
   }
 </style>
