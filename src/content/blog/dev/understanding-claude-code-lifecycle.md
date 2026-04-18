@@ -3,7 +3,7 @@ title: "Understanding How Claude Code Works Under the Hood"
 description: "A walkthrough of Claude Code's execution lifecycle — from the moment you type a prompt to the final response"
 pubDate: 2026-02-14
 author: "Jongmin Lee"
-tags: ["Software Engineering", "AI"]
+tags: ["Software Engineering", "AI", "Claude Code"]
 draft: false
 ---
 
