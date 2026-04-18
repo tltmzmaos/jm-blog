@@ -14,7 +14,7 @@ export interface Props {
 
 const {
   title,
-  description = "Jongmin's development blog - Sharing insights about web development, machine learning, and programming.",
+  description = "Notes on software engineering, lab automation, and applying AI in offline environments.",
   image = '/og-image.jpg',
   type = 'website',
   publishedTime,
@@ -149,8 +149,6 @@ if (type === 'website') {
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl.toString()} />
-<meta name="twitter:creator" content="@jongmin" />
-<meta name="twitter:site" content="@jongmin" />
 
 <!-- Additional meta tags -->
 <meta name="theme-color" content="#3b82f6" />
@@ -190,7 +188,7 @@ if (type === 'website') {
         logo: new URL('/logo.svg', siteUrl).toString(),
         sameAs: [
           'https://github.com/tltmzmaos',
-          'https://linkedin.com/in/jongmin',
+          'https://linkedin.com/in/jml1228',
         ],
       })}
     />
