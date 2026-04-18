@@ -4,7 +4,7 @@ description: 'A few months into team-wide AI use, here are the patterns I''m see
 pubDate: 2026-04-18
 author: 'Jongmin Lee'
 tags: ['AI', 'Claude Code', 'Software Engineering']
-draft: true
+draft: false
 ---
 
 ## The Question That Keeps Coming Back
