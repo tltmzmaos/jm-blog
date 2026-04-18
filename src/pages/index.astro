@@ -4,12 +4,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import PostListItem from '../components/PostListItem.astro';
 import { shouldShowDrafts } from '../utils/env';
+import { calculateReadingTime } from '../utils/readingTime.js';
 
 const showDrafts = shouldShowDrafts();
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts
   .filter((post) => showDrafts || !post.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((post) => ({
+    ...post,
+    readingTime: calculateReadingTime(post.body || '').text,
+  }));
 
 const INITIAL_COUNT = 10;
 ---
@@ -33,6 +38,7 @@ const INITIAL_COUNT = 10;
                 heroImage={post.data.heroImage}
                 slug={post.slug}
                 tags={post.data.tags}
+                readingTime={post.readingTime}
               />
             </div>
           ))
@@ -126,6 +132,80 @@ const INITIAL_COUNT = 10;
 
 <script>
   document.addEventListener('astro:page-load', () => {
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    const DIGIT_POOL = '0123456789';
+    const ALPHA_POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+
+    function scramble(
+      el: HTMLElement,
+      finalText: string,
+      opts: { duration?: number } = {}
+    ) {
+      const duration = opts.duration ?? 520;
+      const chars = finalText.split('');
+      const start = performance.now();
+
+      const anyEl = el as HTMLElement & { _scrambleRaf?: number };
+      if (anyEl._scrambleRaf) cancelAnimationFrame(anyEl._scrambleRaf);
+
+      const step = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        let out = '';
+        for (let i = 0; i < chars.length; i++) {
+          const ch = chars[i];
+          if (ch === ' ' || ch === '·' || ch === ',' || ch === '.') {
+            out += ch;
+            continue;
+          }
+          const threshold = (i / Math.max(chars.length - 1, 1)) * 0.6 + 0.18;
+          if (t > threshold) {
+            out += ch;
+          } else {
+            const pool = /\d/.test(ch) ? DIGIT_POOL : ALPHA_POOL;
+            out += pool[Math.floor(Math.random() * pool.length)];
+          }
+        }
+        el.textContent = out;
+        if (t < 1) {
+          anyEl._scrambleRaf = requestAnimationFrame(step);
+        } else {
+          el.textContent = finalText;
+          anyEl._scrambleRaf = undefined;
+        }
+      };
+      anyEl._scrambleRaf = requestAnimationFrame(step);
+    }
+
+    // Scramble visible post dates on load
+    if (!reducedMotion) {
+      const visibleDates = document.querySelectorAll<HTMLElement>(
+        '.post-wrapper:not(.hidden) .date'
+      );
+      visibleDates.forEach((el, idx) => {
+        const target = el.dataset.final || el.textContent || '';
+        setTimeout(() => scramble(el, target), Math.min(idx * 55, 440));
+      });
+    }
+
+    // Hover scramble on read-time
+    const postLinks = document.querySelectorAll<HTMLElement>('.post-link');
+    postLinks.forEach((link) => {
+      const rt = link.querySelector<HTMLElement>('.read-time');
+      if (!rt) return;
+      const finalText = rt.dataset.final || '';
+      link.addEventListener('mouseenter', () => {
+        if (reducedMotion) {
+          rt.textContent = finalText;
+          return;
+        }
+        scramble(rt, finalText, { duration: 480 });
+      });
+    });
+
+    // Lazy load-more
     const sentinel = document.getElementById('load-sentinel');
     if (!sentinel) return;
 
@@ -147,12 +227,24 @@ const INITIAL_COUNT = 10;
         if (!entries[0].isIntersecting) return;
 
         let revealed = 0;
+        const newlyRevealed: HTMLElement[] = [];
         for (let i = shown; i < posts.length && revealed < BATCH; i++) {
           posts[i].classList.remove('hidden');
           posts[i].classList.add('reveal');
+          newlyRevealed.push(posts[i]);
           revealed++;
         }
         shown += revealed;
+
+        // Scramble dates for newly revealed items
+        if (!reducedMotion) {
+          newlyRevealed.forEach((p, idx) => {
+            const dateEl = p.querySelector<HTMLElement>('.date');
+            if (!dateEl) return;
+            const target = dateEl.dataset.final || dateEl.textContent || '';
+            setTimeout(() => scramble(dateEl, target), idx * 45);
+          });
+        }
 
         if (shown >= posts.length) {
           sentinel.classList.add('done');
