@@ -8,9 +8,9 @@ heroImage: "/1-Neural-Networks/Screenshot_2024-03-26_at_7.54.28_PM.png"
 draft: false
 ---
 
-# 1. Neural Networks
+## 1. Neural Networks
 
-# Neurons and the brain
+## Neurons and the brain
 
 ## Neural networks
 
@@ -22,7 +22,7 @@ Resurgence from around 2005
 
 speech → images → text (NLP) → …
 
-# Demand Prediction
+## Demand Prediction
 
 - example
     - one sigmoid function is an activation → a neuron
@@ -35,7 +35,7 @@ Each neuron is an activation
 
 ![Screenshot 2024-03-26 at 8.03.32 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_8.03.32_PM.png)
 
-# Neural network model
+## Neural network model
 
 - Layer 1
 
@@ -49,7 +49,7 @@ Each neuron is an activation
 
 ![Screenshot 2024-03-26 at 8.25.17 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_8.25.17_PM.png)
 
-# More complex neural network
+## More complex neural network
 
 - Layer 3
 
@@ -64,7 +64,7 @@ $a_j^{[l]}=g(\overrightarrow{w}_j^{[l]}\cdot\overrightarrow{a}^{[l-1]}+b_j^{[l]}
 - $\overrightarrow{a}^{[l-1]}$: output of layer $l-1$ (previous layer)
 - $\overrightarrow{w}_j^{[l]},b_j^{[l]}$: parameters w & b of layer $l$, unit $j$
 
-# Forward propagation
+## Forward propagation
 
 ![Screenshot 2024-03-26 at 8.41.24 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_8.41.24_PM.png)
 
@@ -72,7 +72,7 @@ $a_j^{[l]}=g(\overrightarrow{w}_j^{[l]}\cdot\overrightarrow{a}^{[l-1]}+b_j^{[l]}
 
 ![Screenshot 2024-03-26 at 8.43.41 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_8.43.41_PM.png)
 
-# TensorFlow
+## TensorFlow
 
 ![Screenshot 2024-03-26 at 8.52.10 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_8.52.10_PM.png)
 
@@ -104,30 +104,30 @@ $a_j^{[l]}=g(\overrightarrow{w}_j^{[l]}\cdot\overrightarrow{a}^{[l-1]}+b_j^{[l]}
 
 ![Screenshot 2024-03-26 at 9.07.04 PM.png](/1-Neural-Networks/Screenshot_2024-03-26_at_9.07.04_PM.png)
 
-# Neural network implementation in Python
+## Neural network implementation in Python
 
 ![Screenshot 2024-03-27 at 6.04.29 PM.png](/1-Neural-Networks/Screenshot_2024-03-27_at_6.04.29_PM.png)
 
 ![Screenshot 2024-03-27 at 6.05.04 PM.png](/1-Neural-Networks/Screenshot_2024-03-27_at_6.05.04_PM.png)
 
-# General implementation of forward propagation
+## General implementation of forward propagation
 
 ![Screenshot 2024-03-27 at 6.13.27 PM.png](/1-Neural-Networks/Screenshot_2024-03-27_at_6.13.27_PM.png)
 
 ![Screenshot 2024-03-27 at 6.14.10 PM.png](/1-Neural-Networks/Screenshot_2024-03-27_at_6.14.10_PM.png)
 
-# Is there a path to AGI?
+## Is there a path to AGI?
 
 - ANI - artificial narrow intelligence
     - smart speaker, self-driving car, web search…
 - AGI - artificial general intelligence
     - do anything a human can do
 
-# How neural networks are implemented efficiently
+## How neural networks are implemented efficiently
 
 ![Screenshot 2024-03-27 at 8.21.06 PM.png](/1-Neural-Networks/Screenshot_2024-03-27_at_8.21.06_PM.png)
 
-# Matrix multiplication
+## Matrix multiplication
 
 ## Dot products
 

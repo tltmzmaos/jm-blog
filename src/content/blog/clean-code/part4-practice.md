@@ -7,8 +7,6 @@ tags: ["Clean Code", "Software Engineering", "Best Practices", "Robert C. Martin
 draft: false
 ---
 
-# Clean Code Part 4: Concurrency and Refactoring
-
 This final part tackles the hardest topics: concurrent programming, real-world refactoring case studies, and a comprehensive reference of code smells and heuristics. These chapters separate competent programmers from expert ones.
 
 ---

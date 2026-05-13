@@ -8,8 +8,6 @@ heroImage: "/AI4R/ai4r-hero.png"
 draft: false
 ---
 
-# AI4R: Artificial Intelligence for Robotics
-
 Georgia Tech OMSCS **AI4R (CS 7638)** is a full-stack introduction to robotics intelligence: how robots localize, plan, perceive, and control in uncertain environments. This post captures the major ideas I studied in Spring 2025 and how they connect in real systems.
 
 ## Course Focus

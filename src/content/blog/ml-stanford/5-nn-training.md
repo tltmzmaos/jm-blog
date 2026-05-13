@@ -8,9 +8,9 @@ heroImage: "/2-Neural-network-training/Screenshot_2024-03-28_at_8.20.09_PM.png"
 draft: false
 ---
 
-# 2.Neural network training
+## 2.Neural network training
 
-# TensorFlow Implementation
+## TensorFlow Implementation
 
 ## Train a Neural Network in TensorFlow
 
@@ -34,13 +34,13 @@ draft: false
 
 ![Screenshot 2024-03-28 at 8.33.49 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.33.49_PM.png)
 
-# Alternatives to the sigmoid activation
+## Alternatives to the sigmoid activation
 
 ReLU (Rectified Linear Unit)
 
 ![Screenshot 2024-03-28 at 8.43.38 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.43.38_PM.png)
 
-# Choosing activation functions
+## Choosing activation functions
 
 ![Screenshot 2024-03-28 at 8.46.43 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.46.43_PM.png)
 
@@ -50,7 +50,7 @@ ReLU (Rectified Linear Unit)
 
 ![Screenshot 2024-03-28 at 8.48.38 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.48.38_PM.png)
 
-# Why do we need activation functions?
+## Why do we need activation functions?
 
 ![Screenshot 2024-03-28 at 8.52.12 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.52.12_PM.png)
 
@@ -58,7 +58,7 @@ ReLU (Rectified Linear Unit)
 
 ![Screenshot 2024-03-28 at 8.53.46 PM.png](/2-Neural-network-training/Screenshot_2024-03-28_at_8.53.46_PM.png)
 
-# Multiclass
+## Multiclass
 
 target y can take on more than two possible values
 
@@ -66,7 +66,7 @@ target y can take on more than two possible values
 
 ![Screenshot 2024-03-30 at 8.33.18 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_8.33.18_PM.png)
 
-# Softmax
+## Softmax
 
 ![Screenshot 2024-03-30 at 8.36.45 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_8.36.45_PM.png)
 
@@ -90,13 +90,13 @@ target y can take on more than two possible values
 
 ![Screenshot 2024-03-30 at 8.51.26 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_8.51.26_PM.png)
 
-# Classification with multiple outputs
+## Classification with multiple outputs
 
 ![Screenshot 2024-03-30 at 8.53.01 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_8.53.01_PM.png)
 
 ![Screenshot 2024-03-30 at 8.53.15 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_8.53.15_PM.png)
 
-# Advanced Optimization
+## Advanced Optimization
 
 ## Gradient Descent
 
@@ -108,7 +108,7 @@ target y can take on more than two possible values
 
 ![Screenshot 2024-03-30 at 9.28.37 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_9.28.37_PM.png)
 
-# Additional Layer Types
+## Additional Layer Types
 
 ![Screenshot 2024-03-30 at 9.31.33 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_9.31.33_PM.png)
 
@@ -116,7 +116,7 @@ target y can take on more than two possible values
 
 ![Screenshot 2024-03-30 at 9.33.22 PM.png](/2-Neural-network-training/Screenshot_2024-03-30_at_9.33.22_PM.png)
 
-# Back propagation
+## Back propagation
 
 ## What is a derivative?
 

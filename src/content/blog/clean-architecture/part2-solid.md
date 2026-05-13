@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 2: SOLID Principles
-
 SOLID is an acronym for five design principles that make software designs more understandable, flexible, and maintainable. These principles are the mid-level building blocks of clean architecture—they guide how we organize code into classes and how those classes interconnect.
 
 ---

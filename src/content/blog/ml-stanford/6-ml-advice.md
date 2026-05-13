@@ -8,9 +8,9 @@ heroImage: "/3-Advice-for-applying-machine-learning/Screenshot_2024-04-01_at_6.0
 draft: false
 ---
 
-# 3.Advice for applying machine learning
+## 3.Advice for applying machine learning
 
-# Advice for applying machine learning
+## Advice for applying machine learning
 
 ## Deciding what to try next
 
@@ -44,7 +44,7 @@ draft: false
 
 ![Screenshot 2024-04-01 at 6.22.23 PM.png](/3-Advice-for-applying-machine-learning/Screenshot_2024-04-01_at_6.22.23_PM.png)
 
-# Bias and variance
+## Bias and variance
 
 ## Bias/variance
 
@@ -92,7 +92,7 @@ draft: false
 
 ![Screenshot 2024-04-01 at 9.18.02 PM.png](/3-Advice-for-applying-machine-learning/Screenshot_2024-04-01_at_9.18.02_PM.png)
 
-# Machine learning development process
+## Machine learning development process
 
 ## Iterative loop of ML development
 

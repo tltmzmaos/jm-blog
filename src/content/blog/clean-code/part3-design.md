@@ -7,8 +7,6 @@ tags: ["Clean Code", "Software Engineering", "Best Practices", "Robert C. Martin
 draft: false
 ---
 
-# Clean Code Part 3: Testing and Class Design
-
 This part covers how to handle boundaries with external code, write effective unit tests, design clean classes, and think about systems at scale. These chapters bridge the gap between writing clean functions and building clean systems.
 
 ---

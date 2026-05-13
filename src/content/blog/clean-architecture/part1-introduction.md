@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 1: Design and Programming Paradigms
-
 Robert C. Martin's *Clean Architecture* builds on the foundations laid in Clean Code, zooming out from functions and classes to the architecture of entire systems. This first part establishes why architecture matters and explores the three programming paradigms that shape how we design software.
 
 ---

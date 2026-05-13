@@ -7,8 +7,6 @@ tags: ["Knowledge-Based AI", "OMSCS", "AI", "CS7637", "ARC-AGI"]
 draft: false
 ---
 
-# KBAI: Knowledge-Based AI
-
 Georgia Tech OMSCS **KBAI (CS 7637)** is a course about building agents that reason, learn, and remember through structured knowledge rather than statistical pattern matching. This post captures what I learned in Spring 2026 about cognitive architectures, knowledge representations, and the ARC-AGI project that runs through the semester.
 
 ## Course Focus

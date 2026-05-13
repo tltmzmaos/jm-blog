@@ -8,9 +8,9 @@ heroImage: "/1-Unsupervised-learning/Screenshot_2024-04-09_at_5.51.38_PM.png"
 draft: false
 ---
 
-# 1. Unsupervised learning
+## 1. Unsupervised learning
 
-# Clustering
+## Clustering
 
 ## What is clustering?
 
@@ -70,7 +70,7 @@ draft: false
 
 ![Screenshot 2024-04-09 at 6.21.15 PM.png](/1-Unsupervised-learning/Screenshot_2024-04-09_at_6.21.15_PM.png)
 
-# Anomaly detection
+## Anomaly detection
 
 ## Finding unusual events
 

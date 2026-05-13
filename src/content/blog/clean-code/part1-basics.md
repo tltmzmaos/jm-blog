@@ -7,8 +7,6 @@ tags: ["Clean Code", "Software Engineering", "Best Practices", "Robert C. Martin
 draft: false
 ---
 
-# Clean Code Part 1: The Fundamentals
-
 Robert C. Martin's *Clean Code* is essential reading for any serious developer. This first part covers the foundation: what clean code actually means, how to name things properly, how to write functions that do one thing well, and when comments help versus hurt.
 
 ---

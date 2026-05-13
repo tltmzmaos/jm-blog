@@ -9,9 +9,9 @@ author: "Jongmin Lee"
 draft: false
 ---
 
-# 1. Introduction to machine learning
+## 1. Introduction to machine learning
 
-# Supervised learning
+## Supervised learning
 
 > input x → output y (learns from being right answers)
 > 
@@ -39,7 +39,7 @@ Classification predicts categories, small number of possible outputs
 
 ![Screenshot 2024-03-20 at 6.30.48 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.30.48_PM.png)
 
-# Unsupervised Learning
+## Unsupervised Learning
 
 Find something interesting in unlabeled data
 
@@ -63,7 +63,7 @@ Find something interesting in unlabeled data
 - Anomaly detection - find unusual data points
 - Dimensionality reduction - compress data using fewer numbers
 
-# Linear Regression Model
+## Linear Regression Model
 
 ![Screenshot 2024-03-20 at 7.04.07 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.04.07_PM.png)
 
@@ -81,7 +81,7 @@ Find something interesting in unlabeled data
 
 ![Screenshot 2024-03-20 at 7.09.04 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.09.04_PM.png)
 
-# Cost Function
+## Cost Function
 
 ![Screenshot 2024-03-20 at 7.10.21 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.10.21_PM.png)
 
@@ -137,7 +137,7 @@ $$
     ![Screenshot 2024-03-20 at 7.29.59 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.29.59_PM.png)
     
 
-# Visualizing the cost function
+## Visualizing the cost function
 
 ![Screenshot 2024-03-20 at 7.33.45 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.33.45_PM.png)
 
@@ -150,7 +150,7 @@ $$
     ![Screenshot 2024-03-20 at 7.35.27 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.35.27_PM.png)
     
 
-# Gradient Descent
+## Gradient Descent
 
 Have some function $J(w,b)$ for linear regression or any function
 
@@ -258,6 +258,6 @@ $\frac{1}{m}\sum_{i=1}^{m}(f_w,_b(x^{(i)})-y^{(i)})$
 
 ---
 
-# Source
+## Source
 
 [Machine Learning](https://www.coursera.org/specializations/machine-learning-introduction?myLearningTab=IN_PROGRESS)

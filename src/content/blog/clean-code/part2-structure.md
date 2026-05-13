@@ -7,8 +7,6 @@ tags: ["Clean Code", "Software Engineering", "Best Practices", "Robert C. Martin
 draft: false
 ---
 
-# Clean Code Part 2: Structure and Formatting
-
 After mastering the basics of naming and functions, the next step is organizing code at a higher level. This part covers how to format code for readability, the fundamental difference between objects and data structures, and how to handle errors without cluttering business logic.
 
 ---

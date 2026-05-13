@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 5: Architecture Implementation
-
 This part covers the practical implementation of clean architecture: how to handle presentation, when to use partial boundaries, the role of the main component, the truth about services, testing strategies, and applying clean architecture to embedded systems.
 
 ---

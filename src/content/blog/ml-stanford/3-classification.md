@@ -8,13 +8,13 @@ heroImage: "/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.png"
 draft: false
 ---
 
-# 3. Classification
+## 3. Classification
 
-# Motivation
+## Motivation
 
 To get small handful possible number of outputs instead of infinite number of outputs
 
-# Logistic regression (Classification)
+## Logistic regression (Classification)
 
 Output is either 0 or 1
 
@@ -50,7 +50,7 @@ The probability that class is 1
         - $f_{\overrightarrow{w},b}(\overrightarrow{x}) = P(y=1|\overrightarrow{x};\overrightarrow{w},b)$
         - probability that y is 1, given input $\overrightarrow{x}$, parameters $\overrightarrow{w},b$
 
-# Decision boundary
+## Decision boundary
 
 Prediction: $\hat{y}$
 
@@ -65,7 +65,7 @@ When is $f_{\overrightarrow{w},b}(\overrightarrow{x})$ ≥ 0.5?
 - z ≥ 0
 - $\overrightarrow{w}\cdot\overrightarrow{x} + b$ ≥ 0 → predicts 1 (when $\overrightarrow{w}\cdot\overrightarrow{x} + b$ < 0 → predicts 0)
 
-# Cost Function
+## Cost Function
 
 ## Squared error cost
 
@@ -116,7 +116,7 @@ $J(\overrightarrow{w},b)=\frac{1}{m}\sum_{i=1}^{m}[L(f_{\overrightarrow{w},b}(\o
 
 - = $-\frac{1}{m}\sum_{i=1}^{m}[ y^{(i)}log(f_{\overrightarrow{w},b}(\overrightarrow{x}^{(i)})) + (1-y^{(i)})log(1-f_{\overrightarrow{w},b}(\overrightarrow{x}^{(i)}))]$
 
-# Gradient Descent
+## Gradient Descent
 
 $J(\overrightarrow{w},b)=-\frac{1}{m}\sum_{i=1}^{m}[ y^{(i)}log(f_{\overrightarrow{w},b}(\overrightarrow{x}^{(i)})) + (1-y^{(i)})log(1-f_{\overrightarrow{w},b}(\overrightarrow{x}^{(i)}))]$
 
@@ -155,7 +155,7 @@ $f_{\overrightarrow{w},b}(\overrightarrow{x})=\frac{1}{1+e^{-\overrightarrow{w}\
     - vectorized implementation
     - Feature scaling
 
-# The problem of overfitting
+## The problem of overfitting
 
 ## Linear regression
 
@@ -165,7 +165,7 @@ $f_{\overrightarrow{w},b}(\overrightarrow{x})=\frac{1}{1+e^{-\overrightarrow{w}\
 
 ![Screenshot 2024-03-24 at 4.21.14 PM.png](/3-Classification/Screenshot_2024-03-24_at_4.21.14_PM.png)
 
-# Addressing overfitting
+## Addressing overfitting
 
 - Collecting more training examples
 - Selecting features to include or exclude
@@ -173,7 +173,7 @@ $f_{\overrightarrow{w},b}(\overrightarrow{x})=\frac{1}{1+e^{-\overrightarrow{w}\
 - Reduce the size of parameters
     - Regularization
 
-# Cost Function to Regularization
+## Cost Function to Regularization
 
 ## Intuition
 

@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 4: Architecture Design
-
 This part covers the heart of clean architecture: what architecture actually is, how to achieve independence from frameworks and databases, how to draw boundaries, and the famous Clean Architecture pattern itself.
 
 ---

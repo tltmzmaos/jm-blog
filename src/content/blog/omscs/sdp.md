@@ -8,8 +8,6 @@ heroImage: "/SDP/sdp-hero.png"
 draft: false
 ---
 
-# SDP: Software Development Process
-
 Georgia Tech OMSCS **SDP (CS 6300)** is a hands-on introduction to software engineering practices. The course bridges the gap between writing code and building maintainable systems. This post captures what I learned in Fall 2025 about processes, testing, design, and team-based development.
 
 ## Course Focus

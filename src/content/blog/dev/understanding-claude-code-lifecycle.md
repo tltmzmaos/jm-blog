@@ -193,17 +193,17 @@ The available hook events map directly to the lifecycle stages:
 MCP connects Claude Code to external tools. Some commonly used servers:
 
 ```bash
-# GitHub — PR reviews, issue management
+## GitHub — PR reviews, issue management
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 
-# Sentry — error monitoring and debugging
+## Sentry — error monitoring and debugging
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
-# PostgreSQL — query databases directly
+## PostgreSQL — query databases directly
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://user:pass@host:5432/dbname"
 
-# Notion — access documentation
+## Notion — access documentation
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 ```
 
@@ -230,7 +230,7 @@ Commands are lightweight — just text that gets injected into the conversation.
 Skills are reusable prompts stored as `SKILL.md` files with YAML frontmatter. For example, a `/deploy` skill:
 
 ```yaml
-# .claude/skills/deploy/SKILL.md
+## .claude/skills/deploy/SKILL.md
 ---
 name: deploy
 description: Deploy the application to production
@@ -267,7 +267,7 @@ The `!`command`` syntax runs the shell command and injects its output before Cla
 Custom subagents go in `.claude/agents/` as Markdown files. Here's a read-only code reviewer:
 
 ```yaml
-# .claude/agents/code-reviewer.md
+## .claude/agents/code-reviewer.md
 ---
 name: code-reviewer
 description: Reviews code for quality and best practices. Use proactively after code changes.

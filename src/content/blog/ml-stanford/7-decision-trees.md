@@ -8,9 +8,9 @@ heroImage: "/4-Decision-trees/Screenshot_2024-04-03_at_5.44.16_PM.png"
 draft: false
 ---
 
-# 4. Decision trees
+## 4. Decision trees
 
-# Decision trees
+## Decision trees
 
 ![Screenshot 2024-04-03 at 5.44.16 PM.png](/4-Decision-trees/Screenshot_2024-04-03_at_5.44.16_PM.png)
 
@@ -26,7 +26,7 @@ draft: false
 
 ![Screenshot 2024-04-03 at 5.57.17 PM.png](/4-Decision-trees/Screenshot_2024-04-03_at_5.57.17_PM.png)
 
-# Decision tree learning
+## Decision tree learning
 
 ## Measuring purity
 
@@ -70,7 +70,7 @@ draft: false
 
 ![Screenshot 2024-04-03 at 7.59.43 PM.png](/4-Decision-trees/Screenshot_2024-04-03_at_7.59.43_PM.png)
 
-# Tree ensembles
+## Tree ensembles
 
 ## Using multiple decision trees
 

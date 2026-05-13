@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 3: Component Principles
-
 Components are the units of deployment. They're the smallest entities that can be deployed as part of a system—JARs in Java, DLLs in .NET, npm packages in JavaScript. This part covers how to decide what goes into a component and how components should depend on each other.
 
 ---

@@ -9,9 +9,9 @@ author: "Jongmin Lee"
 draft: false
 ---
 
-# 2. Regression with multiple input variables
+## 2. Regression with multiple input variables
 
-# Multiple Features
+## Multiple Features
 
 ![Screenshot 2024-03-20 at 10.30.22 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.png)
 
@@ -37,7 +37,7 @@ $\overrightarrow{x}$ = [x1 x2 x3 .. xn]
 
 $f_w,_b(x) = w_1x_1+w_2x_2+...+w_nx_n+b = \overrightarrow{w}\cdot\overrightarrow{x}+b$
 
-# Vectorization
+## Vectorization
 
 ## Parameters and features
 
@@ -117,7 +117,7 @@ $\overrightarrow{w}=\overrightarrow{w}-0.1\overrightarrow{d}$
 w = w - 0.1 * d
 ```
 
-# Gradient descent for multiple regression
+## Gradient descent for multiple regression
 
 ## Previous notation
 
@@ -214,7 +214,7 @@ simulatenously update $w_j$ (for $j = 1,..,n)$ and $b$
     - doesn’t generalize to other learning algorithms
     - slow when number of features is large (> 10,000)
 
-# Feature scaling
+## Feature scaling
 
 Feature scaling enables gradient descent to run much faster by rescaling the range of each features
 
@@ -246,19 +246,19 @@ Feature scaling enables gradient descent to run much faster by rescaling the ran
 
 ![Screenshot 2024-03-24 at 12.07.16 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.07.16_PM.png)
 
-# Checking Gradient descent for convergence
+## Checking Gradient descent for convergence
 
 ![Screenshot 2024-03-24 at 12.13.24 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.13.24_PM.png)
 
-# Choosing the learning rate
+## Choosing the learning rate
 
 ![Screenshot 2024-03-24 at 12.15.14 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.15.14_PM.png)
 
-# Feature engineering
+## Feature engineering
 
 ![Screenshot 2024-03-24 at 12.16.45 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.16.45_PM.png)
 
-# Polynomial regression
+## Polynomial regression
 
 ![Screenshot 2024-03-24 at 12.18.30 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.18.30_PM.png)
 

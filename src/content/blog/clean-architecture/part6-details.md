@@ -7,8 +7,6 @@ tags: ["Clean Architecture", "Software Engineering", "Best Practices", "Robert C
 draft: false
 ---
 
-# Clean Architecture Part 6: Details and Case Study
-
 This final part challenges common assumptions: databases, the web, and frameworks are all **details**, not architecture. The book concludes with a case study applying these principles and a "missing chapter" on organizing code by package.
 
 ---
