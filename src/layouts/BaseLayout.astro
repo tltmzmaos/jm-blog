@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import SEO from '../components/SEO.astro';
+import Footer from '../components/Footer.astro';
 
 export interface Props {
   title: string;
@@ -17,7 +18,7 @@ export interface Props {
 
 const {
   title,
-  description = "Jongmin's Dev Blog",
+  description = "Notes on software engineering, working with AI, and what I'm picking up along the way.",
   image = '/og-image.jpg',
   type = 'website',
   publishedTime,
@@ -130,6 +131,7 @@ const {
   <body>
     <a href="#main-content" class="skip-to-content">Skip to content</a>
     <slot />
+    <Footer />
 
     <!-- Cloudflare Web Analytics -->
     <script is:inline>
