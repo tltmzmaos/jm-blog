@@ -3,7 +3,7 @@ title: "KBAI: Knowledge-Based AI - OMSCS 2026 Spring"
 description: "Key knowledge-based AI concepts from Georgia Tech OMSCS KBAI (CS 7637): knowledge representation, reasoning strategies, learning, planning, and the ARC-AGI project."
 pubDate: 2026-05-11
 author: "Jongmin Lee"
-tags: ["Knowledge-Based AI", "OMSCS", "Artificial Intelligence", "CS7637", "ARC-AGI"]
+tags: ["Knowledge-Based AI", "OMSCS", "AI", "CS7637", "ARC-AGI"]
 draft: false
 ---
 
