@@ -47,28 +47,14 @@ export function stripSeriesPrefix(title: string): string {
 }
 
 /**
- * Strip trailing " - OMSCS YYYY Season" tag from course-note titles.
- */
-export function stripOmscsSuffix(title: string): string {
-  return title
-    .replace(
-      /\s*[-–—]\s*OMSCS\s+\d{4}\s+(Spring|Summer|Fall|Winter)\s*$/i,
-      ''
-    )
-    .trim();
-}
-
-/**
  * Format a post title for display inside a series index, based on
- * the series' sort mode and directory.
+ * the series' sort mode.
  */
 export function displayPartTitle(
   title: string,
-  series: { dir: string; sortBy: 'part' | 'date' }
+  series: { sortBy: 'part' | 'date' }
 ): string {
-  if (series.sortBy === 'part') return stripSeriesPrefix(title);
-  if (series.dir === 'omscs') return stripOmscsSuffix(title);
-  return title;
+  return series.sortBy === 'part' ? stripSeriesPrefix(title) : title;
 }
 
 export async function getAllSeries(): Promise<SeriesWithPosts[]> {

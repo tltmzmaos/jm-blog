@@ -1,5 +1,5 @@
 ---
-title: "SDP: Software Development Process - OMSCS 2025 Fall"
+title: "SDP: Software Development Process"
 description: "Key software engineering concepts from Georgia Tech OMSCS SDP (CS 6300): lifecycle models, UML, testing, Android development, and team collaboration."
 pubDate: 2025-12-19
 author: "Jongmin Lee"
