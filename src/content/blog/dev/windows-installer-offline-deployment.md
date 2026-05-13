@@ -5,6 +5,7 @@ pubDate: 2026-02-10
 author: "Jongmin Lee"
 tags: ["Software Engineering", ".NET", "Best Practices"]
 draft: false
+featured: true
 ---
 
 ## Context

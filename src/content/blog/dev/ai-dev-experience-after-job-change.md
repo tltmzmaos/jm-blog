@@ -5,6 +5,7 @@ pubDate: 2026-02-14
 author: "Jongmin Lee"
 tags: ["Software Engineering", "AI"]
 draft: false
+featured: true
 ---
 
 ## AI at My Previous Company

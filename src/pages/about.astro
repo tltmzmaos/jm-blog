@@ -10,17 +10,10 @@ const now: string[] = [
   'Figuring out how to actually use AI tools well in my own work.',
 ];
 
-const selectedSlugs = [
-  'dev/team-ai-observations',
-  'dev/windows-installer-offline-deployment',
-  'dev/understanding-claude-code-lifecycle',
-  'dev/ai-dev-experience-after-job-change',
-];
-
 const allPosts = await getCollection('blog');
-const selectedPosts = selectedSlugs
-  .map((slug) => allPosts.find((p) => p.slug === slug))
-  .filter((p): p is NonNullable<typeof p> => Boolean(p))
+const selectedPosts = allPosts
+  .filter((p) => p.data.featured && !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .map((p) => ({
     slug: p.slug,
     title: p.data.title,

@@ -5,6 +5,7 @@ pubDate: 2026-04-18
 author: 'Jongmin Lee'
 tags: ['AI', 'Claude Code', 'Software Engineering']
 draft: false
+featured: true
 ---
 
 ## The Question That Keeps Coming Back

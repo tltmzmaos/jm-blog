@@ -5,6 +5,7 @@ pubDate: 2026-02-14
 author: "Jongmin Lee"
 tags: ["Software Engineering", "AI", "Claude Code"]
 draft: false
+featured: true
 ---
 
 ## Why I Wanted to Understand This
