@@ -1,0 +1,415 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import { getAllSeries, displayPartTitle } from '../../utils/seriesIndex';
+
+const seriesList = await getAllSeries();
+const baseUrl = import.meta.env.BASE_URL;
+
+const formatMonthYear = (date?: Date) => {
+  if (!date) return '';
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+};
+
+const formatRange = (first?: Date, last?: Date) => {
+  if (!first || !last) return '';
+  const a = formatMonthYear(first);
+  const b = formatMonthYear(last);
+  return a === b ? a : `${a} – ${b}`;
+};
+
+const formatShortDate = (date: Date) =>
+  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(
+    date
+  );
+---
+
+<BaseLayout
+  title="Series — Jongmin Lee"
+  description="Long-form, multi-part explorations. Each one was written as I worked through the material myself."
+>
+  <Header />
+
+  <main class="series-page" id="main-content">
+    <header class="page-header">
+      <div class="page-header-row">
+        <h1 class="page-title">Series</h1>
+        <button
+          class="toggle-all"
+          id="toggle-all"
+          type="button"
+          data-state="closed"
+        >
+          Expand all
+        </button>
+      </div>
+      <p class="page-lead">
+        Long-form, multi-part explorations. Each one was written as I worked
+        through the material myself.
+      </p>
+    </header>
+
+    <div class="series-list">
+      {
+        seriesList.map((s) => (
+          <details class="series-block" id={s.dir}>
+            <summary class="series-head">
+              <div class="series-head-row">
+                <h2 class="series-name">{s.title}</h2>
+                <span class="series-meta">
+                  <span class="count">
+                    {s.count} {s.count === 1 ? 'part' : 'parts'}
+                  </span>
+                  {s.status === 'ongoing' && (
+                    <>
+                      <span class="dot">·</span>
+                      <span class="status ongoing">Ongoing</span>
+                    </>
+                  )}
+                </span>
+              </div>
+              <p class="series-range">{formatRange(s.firstDate, s.lastDate)}</p>
+              <p class="series-desc">{s.description}</p>
+              <span class="chevron" aria-hidden="true">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </span>
+            </summary>
+
+            <ol class="parts">
+              {s.posts.map((post, i) => (
+                <li class="part">
+                  <span class="part-num">
+                    {s.sortBy === 'part' && post.partNumber
+                      ? post.partNumber
+                      : i + 1}
+                    .
+                  </span>
+                  <a href={`${baseUrl}posts/${post.slug}`} class="part-link">
+                    <span class="part-title">
+                      {displayPartTitle(post.title, s)}
+                    </span>
+                  </a>
+                  <span class="part-date">
+                    {formatShortDate(post.pubDate)}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </details>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .series-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 4rem;
+  }
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .page-header-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4.5vw, 2.625rem);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .toggle-all {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    padding: 0.25rem 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .toggle-all:hover {
+    color: var(--color-accent);
+  }
+
+  .page-lead {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 58ch;
+  }
+
+  .series-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .series-block {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .series-block:last-child {
+    border-bottom: none;
+  }
+
+  .series-head {
+    position: relative;
+    padding: 1.75rem 2.5rem 1.75rem 0;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.15s ease;
+  }
+
+  .series-head::-webkit-details-marker {
+    display: none;
+  }
+
+  .series-head:hover .series-name {
+    color: var(--color-accent);
+  }
+
+  .series-head:hover .chevron {
+    color: var(--color-accent);
+  }
+
+  .series-head-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.375rem;
+  }
+
+  .series-name {
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    line-height: 1.25;
+    margin: 0;
+    transition: color 0.15s ease;
+  }
+
+  .series-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .dot {
+    color: var(--color-border);
+  }
+
+  .status.complete {
+    color: var(--color-text-muted);
+  }
+
+  .status.ongoing {
+    color: var(--color-accent);
+  }
+
+  .series-range {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .series-desc {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .chevron {
+    position: absolute;
+    top: 1.875rem;
+    right: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-text-muted);
+    transition:
+      transform 0.2s ease,
+      color 0.15s ease;
+  }
+
+  .series-block[open] > .series-head .chevron {
+    transform: rotate(90deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chevron {
+      transition: color 0.15s ease;
+    }
+  }
+
+  .parts {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .part {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .part:last-child {
+    border-bottom: none;
+  }
+
+  .part-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .part-link {
+    text-decoration: none;
+    color: var(--color-text);
+    min-width: 0;
+    transition: color 0.15s ease;
+  }
+
+  .part-link:hover {
+    color: var(--color-accent);
+  }
+
+  .part-title {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.35;
+  }
+
+  .part-date {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .series-page {
+      padding: 2.5rem 1.25rem 3rem;
+    }
+
+    .series-name {
+      font-size: 1.1875rem;
+    }
+
+    .chevron {
+      top: 1.625rem;
+    }
+
+    .part {
+      grid-template-columns: 1.75rem 1fr;
+    }
+
+    .part-date {
+      grid-column: 2;
+      margin-top: 0.125rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const blocks = Array.from(
+      document.querySelectorAll<HTMLDetailsElement>('.series-block')
+    );
+    if (blocks.length === 0) return;
+
+    // Open the section matching the URL hash, if any.
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const target = document.getElementById(hash);
+      if (target instanceof HTMLDetailsElement) {
+        target.open = true;
+        requestAnimationFrame(() => {
+          target.scrollIntoView({ block: 'start' });
+        });
+      }
+    }
+
+    const toggleBtn = document.getElementById(
+      'toggle-all'
+    ) as HTMLButtonElement | null;
+    if (!toggleBtn) return;
+
+    const syncBtn = () => {
+      const allOpen = blocks.every((b) => b.open);
+      toggleBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
+      toggleBtn.dataset.state = allOpen ? 'open' : 'closed';
+    };
+
+    syncBtn();
+
+    toggleBtn.addEventListener('click', () => {
+      const allOpen = blocks.every((b) => b.open);
+      blocks.forEach((b) => {
+        b.open = !allOpen;
+      });
+      syncBtn();
+    });
+
+    blocks.forEach((b) => b.addEventListener('toggle', syncBtn));
+  });
+</script>

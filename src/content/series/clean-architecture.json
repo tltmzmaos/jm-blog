@@ -1,0 +1,8 @@
+{
+  "title": "Clean Architecture",
+  "description": "Robert C. Martin's principles for designing software that survives change. From programming paradigms to practical implementation and a full case study.",
+  "dir": "clean-architecture",
+  "status": "complete",
+  "sortBy": "part",
+  "featured": true
+}

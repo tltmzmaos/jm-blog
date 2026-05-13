@@ -1,0 +1,8 @@
+{
+  "title": "Machine Learning (Stanford)",
+  "description": "Notes from Andrew Ng's ML specialization. Linear and logistic regression, neural networks, decision trees, and unsupervised methods.",
+  "dir": "ml-stanford",
+  "status": "complete",
+  "sortBy": "part",
+  "featured": true
+}

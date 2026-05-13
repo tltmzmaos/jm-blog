@@ -1,0 +1,8 @@
+{
+  "title": "OMSCS Course Notes",
+  "description": "Per-semester summaries from Georgia Tech's OMSCS program — the concepts I want to remember after the class ends.",
+  "dir": "omscs",
+  "status": "ongoing",
+  "sortBy": "date",
+  "featured": true
+}
