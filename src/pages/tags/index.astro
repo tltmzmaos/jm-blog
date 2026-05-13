@@ -10,7 +10,6 @@ const publishedPosts = allPosts
   .filter((post) => showDrafts || !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
-// Gather count + latest post date per tag
 const tagMap = new Map<string, { count: number; latest: Date }>();
 for (const post of publishedPosts) {
   for (const tag of post.data.tags) {
@@ -32,6 +31,9 @@ const sortedTags = [...tagMap.entries()]
     return a.localeCompare(b);
   })
   .map(([tag, { count, latest }]) => ({ tag, count, latest }));
+
+const mainTags = sortedTags.filter((t) => t.count >= 2);
+const singletons = sortedTags.filter((t) => t.count === 1);
 
 const formatShort = (d: Date) =>
   new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(
@@ -77,7 +79,7 @@ const baseUrl = import.meta.env.BASE_URL;
 
     <ul class="tag-list" id="tag-list">
       {
-        sortedTags.map(({ tag, count, latest }) => {
+        mainTags.map(({ tag, count, latest }) => {
           const dateText = formatShort(latest);
           return (
             <li class="tag-item" data-tag={tag.toLowerCase()}>
@@ -86,6 +88,36 @@ const baseUrl = import.meta.env.BASE_URL;
                 <span class="tag-meta">
                   <span class="tag-count" data-count={count}>
                     {count}
+                  </span>
+                  <span class="dot" aria-hidden="true">
+                    ·
+                  </span>
+                  <span class="tag-latest" data-final={dateText}>
+                    {dateText}
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+      {
+        singletons.map(({ tag, count, latest }) => {
+          const dateText = formatShort(latest);
+          return (
+            <li
+              class="tag-item is-singleton"
+              data-tag={tag.toLowerCase()}
+              hidden
+            >
+              <a href={`${baseUrl}tags/${encodeURIComponent(tag)}`} class="tag">
+                <span class="tag-name">{tag}</span>
+                <span class="tag-meta">
+                  <span class="tag-count" data-count={count}>
+                    {count}
+                  </span>
+                  <span class="dot" aria-hidden="true">
+                    ·
                   </span>
                   <span class="tag-latest" data-final={dateText}>
                     {dateText}
@@ -97,6 +129,22 @@ const baseUrl = import.meta.env.BASE_URL;
         })
       }
     </ul>
+
+    {
+      singletons.length > 0 && (
+        <div class="show-more">
+          <button
+            id="toggle-singletons"
+            class="toggle-link"
+            type="button"
+            data-expanded="false"
+            data-count={singletons.length}
+          >
+            Show {singletons.length} single-post tags
+          </button>
+        </div>
+      )
+    }
   </main>
 </BaseLayout>
 
@@ -106,7 +154,13 @@ const baseUrl = import.meta.env.BASE_URL;
     const searchInput = document.getElementById(
       'tag-search'
     ) as HTMLInputElement | null;
+    const toggleBtn = document.getElementById(
+      'toggle-singletons'
+    ) as HTMLButtonElement | null;
     const items = list?.querySelectorAll<HTMLElement>('.tag-item');
+    const singletons = list?.querySelectorAll<HTMLElement>(
+      '.tag-item.is-singleton'
+    );
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches;
@@ -158,9 +212,11 @@ const baseUrl = import.meta.env.BASE_URL;
       anyEl._scrambleRaf = requestAnimationFrame(step);
     }
 
-    if (!reducedMotion) {
-      // Count scramble on load
-      const counts = list?.querySelectorAll<HTMLElement>('.tag-count');
+    function scrambleVisibleMeta() {
+      if (reducedMotion) return;
+      const counts = list?.querySelectorAll<HTMLElement>(
+        '.tag-item:not([hidden]) .tag-count'
+      );
       counts?.forEach((el, idx) => {
         const target = el.dataset.count || '0';
         const delay = Math.min(idx * 18, 220);
@@ -175,8 +231,9 @@ const baseUrl = import.meta.env.BASE_URL;
         );
       });
 
-      // Latest date scramble on load
-      const dates = list?.querySelectorAll<HTMLElement>('.tag-latest');
+      const dates = list?.querySelectorAll<HTMLElement>(
+        '.tag-item:not([hidden]) .tag-latest'
+      );
       dates?.forEach((el, idx) => {
         const target = el.dataset.final || el.textContent || '';
         const delay = Math.min(idx * 20, 280);
@@ -184,16 +241,75 @@ const baseUrl = import.meta.env.BASE_URL;
       });
     }
 
+    scrambleVisibleMeta();
+
+    toggleBtn?.addEventListener('click', () => {
+      const expanded = toggleBtn.dataset.expanded === 'true';
+      const next = !expanded;
+      toggleBtn.dataset.expanded = String(next);
+
+      singletons?.forEach((el) => {
+        if (next) {
+          el.removeAttribute('hidden');
+        } else {
+          el.setAttribute('hidden', '');
+        }
+      });
+
+      const n = toggleBtn.dataset.count || '0';
+      toggleBtn.textContent = next
+        ? 'Hide single-post tags'
+        : `Show ${n} single-post tags`;
+
+      if (next) {
+        // Scramble the newly revealed singletons' meta
+        if (!reducedMotion) {
+          singletons?.forEach((el, idx) => {
+            const countEl = el.querySelector<HTMLElement>('.tag-count');
+            const dateEl = el.querySelector<HTMLElement>('.tag-latest');
+            const delay = Math.min(idx * 18, 220);
+            if (countEl) {
+              const target = countEl.dataset.count || '0';
+              countEl.textContent = '';
+              setTimeout(
+                () =>
+                  scramble(countEl, target, {
+                    duration: 360,
+                    digitsOnly: true,
+                  }),
+                delay
+              );
+            }
+            if (dateEl) {
+              const target = dateEl.dataset.final || dateEl.textContent || '';
+              setTimeout(
+                () => scramble(dateEl, target, { duration: 460 }),
+                delay + 40
+              );
+            }
+          });
+        }
+      }
+    });
+
     if (!list || !items?.length) return;
 
     const filterTags = (q: string) => {
       const query = q.toLowerCase().trim();
+      const isExpanded = toggleBtn?.dataset.expanded === 'true';
       for (const el of items) {
         const tag = el.dataset.tag || '';
-        el.classList.toggle(
-          'filtered',
-          query.length > 0 && !tag.includes(query)
-        );
+        const matchesQuery = query.length === 0 || tag.includes(query);
+        const isSingleton = el.classList.contains('is-singleton');
+
+        if (query.length > 0) {
+          // While searching, reveal singletons that match
+          el.classList.toggle('filtered', !matchesQuery);
+          if (isSingleton && matchesQuery) el.removeAttribute('hidden');
+        } else {
+          el.classList.remove('filtered');
+          if (isSingleton && !isExpanded) el.setAttribute('hidden', '');
+        }
       }
     };
 
@@ -229,7 +345,6 @@ const baseUrl = import.meta.env.BASE_URL;
     padding: 3.5rem 1.5rem 4rem;
   }
 
-  /* ═══ Header ═══ */
   .page-header {
     margin-bottom: 2.5rem;
   }
@@ -256,7 +371,7 @@ const baseUrl = import.meta.env.BASE_URL;
   /* ═══ Search ═══ */
   .search-box {
     position: relative;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
 
   .search-icon {
@@ -334,9 +449,9 @@ const baseUrl = import.meta.env.BASE_URL;
   .tag {
     display: grid;
     grid-template-columns: 1fr auto;
-    align-items: center;
+    align-items: baseline;
     column-gap: 1rem;
-    padding: 0.875rem 0;
+    padding: 0.625rem 0;
     text-decoration: none;
     color: var(--color-text);
     transition: color 0.15s ease;
@@ -355,31 +470,54 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .tag-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.15rem;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-  }
-
-  .tag-count {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    letter-spacing: 0.04em;
-    min-width: 1.5ch;
-    text-align: right;
-  }
-
-  .tag-latest {
     font-size: 0.6875rem;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     color: var(--color-text-muted);
     white-space: nowrap;
   }
 
-  .tag:hover .tag-count,
-  .tag:hover .tag-latest {
+  .tag-meta .dot {
+    color: var(--color-border);
+  }
+
+  .tag-count {
+    min-width: 1.5ch;
+    text-align: right;
+  }
+
+  .tag:hover .tag-meta {
+    color: var(--color-accent);
+  }
+
+  .tag:hover .tag-meta .dot {
+    color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  /* ═══ Show more ═══ */
+  .show-more {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .toggle-link {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .toggle-link:hover {
     color: var(--color-accent);
   }
 
