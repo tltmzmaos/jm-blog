@@ -39,7 +39,12 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
       >
       {
         readingTime && (
-          <span class="read-time" data-final={`· ${readingTime}`} />
+          <>
+            <span class="separator" aria-hidden="true">
+              ·
+            </span>
+            <span class="read-time">{readingTime}</span>
+          </>
         )
       }
     </div>
@@ -94,15 +99,18 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     margin-bottom: 0.4rem;
   }
 
+  .separator {
+    color: var(--color-border);
+  }
+
   .read-time {
-    color: var(--color-accent);
-    opacity: 0;
+    color: var(--color-text-muted);
     white-space: nowrap;
-    transition: opacity 0.2s ease;
+    transition: color 0.15s ease;
   }
 
   .post-link:hover .read-time {
-    opacity: 1;
+    color: var(--color-accent);
   }
 
   .title {

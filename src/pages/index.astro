@@ -190,21 +190,6 @@ const INITIAL_COUNT = 10;
       });
     }
 
-    // Hover scramble on read-time
-    const postLinks = document.querySelectorAll<HTMLElement>('.post-link');
-    postLinks.forEach((link) => {
-      const rt = link.querySelector<HTMLElement>('.read-time');
-      if (!rt) return;
-      const finalText = rt.dataset.final || '';
-      link.addEventListener('mouseenter', () => {
-        if (reducedMotion) {
-          rt.textContent = finalText;
-          return;
-        }
-        scramble(rt, finalText, { duration: 480 });
-      });
-    });
-
     // Lazy load-more
     const sentinel = document.getElementById('load-sentinel');
     if (!sentinel) return;
