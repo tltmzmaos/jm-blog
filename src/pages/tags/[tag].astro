@@ -53,7 +53,6 @@ const baseUrl = import.meta.env.BASE_URL;
 
   <main class="main-content" id="main-content">
     <header class="page-header">
-      <p class="eyebrow">— Tag</p>
       <h1>{tag}</h1>
       <p class="count">
         {posts.length}
@@ -112,15 +111,6 @@ const baseUrl = import.meta.env.BASE_URL;
   /* ═══ Header ═══ */
   .page-header {
     margin-bottom: 2.5rem;
-  }
-
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin: 0 0 0.75rem;
   }
 
   .page-header h1 {
