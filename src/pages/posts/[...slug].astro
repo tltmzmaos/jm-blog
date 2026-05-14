@@ -3,10 +3,13 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getRelatedPosts } from '../../utils/relatedPosts';
 import { getSeriesInfo } from '../../utils/seriesPosts';
+import { shouldShowDrafts } from '../../utils/env';
 
 export async function getStaticPaths() {
+  const showDrafts = shouldShowDrafts();
   const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  const visible = posts.filter((post) => showDrafts || !post.data.draft);
+  return visible.map((post) => ({
     params: { slug: post.slug },
     props: post,
   }));
@@ -17,9 +20,12 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content, headings } = await post.render();
 
-// Find previous/next posts
+// Build the visible-post universe once and reuse for nav / related / series
 const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort(
+const visiblePosts = allPosts.filter(
+  (p) => shouldShowDrafts() || !p.data.draft
+);
+const sortedPosts = visiblePosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 const currentIndex = sortedPosts.findIndex((p) => p.slug === post.slug);
@@ -43,10 +49,10 @@ const nextPost =
     : undefined;
 
 // Find related posts (tag-based)
-const relatedPosts = getRelatedPosts(post, allPosts, 3);
+const relatedPosts = getRelatedPosts(post, visiblePosts, 3);
 
 // Detect series membership
-const seriesInfo = getSeriesInfo(post, allPosts);
+const seriesInfo = getSeriesInfo(post, visiblePosts);
 ---
 
 <PostLayout
