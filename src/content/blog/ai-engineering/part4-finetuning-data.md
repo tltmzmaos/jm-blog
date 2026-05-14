@@ -1,7 +1,7 @@
 ---
 title: 'AI Engineering Part 4: Fine-tuning and Dataset Engineering'
 description: "Reading notes on chapters 7-8 of Chip Huyen's AI Engineering. When fine-tuning beats prompting and RAG, types of fine-tuning (LoRA, QLoRA, RLHF), and the dataset engineering work that determines the outcome."
-pubDate: 2026-05-13
+pubDate: 2026-05-16
 author: 'Jongmin Lee'
 tags: ['AI', 'AI Engineering', 'LLM', 'Fine-tuning', 'Reading Notes']
 featured: false

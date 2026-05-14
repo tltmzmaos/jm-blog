@@ -1,7 +1,7 @@
 ---
 title: 'AI Engineering Part 3: Prompt Engineering and RAG'
 description: "Reading notes on chapters 5-6 of Chip Huyen's AI Engineering. The anatomy of a good prompt, core prompting techniques, retrieval-augmented generation, and when to reach for agents and tools."
-pubDate: 2026-05-13
+pubDate: 2026-05-15
 author: 'Jongmin Lee'
 tags: ['AI', 'AI Engineering', 'LLM', 'RAG', 'Reading Notes']
 featured: false

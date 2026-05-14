@@ -5,7 +5,7 @@ pubDate: 2026-05-13
 author: 'Jongmin Lee'
 tags: ['AI', 'AI Engineering', 'LLM', 'Software Engineering', 'Reading Notes']
 featured: false
-draft: true
+draft: false
 ---
 
 > These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.

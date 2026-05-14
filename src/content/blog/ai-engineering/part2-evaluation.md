@@ -1,7 +1,7 @@
 ---
 title: 'AI Engineering Part 2: Evaluation Methodology and Evaluating AI Systems'
 description: "Reading notes on chapters 3-4 of Chip Huyen's AI Engineering. Why evaluating AI systems is harder than traditional ML, the spectrum of methods, LLM-as-judge, and building reliable production evaluations."
-pubDate: 2026-05-13
+pubDate: 2026-05-14
 author: 'Jongmin Lee'
 tags: ['AI', 'AI Engineering', 'LLM', 'Evaluation', 'Reading Notes']
 featured: false

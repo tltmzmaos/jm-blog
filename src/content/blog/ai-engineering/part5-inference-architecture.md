@@ -1,7 +1,7 @@
 ---
 title: 'AI Engineering Part 5: Inference Optimization and Production Architecture'
 description: "Reading notes on chapters 9-10 of Chip Huyen's AI Engineering. Why inference is expensive, optimization techniques (quantization, KV cache, batching, speculative decoding), and architecture patterns for production AI systems."
-pubDate: 2026-05-13
+pubDate: 2026-05-17
 author: 'Jongmin Lee'
 tags: ['AI', 'AI Engineering', 'LLM', 'Inference', 'Reading Notes']
 featured: false
