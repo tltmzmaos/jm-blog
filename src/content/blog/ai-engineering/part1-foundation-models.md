@@ -8,8 +8,6 @@ featured: false
 draft: false
 ---
 
-> These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.
-
 Foundation models changed what software engineering looks like in a way that wasn't obvious from the outside. The first two chapters of _AI Engineering_ set up that shift: what these models actually are, how they get built, and why working with them feels different from any other kind of engineering. This part walks through those foundations.
 
 ## From ML Engineering to AI Engineering

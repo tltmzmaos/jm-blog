@@ -8,8 +8,6 @@ featured: false
 draft: true
 ---
 
-> These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.
-
 By the end of the book, the question shifts from "does it work" to "can we afford to ship it." Inference economics shape every product decision — what model to use, how to architect the system, how to balance quality against cost and latency. Chapters 9 and 10 cover both the technical optimizations and the broader architecture patterns. These notes pull out the parts that matter for application teams, not just infrastructure engineers.
 
 ## Why Inference Is Expensive

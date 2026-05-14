@@ -8,8 +8,6 @@ featured: false
 draft: true
 ---
 
-> These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.
-
 Most AI applications never fine-tune a model. Prompting and RAG cover the majority of cases, are cheaper, and let you iterate faster. But when fine-tuning is the right move, it can dramatically improve quality, cost, or both. Chapters 7 and 8 of _AI Engineering_ cover both halves: when to fine-tune, and how to do the dataset work that actually determines the outcome.
 
 ## When to Fine-tune

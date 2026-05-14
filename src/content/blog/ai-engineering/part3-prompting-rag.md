@@ -8,8 +8,6 @@ featured: false
 draft: true
 ---
 
-> These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.
-
 Once you have evaluation in place, the main thing you do as an AI engineer is shape the input the model sees. The two highest-leverage levers are **prompting** and **retrieval-augmented generation (RAG)**. Chapters 5 and 6 of _AI Engineering_ cover these in depth. These notes pull out the patterns that actually matter in practice.
 
 ## Anatomy of a Prompt

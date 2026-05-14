@@ -8,8 +8,6 @@ featured: false
 draft: true
 ---
 
-> These are AI-assisted notes I'm building up as I work through Chip Huyen's _AI Engineering_ (O'Reilly, 2024). The goal is to capture the book's core ideas in a way that's useful even if you haven't read it. Treat these as a curated guide, not a substitute for the book itself.
-
 If Part 1 was about what foundation models _are_, this part is about how to tell whether they're actually doing their job. Huyen spends two chapters on evaluation, which is unusual — and a strong signal that evaluation is the hardest part of building AI products. These notes cover both: the methodology (chapter 3) and the practical work of evaluating real systems (chapter 4).
 
 ## Why Evaluation Is Hard
