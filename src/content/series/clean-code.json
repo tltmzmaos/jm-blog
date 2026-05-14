@@ -1,8 +1,0 @@
-{
-  "title": "Clean Code",
-  "description": "Core principles from Robert C. Martin's classic — naming, functions, formatting, error handling, testing, and the road from messy code to clean.",
-  "dir": "clean-code",
-  "status": "complete",
-  "sortBy": "part",
-  "featured": true
-}

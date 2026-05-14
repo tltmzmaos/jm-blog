@@ -1,8 +1,0 @@
-{
-  "title": "AI Engineering",
-  "description": "Reading notes on Chip Huyen's AI Engineering — how to design, build, and ship applications powered by foundation models.",
-  "dir": "ai-engineering",
-  "status": "ongoing",
-  "sortBy": "part",
-  "featured": true
-}
