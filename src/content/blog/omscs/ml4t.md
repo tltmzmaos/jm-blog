@@ -5,6 +5,7 @@ pubDate: 2024-12-19
 author: "Jongmin Lee"
 tags: ["Machine Learning", "Portfolio Theory", "ML4T", "CS7646", "OMSCS"]
 heroImage: "/ML4T/ml4t-hero.png"
+draft: false
 ---
 
 Georgia Tech OMSCS **ML4T (CS 7646)** connects machine learning with financial markets. The course is less about predicting prices and more about building decision pipelines that are statistically sound, risk-aware, and testable. This post summarizes what I learned in Fall 2024.
