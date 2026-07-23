@@ -1,14 +1,14 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site }) => {
-  const baseUrl = site?.toString() || 'https://jongminlee.dev';
+  const baseUrl = site?.toString() || 'https://jongmin.me';
   const siteUrl = baseUrl.replace(/\/$/, '');
 
   const robotsTxt = `User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap-index.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1
@@ -21,7 +21,7 @@ Disallow: /api/
 # Allow important files
 Allow: /favicon.ico
 Allow: /robots.txt
-Allow: /sitemap.xml
+Allow: /sitemap-index.xml
 
 # SEO optimizations
 User-agent: Googlebot
