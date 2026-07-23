@@ -10,7 +10,7 @@ featured: true
 
 ## Context
 
-I develop an equipment orchestration service in the Lab Automation space. The application is built with .NET 8.0 and React+Vite — an offline web application deployed to Windows Server machines connected to each automation instrument.
+I developed an equipment orchestration service in the Lab Automation space. The application was built with .NET 8.0 and React+Vite — an offline web application deployed to Windows Server machines connected to each automation instrument.
 
 Recently, customers' network security policies have become increasingly strict. Most field sites are now air-gapped environments where internet connectivity simply cannot be expected. This made our existing deployment approach unsustainable.
 
