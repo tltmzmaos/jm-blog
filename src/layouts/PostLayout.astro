@@ -1,7 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
-import LikeButton from '../components/LikeButton.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
@@ -211,8 +210,6 @@ const formatDate = (date: Date) => {
           >
         </button>
       </div>
-
-      <LikeButton postSlug={slug} />
 
       {
         relatedPosts.length > 0 && (

@@ -33,6 +33,3 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          PUBLIC_GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}
-          PUBLIC_GIST_ID: ${{ secrets.PUBLIC_GIST_ID }}

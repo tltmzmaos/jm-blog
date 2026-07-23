@@ -27,7 +27,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - SEO with JSON-LD structured data and breadcrumbs
 - Self-hosted Inter font (Latin subset)
 - Dynamic OG image generation per post
-- Custom sitemap with content-based lastmod
+- Sitemap via @astrojs/sitemap
 
 ## Project Structure
 
@@ -37,7 +37,6 @@ src/
 │   ├── Header.astro
 │   ├── SearchBox.astro
 │   ├── ThemeToggle.astro
-│   ├── LikeButton.astro
 │   ├── TableOfContents.astro
 │   ├── PostListItem.astro
 │   └── SEO.astro
@@ -57,7 +56,6 @@ src/
 │   ├── posts/[...slug].astro
 │   ├── tags/
 │   ├── og/[...slug].png.ts
-│   ├── sitemap.xml.ts
 │   └── robots.txt.ts
 ├── types/
 └── utils/
@@ -73,13 +71,6 @@ npm run check          # Astro type check
 npm run lint           # ESLint
 npm run format         # Prettier (write)
 npm run format:check   # Prettier (check only)
-```
-
-## Environment Variables
-
-```env
-PUBLIC_GITHUB_TOKEN=   # GitHub token (gist scope) for like system
-PUBLIC_GIST_ID=        # GitHub Gist ID for storing likes
 ```
 
 ## License
