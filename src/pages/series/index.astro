@@ -11,6 +11,7 @@ const formatMonthYear = (date?: Date) => {
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(date);
 };
 
@@ -22,9 +23,11 @@ const formatRange = (first?: Date, last?: Date) => {
 };
 
 const formatShortDate = (date: Date) =>
-  new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(
-    date
-  );
+  new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
 ---
 
 <BaseLayout
