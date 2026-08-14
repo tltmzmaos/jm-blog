@@ -6,14 +6,13 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Tech Stack
 
-- **Framework:** Astro 5.x (Static Site Generation)
+- **Framework:** Astro 7.x (Static Site Generation)
 - **Styling:** Hand-written CSS with CSS custom properties (scoped `<style>` blocks per component)
 - **Content:** MDX, KaTeX (math), Mermaid (diagrams)
 - **Search:** Fuse.js (client-side fuzzy search)
 - **OG Images:** Satori + Sharp (dynamic generation)
-- **Like System:** GitHub Gist-based
 - **Linting:** ESLint + Prettier
-- **Hosting:** Cloudflare Pages
+- **Hosting:** GitHub Pages
 
 ## Features
 
@@ -28,6 +27,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Self-hosted Inter font (Latin subset)
 - Dynamic OG image generation per post
 - Sitemap via @astrojs/sitemap
+- Series index page and a JSON post API (`/api/posts.json`)
 
 ## Project Structure
 
@@ -41,20 +41,23 @@ src/
 │   ├── PostListItem.astro
 │   └── SEO.astro
 ├── content/
-│   └── blog/          # Blog posts (Markdown/MDX)
-│       ├── clean-architecture/
-│       ├── clean-code/
-│       ├── dev-practices/
-│       ├── ml-stanford/
-│       └── omscs/
+│   ├── blog/          # Blog posts (Markdown/MDX)
+│   │   ├── dev/
+│   │   ├── ml-stanford/
+│   │   └── omscs/
+│   └── series/        # Series metadata (JSON)
+├── content.config.ts  # Collection schemas + loaders
 ├── layouts/
 │   ├── BaseLayout.astro
 │   └── PostLayout.astro
 ├── pages/
 │   ├── index.astro
 │   ├── about.astro
+│   ├── 404.astro
 │   ├── posts/[...slug].astro
+│   ├── series/index.astro
 │   ├── tags/
+│   ├── api/posts.json.ts
 │   ├── og/[...slug].png.ts
 │   └── robots.txt.ts
 ├── types/
