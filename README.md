@@ -64,6 +64,13 @@ src/
 └── utils/
 ```
 
+## Images
+
+Originals live in `image-originals/` (not published). `npm run images` writes
+resized WebP copies into `public/` at the same relative path, and posts
+reference the `.webp`. Add a new screenshot to `image-originals/<post-dir>/`,
+run the script, then link `/[post-dir]/[name].webp` from the post.
+
 ## Commands
 
 ```bash
@@ -74,6 +81,7 @@ npm run check          # Astro type check
 npm run lint           # ESLint
 npm run format         # Prettier (write)
 npm run format:check   # Prettier (check only)
+npm run images         # Convert image-originals/ to WebP in public/
 ```
 
 ## License

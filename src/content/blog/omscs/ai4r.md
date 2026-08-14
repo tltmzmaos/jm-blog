@@ -4,7 +4,7 @@ description: "Key robotics AI concepts from Georgia Tech OMSCS AI4R (CS 7638): l
 pubDate: 2025-05-19
 author: "Jongmin Lee"
 tags: ["AI", "Robotics", "OMSCS", "SLAM", "Path Planning", "Kalman Filter", "Particle Filter"]
-heroImage: "/AI4R/ai4r-hero.png"
+heroImage: "/AI4R/ai4r-hero.webp"
 draft: false
 ---
 

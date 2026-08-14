@@ -4,7 +4,7 @@ description: "Deep dive into multiple linear regression, vectorization, gradient
 pubDate: "2024-03-20T10:00:00Z"
 updatedDate: "2024-03-20"
 tags: ["Machine Learning", "Regression", "Gradient Descent"]
-heroImage: "/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.png"
+heroImage: "/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.webp"
 author: "Jongmin Lee"
 draft: false
 ---
@@ -13,7 +13,7 @@ draft: false
 
 ## Multiple Features
 
-![Screenshot 2024-03-20 at 10.30.22 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.png)
+![Screenshot 2024-03-20 at 10.30.22 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.webp)
 
 ## Model
 
@@ -231,35 +231,35 @@ Feature scaling enables gradient descent to run much faster by rescaling the ran
         - 98.6 ≤ x ≤ 105
 - example
     
-    ![Screenshot 2024-03-24 at 12.00.55 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.00.55_PM.png)
+    ![Screenshot 2024-03-24 at 12.00.55 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.00.55_PM.webp)
     
-    ![Screenshot 2024-03-24 at 12.01.42 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.01.42_PM.png)
+    ![Screenshot 2024-03-24 at 12.01.42 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.01.42_PM.webp)
     
-    ![Screenshot 2024-03-24 at 12.02.04 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.02.04_PM.png)
+    ![Screenshot 2024-03-24 at 12.02.04 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.02.04_PM.webp)
     
 
 ### Mean normalization
 
-![Screenshot 2024-03-24 at 12.05.06 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.05.06_PM.png)
+![Screenshot 2024-03-24 at 12.05.06 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.05.06_PM.webp)
 
 ### Z-score normalization
 
-![Screenshot 2024-03-24 at 12.07.16 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.07.16_PM.png)
+![Screenshot 2024-03-24 at 12.07.16 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.07.16_PM.webp)
 
 ## Checking Gradient descent for convergence
 
-![Screenshot 2024-03-24 at 12.13.24 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.13.24_PM.png)
+![Screenshot 2024-03-24 at 12.13.24 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.13.24_PM.webp)
 
 ## Choosing the learning rate
 
-![Screenshot 2024-03-24 at 12.15.14 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.15.14_PM.png)
+![Screenshot 2024-03-24 at 12.15.14 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.15.14_PM.webp)
 
 ## Feature engineering
 
-![Screenshot 2024-03-24 at 12.16.45 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.16.45_PM.png)
+![Screenshot 2024-03-24 at 12.16.45 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.16.45_PM.webp)
 
 ## Polynomial regression
 
-![Screenshot 2024-03-24 at 12.18.30 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.18.30_PM.png)
+![Screenshot 2024-03-24 at 12.18.30 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.18.30_PM.webp)
 
-![Screenshot 2024-03-24 at 12.19.20 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.19.20_PM.png)
+![Screenshot 2024-03-24 at 12.19.20 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.19.20_PM.webp)

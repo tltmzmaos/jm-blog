@@ -4,7 +4,7 @@ description: "Overview of supervised and unsupervised learning, linear regressio
 pubDate: "2024-03-20"
 updatedDate: "2024-08-04"
 tags: ["Machine Learning", "Regression", "Gradient Descent"]
-heroImage: "/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.png"
+heroImage: "/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.webp"
 author: "Jongmin Lee"
 draft: false
 ---
@@ -27,32 +27,32 @@ draft: false
 
 Regression predicts a number infinitely many possible outputs
 
-![Screenshot 2024-03-20 at 6.28.25 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.28.25_PM.png)
+![Screenshot 2024-03-20 at 6.28.25 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.28.25_PM.webp)
 
 ## Classification
 
 Classification predicts categories, small number of possible outputs
 
-![Screenshot 2024-03-20 at 6.29.45 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.29.45_PM.png)
+![Screenshot 2024-03-20 at 6.29.45 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.29.45_PM.webp)
 
 ### Two or more inputs
 
-![Screenshot 2024-03-20 at 6.30.48 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.30.48_PM.png)
+![Screenshot 2024-03-20 at 6.30.48 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.30.48_PM.webp)
 
 ## Unsupervised Learning
 
 Find something interesting in unlabeled data
 
-![Screenshot 2024-03-20 at 6.34.39 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.34.39_PM.png)
+![Screenshot 2024-03-20 at 6.34.39 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.34.39_PM.webp)
 
 - example
     - Google news
         
-        ![Screenshot 2024-03-20 at 6.35.56 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.35.56_PM.png)
+        ![Screenshot 2024-03-20 at 6.35.56 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.35.56_PM.webp)
         
     - DNA microarray
         
-        ![Screenshot 2024-03-20 at 6.56.07 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.56.07_PM.png)
+        ![Screenshot 2024-03-20 at 6.56.07 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_6.56.07_PM.webp)
         
 
 ## Unsupervised learning
@@ -65,11 +65,11 @@ Find something interesting in unlabeled data
 
 ## Linear Regression Model
 
-![Screenshot 2024-03-20 at 7.04.07 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.04.07_PM.png)
+![Screenshot 2024-03-20 at 7.04.07 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.04.07_PM.webp)
 
 ## Terminology
 
-![Screenshot 2024-03-20 at 7.05.47 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.05.47_PM.png)
+![Screenshot 2024-03-20 at 7.05.47 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.05.47_PM.webp)
 
 - Training set - data used to train the model
 - x - input variable feature
@@ -79,11 +79,11 @@ Find something interesting in unlabeled data
 - $(x^{(i)},y^{(i)})$ - ith training example
     - ex) $(x^{(1)}, y^{(1)}) = (2104,400)$
 
-![Screenshot 2024-03-20 at 7.09.04 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.09.04_PM.png)
+![Screenshot 2024-03-20 at 7.09.04 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.09.04_PM.webp)
 
 ## Cost Function
 
-![Screenshot 2024-03-20 at 7.10.21 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.10.21_PM.png)
+![Screenshot 2024-03-20 at 7.10.21 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.10.21_PM.webp)
 
 ## What do w, b do?
 
@@ -91,7 +91,7 @@ Find w,b:
 
 $\hat{y}^{(i)}$ is close to $y^{(i)}$ for all $(x^{(i)},y^{(i)})$
 
-![Screenshot 2024-03-20 at 7.11.31 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.11.31_PM.png)
+![Screenshot 2024-03-20 at 7.11.31 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.11.31_PM.webp)
 
 ## Cost function
 
@@ -101,7 +101,7 @@ $$
 J(w,b) = \frac{1}{2m}\sum_{i=1}^m (f_w,_b(x^{(i)})-y^{(i)})^2
 $$
 
-![Screenshot 2024-03-20 at 7.13.53 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.13.53_PM.png)
+![Screenshot 2024-03-20 at 7.13.53 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.13.53_PM.webp)
 
 - error : $\hat{y}^{(i)}-y^{(i)}$ (prediction_i - realvalue_i)
     - different people use different cost function
@@ -130,24 +130,24 @@ $$
     - $minimize_wJ(w)$
 - examples
     
-    ![Screenshot 2024-03-20 at 7.27.29 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.27.29_PM.png)
+    ![Screenshot 2024-03-20 at 7.27.29 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.27.29_PM.webp)
     
-    ![Screenshot 2024-03-20 at 7.28.47 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.28.47_PM.png)
+    ![Screenshot 2024-03-20 at 7.28.47 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.28.47_PM.webp)
     
-    ![Screenshot 2024-03-20 at 7.29.59 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.29.59_PM.png)
+    ![Screenshot 2024-03-20 at 7.29.59 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.29.59_PM.webp)
     
 
 ## Visualizing the cost function
 
-![Screenshot 2024-03-20 at 7.33.45 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.33.45_PM.png)
+![Screenshot 2024-03-20 at 7.33.45 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.33.45_PM.webp)
 
 - examples
     
-    ![Screenshot 2024-03-20 at 7.34.40 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.34.40_PM.png)
+    ![Screenshot 2024-03-20 at 7.34.40 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.34.40_PM.webp)
     
-    ![Screenshot 2024-03-20 at 7.35.03 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.35.03_PM.png)
+    ![Screenshot 2024-03-20 at 7.35.03 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.35.03_PM.webp)
     
-    ![Screenshot 2024-03-20 at 7.35.27 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.35.27_PM.png)
+    ![Screenshot 2024-03-20 at 7.35.27 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.35.27_PM.webp)
     
 
 ## Gradient Descent
@@ -163,7 +163,7 @@ Outline:
 - until we settle at or near a minimum
     - may have > 1 minimum
         
-        ![Screenshot 2024-03-20 at 9.11.58 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.11.58_PM.png)
+        ![Screenshot 2024-03-20 at 9.11.58 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.11.58_PM.webp)
         
 
 ## Implementing gradient descent
@@ -186,7 +186,7 @@ $\frac{d}{dw}J(w,b)$: Derivative
 
 ## Gradient descent intuition
 
-![Screenshot 2024-03-20 at 9.16.20 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.16.20_PM.png)
+![Screenshot 2024-03-20 at 9.16.20 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.16.20_PM.webp)
 
 ## Learning rate
 
@@ -197,7 +197,7 @@ if a is too large, gradient descent may:
 - overshoot, never reach minimum
 - fail to converge, diverge
 
-![Screenshot 2024-03-20 at 9.19.26 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.19.26_PM.png)
+![Screenshot 2024-03-20 at 9.19.26 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.19.26_PM.webp)
 
 ## Gradient descent for linear regression
 
@@ -231,7 +231,7 @@ $$
 - $b = b - a\frac{d}{db}J(w,b)$
     - $\frac{1}{m}\sum_{i=1}^m(f_w,_b(x^{(i)})-y^{(i)})$
 
-![Screenshot 2024-03-20 at 9.27.44 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.27.44_PM.png)
+![Screenshot 2024-03-20 at 9.27.44 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.27.44_PM.webp)
 
 - squared error cost will never have local minimum
 - gradient descent with convex function will always converge with global minimum
@@ -254,7 +254,7 @@ $\frac{1}{m}\sum_{i=1}^{m}(f_w,_b(x^{(i)})-y^{(i)})$
 
 ## Running gradient descent
 
-![Screenshot 2024-03-20 at 9.31.37 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.png)
+![Screenshot 2024-03-20 at 9.31.37 PM.png](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.webp)
 
 ---
 

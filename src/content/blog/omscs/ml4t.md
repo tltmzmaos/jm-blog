@@ -4,7 +4,7 @@ description: "Key ML-for-trading concepts from Georgia Tech OMSCS ML4T (CS 7646)
 pubDate: 2024-12-19
 author: "Jongmin Lee"
 tags: ["Machine Learning", "Portfolio Theory", "ML4T", "CS7646", "OMSCS"]
-heroImage: "/ML4T/ml4t-hero.png"
+heroImage: "/ML4T/ml4t-hero.webp"
 draft: false
 ---
 

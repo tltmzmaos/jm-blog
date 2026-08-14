@@ -4,7 +4,7 @@ description: "Key software engineering concepts from Georgia Tech OMSCS SDP (CS 
 pubDate: 2025-12-19
 author: "Jongmin Lee"
 tags: ["Software Engineering", "OMSCS", "UML", "Testing", "Android", "Agile", "CS6300"]
-heroImage: "/SDP/sdp-hero.png"
+heroImage: "/SDP/sdp-hero.webp"
 draft: false
 ---
 

@@ -4,7 +4,7 @@ description: "A comprehensive breakdown of logistic regression, sigmoid function
 pubDate: "2024-03-24T11:00:00Z"
 tags: ["Machine Learning", "Classification", "Logistic Regression"]
 author: "Jongmin Lee"
-heroImage: "/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.png"
+heroImage: "/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.webp"
 draft: false
 ---
 
@@ -20,7 +20,7 @@ Output is either 0 or 1
 
 ## Sigmoid function
 
-![Screenshot 2024-03-24 at 2.10.03 PM.png](/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.png)
+![Screenshot 2024-03-24 at 2.10.03 PM.png](/3-Classification/Screenshot_2024-03-24_at_2.10.03_PM.webp)
 
 outputs value between 0 and 1
 
@@ -71,7 +71,7 @@ When is $f_{\overrightarrow{w},b}(\overrightarrow{x})$ ≥ 0.5?
 
 $J(\overrightarrow{w},b)=\frac{1}{m}\sum_{i=1}^{m}\frac{1}{2}(f_{\overrightarrow{w},b}(\overrightarrow{x}^{(i)})-y^{(i)})^2$
 
-![Screenshot 2024-03-24 at 3.49.07 PM.png](/3-Classification/Screenshot_2024-03-24_at_3.49.07_PM.png)
+![Screenshot 2024-03-24 at 3.49.07 PM.png](/3-Classification/Screenshot_2024-03-24_at_3.49.07_PM.webp)
 
 Squared error cost is not a good choice for logistic regression because it can have multiple local minima
 
@@ -159,11 +159,11 @@ $f_{\overrightarrow{w},b}(\overrightarrow{x})=\frac{1}{1+e^{-\overrightarrow{w}\
 
 ## Linear regression
 
-![Screenshot 2024-03-24 at 4.20.17 PM.png](/3-Classification/Screenshot_2024-03-24_at_4.20.17_PM.png)
+![Screenshot 2024-03-24 at 4.20.17 PM.png](/3-Classification/Screenshot_2024-03-24_at_4.20.17_PM.webp)
 
 ## Classification
 
-![Screenshot 2024-03-24 at 4.21.14 PM.png](/3-Classification/Screenshot_2024-03-24_at_4.21.14_PM.png)
+![Screenshot 2024-03-24 at 4.21.14 PM.png](/3-Classification/Screenshot_2024-03-24_at_4.21.14_PM.webp)
 
 ## Addressing overfitting
 
