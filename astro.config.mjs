@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
+import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 
 import remarkMath from 'remark-math';
@@ -10,11 +10,6 @@ export default defineConfig({
   site: 'https://jongmin.me',
   base: '/',
   integrations: [
-    tailwind({
-      config: {
-        applyBaseStyles: false, // We handle base styles in globals.css
-      }
-    }),
     mdx(),
     sitemap(),
   ],
@@ -23,16 +18,21 @@ export default defineConfig({
       theme: 'github-dark',
       wrap: true
     },
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex]
+    // Astro 7 defaults to the Satteri processor; remark-math / rehype-katex are
+    // unified plugins, so the unified processor stays opt-in here.
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [rehypeKatex],
+    }),
   },
   vite: {
     build: {
       rollupOptions: {
         output: {
-          manualChunks: {
+          // Rolldown requires a function here; object form is no longer accepted.
+          manualChunks(id) {
             // Separate vendor chunks for better caching
-            'vendor-utils': ['fuse.js'],
+            if (id.includes('node_modules/fuse.js')) return 'vendor-utils';
           },
         },
       },

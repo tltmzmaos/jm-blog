@@ -22,7 +22,7 @@ export function getRelatedPosts(
   }
 
   const scored = allPosts
-    .filter((post) => post.slug !== currentPost.slug)
+    .filter((post) => post.id !== currentPost.id)
     .map((post) => {
       const postTags = post.data.tags || [];
       const commonTags = currentTags.filter((tag) => postTags.includes(tag));
@@ -42,7 +42,7 @@ export function getRelatedPosts(
     .slice(0, limit);
 
   return scored.map((item) => ({
-    slug: item.post.slug,
+    slug: item.post.id,
     title: item.post.data.title,
     description: item.post.data.description,
   }));

@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
     .filter((post) => !post.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
     .map((post) => ({
-      slug: post.slug,
+      slug: post.id,
       title: post.data.title,
       description: post.data.description,
       tags: post.data.tags || [],
