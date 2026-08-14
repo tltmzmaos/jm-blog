@@ -10,6 +10,7 @@ export interface Props {
   author?: string;
   canonical?: string;
   slug?: string;
+  hasMath?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   author = 'Jongmin',
   canonical,
   slug,
+  hasMath = false,
 } = Astro.props;
 
 const siteUrl = Astro.site || 'https://jongmin.me';
@@ -195,16 +197,13 @@ if (type === 'website') {
   )
 }
 
-<!-- Preconnect to external domains -->
-<link rel="preconnect" href="https://cdn.jsdelivr.net" />
+<!-- jsdelivr only ever serves the KaTeX stylesheet -->
+{hasMath && <link rel="preconnect" href="https://cdn.jsdelivr.net" />}
 
-<!-- DNS prefetch for better performance -->
-<link rel="dns-prefetch" href="https://api.github.com" />
-<link rel="dns-prefetch" href="https://gist.github.com" />
-
-<!-- Preload critical resources (conditionally includes KaTeX) -->
+<!-- Preload KaTeX only where BaseLayout will actually load the stylesheet;
+     an unused preload costs a round trip and warns in the console. -->
 {
-  type === 'article' && (
+  hasMath && (
     <link
       rel="preload"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css"

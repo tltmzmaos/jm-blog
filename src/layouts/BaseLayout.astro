@@ -38,6 +38,9 @@ const {
     <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta name="color-scheme" content="light dark" />
+    <!-- GitHub Pages cannot set response headers; this is the only one
+         from the old _headers file that a meta tag can express. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       name="theme-color"
       content="#ffffff"
@@ -71,6 +74,7 @@ const {
       tags={tags}
       author={author}
       slug={slug}
+      hasMath={hasMath}
     />
 
     <!-- KaTeX CSS (only loaded on pages with math) -->

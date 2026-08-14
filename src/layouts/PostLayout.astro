@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
+import { hasMathContent } from '../utils/hasMath';
 
 export interface Props {
   frontmatter: {
@@ -55,7 +56,7 @@ const slug =
 const ogImage = heroImage || `/og/${slug}.png`;
 
 // Detect math formulas ($ or $$ usage)
-const hasMath = content ? /\$\$?[^$]+\$\$?/.test(content) : false;
+const hasMath = hasMathContent(content);
 
 const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat('en-US', {
@@ -733,29 +734,6 @@ const formatDate = (date: Date) => {
     border-top-color: #3c3c3c;
   }
 
-  /* Mermaid diagram container */
-  .article-content :global(.mermaid-container) {
-    display: flex;
-    justify-content: center;
-    margin: 1.5rem 0;
-    padding: 1.5rem;
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 12px;
-    overflow-x: auto;
-  }
-
-  /* Keep mermaid diagrams light in both modes for best text visibility */
-  :global(.dark) .article-content :global(.mermaid-container) {
-    background: #ffffff;
-    border-color: #d0d0d0;
-  }
-
-  .article-content :global(.mermaid-container svg) {
-    max-width: 100%;
-    height: auto;
-  }
-
   .article-content :global(table) {
     width: 100%;
     border-collapse: collapse;
@@ -1245,38 +1223,5 @@ const formatDate = (date: Date) => {
     }
 
     // Initialize Mermaid diagrams
-    const mermaidBlocks = document.querySelectorAll(
-      '.article-content pre[data-language="mermaid"]'
-    );
-    if (mermaidBlocks.length > 0) {
-      import('mermaid').then(({ default: mermaid }) => {
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: 'default',
-          securityLevel: 'strict',
-        });
-
-        mermaidBlocks.forEach((pre, index) => {
-          const code = pre.querySelector('code');
-          if (!code) return;
-
-          const container = document.createElement('div');
-          container.className = 'mermaid-container';
-
-          const mermaidCode = code.textContent || '';
-          const id = `mermaid-${index}`;
-
-          mermaid
-            .render(id, mermaidCode)
-            .then(({ svg }) => {
-              container.innerHTML = svg;
-              pre.replaceWith(container);
-            })
-            .catch((err) => {
-              console.error('Mermaid rendering failed:', err);
-            });
-        });
-      });
-    }
   });
 </script>

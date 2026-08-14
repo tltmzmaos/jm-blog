@@ -27,15 +27,6 @@ export interface SearchResult {
   }>;
 }
 
-export interface LikeData {
-  count: number;
-  users: string[];
-}
-
-export interface LikeStorage {
-  [postSlug: string]: LikeData;
-}
-
 export interface SEOProps {
   title: string;
   description?: string;
