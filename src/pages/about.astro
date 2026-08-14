@@ -15,7 +15,7 @@ const selectedPosts = allPosts
   .filter((p) => p.data.featured && !p.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .map((p) => ({
-    slug: p.slug,
+    slug: p.id,
     title: p.data.title,
     description: p.data.description,
     readingTime: calculateReadingTime(p.body || '').text,

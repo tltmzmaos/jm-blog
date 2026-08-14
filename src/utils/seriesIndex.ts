@@ -70,14 +70,14 @@ export async function getAllSeries(): Promise<SeriesWithPosts[]> {
     .map((entry) => {
       const meta = entry.data;
       const matched = visiblePosts.filter((p) =>
-        p.slug.startsWith(meta.dir + '/')
+        p.id.startsWith(meta.dir + '/')
       );
 
       const posts: SeriesPostEntry[] = matched
         .map((p) => {
-          const part = extractPartNumber(p.slug);
+          const part = extractPartNumber(p.id);
           return {
-            slug: p.slug,
+            slug: p.id,
             title: p.data.title,
             description: p.data.description,
             pubDate: p.data.pubDate,

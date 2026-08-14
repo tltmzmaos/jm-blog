@@ -38,7 +38,7 @@ export function getSeriesInfo(
   currentPost: CollectionEntry<'blog'>,
   allPosts: CollectionEntry<'blog'>[]
 ): SeriesInfo | null {
-  const slug = currentPost.slug;
+  const slug = currentPost.id;
   const parts = slug.split('/');
   if (parts.length < 2) return null;
 
@@ -49,13 +49,13 @@ export function getSeriesInfo(
   // Find all posts in the same directory with a part number
   const seriesPosts = allPosts
     .filter((post) => {
-      if (!post.slug.startsWith(dir + '/')) return false;
-      return extractPartNumber(post.slug) !== null;
+      if (!post.id.startsWith(dir + '/')) return false;
+      return extractPartNumber(post.id) !== null;
     })
     .map((post) => ({
-      slug: post.slug,
+      slug: post.id,
       title: post.data.title,
-      partNumber: extractPartNumber(post.slug)!,
+      partNumber: extractPartNumber(post.id)!,
     }))
     .sort((a, b) => a.partNumber - b.partNumber);
 

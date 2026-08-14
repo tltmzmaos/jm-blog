@@ -7,7 +7,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 ## Tech Stack
 
 - **Framework:** Astro 5.x (Static Site Generation)
-- **Styling:** Tailwind CSS + Typography plugin
+- **Styling:** Hand-written CSS with CSS custom properties (scoped `<style>` blocks per component)
 - **Content:** MDX, KaTeX (math), Mermaid (diagrams)
 - **Search:** Fuse.js (client-side fuzzy search)
 - **OG Images:** Satori + Sharp (dynamic generation)

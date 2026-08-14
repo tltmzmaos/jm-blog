@@ -6,7 +6,7 @@ import sharp from 'sharp';
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: {
       title: post.data.title,
       description: post.data.description,
