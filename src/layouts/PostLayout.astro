@@ -97,162 +97,164 @@ const formatDate = (date: Date) => {
 
   {headings.length > 0 && <TableOfContents headings={headings} />}
 
-  <article class="article" id="main-content">
-    <header class="article-header">
-      <div class="meta">
-        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-        <span class="separator">·</span>
-        <span class="reading-time">
-          <Fragment set:html={ReadingTimeIcon} />
-          {readingTime.text}
-        </span>
-      </div>
+  <main id="main-content">
+    <article class="article">
+      <header class="article-header">
+        <div class="meta">
+          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+          <span class="separator">·</span>
+          <span class="reading-time">
+            <Fragment set:html={ReadingTimeIcon} />
+            {readingTime.text}
+          </span>
+        </div>
 
-      <h1>{title}</h1>
+        <h1>{title}</h1>
 
-      {description && <p class="description">{description}</p>}
+        {description && <p class="description">{description}</p>}
+
+        {
+          tags.length > 0 && (
+            <div class="tags">
+              {tags.map((tag) => (
+                <a href={`/tags/${tagSlug(tag)}`} class="tag">
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )
+        }
+
+        {
+          seriesInfo && (
+            <nav class="series-nav" aria-label="Series navigation">
+              <div class="series-header">
+                <span class="series-label">{seriesInfo.name}</span>
+                <span class="series-count">
+                  Part {seriesInfo.currentPart} of {seriesInfo.totalParts}
+                </span>
+              </div>
+              <ol class="series-list">
+                {seriesInfo.parts.map((part) => (
+                  <li
+                    class:list={[
+                      { current: part.partNumber === seriesInfo.currentPart },
+                    ]}
+                  >
+                    {part.partNumber === seriesInfo.currentPart ? (
+                      <span class="series-current">{part.title}</span>
+                    ) : (
+                      <a href={`/posts/${part.slug}`}>{part.title}</a>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )
+        }
+      </header>
 
       {
-        tags.length > 0 && (
-          <div class="tags">
-            {tags.map((tag) => (
-              <a href={`/tags/${tagSlug(tag)}`} class="tag">
-                {tag}
-              </a>
-            ))}
+        heroImage && (
+          <div class="hero-image">
+            <img
+              src={heroImage}
+              alt={title}
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              width={heroSize?.width}
+              height={heroSize?.height}
+            />
           </div>
         )
       }
 
-      {
-        seriesInfo && (
-          <nav class="series-nav" aria-label="Series navigation">
-            <div class="series-header">
-              <span class="series-label">{seriesInfo.name}</span>
-              <span class="series-count">
-                Part {seriesInfo.currentPart} of {seriesInfo.totalParts}
-              </span>
-            </div>
-            <ol class="series-list">
-              {seriesInfo.parts.map((part) => (
-                <li
-                  class:list={[
-                    { current: part.partNumber === seriesInfo.currentPart },
-                  ]}
-                >
-                  {part.partNumber === seriesInfo.currentPart ? (
-                    <span class="series-current">{part.title}</span>
-                  ) : (
-                    <a href={`/posts/${part.slug}`}>{part.title}</a>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )
-      }
-    </header>
-
-    {
-      heroImage && (
-        <div class="hero-image">
-          <img
-            src={heroImage}
-            alt={title}
-            loading="eager"
-            decoding="async"
-            fetchpriority="high"
-            width={heroSize?.width}
-            height={heroSize?.height}
-          />
-        </div>
-      )
-    }
-
-    <div class="article-content">
-      <slot />
-    </div>
-
-    <footer class="article-footer">
-      <div class="share-buttons">
-        <button
-          class="share-btn"
-          id="copy-link-btn"
-          type="button"
-          data-url={postUrl}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            aria-hidden="true"
-            ><path
-              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-            ></path><path
-              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-            ></path></svg
-          >
-          Copy link
-        </button>
-        <span class="share-status" id="copy-link-status" role="status"></span>
+      <div class="article-content">
+        <slot />
       </div>
 
-      {
-        relatedPosts.length > 0 && (
-          <section class="related-posts">
-            <h3 class="section-title">Related Posts</h3>
-            <ul>
-              {relatedPosts.map((post) => (
-                <li>
-                  <a href={`/posts/${post.slug}`}>
-                    <span class="related-title">{post.title}</span>
-                    {post.description && (
-                      <span class="related-desc">{post.description}</span>
-                    )}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        (prevPost || nextPost) && (
-          <nav class="post-nav" aria-label="Post navigation">
-            <h3 class="section-title">Continue Reading</h3>
-            {prevPost ? (
-              <a href={`/posts/${prevPost.slug}`} class="nav-link prev">
-                <span class="nav-label">Previous</span>
-                <span class="nav-title">{prevPost.title}</span>
-              </a>
-            ) : (
-              <div />
-            )}
-
-            {nextPost && (
-              <a href={`/posts/${nextPost.slug}`} class="nav-link next">
-                <span class="nav-label">Next</span>
-                <span class="nav-title">{nextPost.title}</span>
-              </a>
-            )}
-          </nav>
-        )
-      }
-
-      <div class="author-bio">
-        <div class="author-info">
-          <span class="author-name">{author}</span>
-          <span class="author-desc"
-            >Writing about what I learn, think, and build.</span
+      <footer class="article-footer">
+        <div class="share-buttons">
+          <button
+            class="share-btn"
+            id="copy-link-btn"
+            type="button"
+            data-url={postUrl}
           >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+              ><path
+                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+              ></path><path
+                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              ></path></svg
+            >
+            Copy link
+          </button>
+          <span class="share-status" id="copy-link-status" role="status"></span>
         </div>
-      </div>
-    </footer>
-  </article>
+
+        {
+          relatedPosts.length > 0 && (
+            <section class="related-posts">
+              <h2 class="section-title">Related Posts</h2>
+              <ul>
+                {relatedPosts.map((post) => (
+                  <li>
+                    <a href={`/posts/${post.slug}`}>
+                      <span class="related-title">{post.title}</span>
+                      {post.description && (
+                        <span class="related-desc">{post.description}</span>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+
+        {
+          (prevPost || nextPost) && (
+            <nav class="post-nav" aria-label="Post navigation">
+              <h2 class="section-title">Continue Reading</h2>
+              {prevPost ? (
+                <a href={`/posts/${prevPost.slug}`} class="nav-link prev">
+                  <span class="nav-label">Previous</span>
+                  <span class="nav-title">{prevPost.title}</span>
+                </a>
+              ) : (
+                <div />
+              )}
+
+              {nextPost && (
+                <a href={`/posts/${nextPost.slug}`} class="nav-link next">
+                  <span class="nav-label">Next</span>
+                  <span class="nav-title">{nextPost.title}</span>
+                </a>
+              )}
+            </nav>
+          )
+        }
+
+        <div class="author-bio">
+          <div class="author-info">
+            <span class="author-name">{author}</span>
+            <span class="author-desc"
+              >Writing about what I learn, think, and build.</span
+            >
+          </div>
+        </div>
+      </footer>
+    </article>
+  </main>
 
   <button
     class="back-to-top"
