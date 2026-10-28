@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import SeriesStrip from '../components/SeriesStrip.astro';
 import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
@@ -138,6 +139,14 @@ const formatDate = (date: Date) => {
                   {seriesInfo.name}
                 </a>
               </p>
+
+              <div class="series-strip">
+                <SeriesStrip
+                  name={seriesInfo.name}
+                  parts={seriesInfo.parts}
+                  current={seriesInfo.currentPart}
+                />
+              </div>
 
               <div class="series-steps">
                 {seriesInfo.prev && (
@@ -427,6 +436,10 @@ const formatDate = (date: Date) => {
 
   .series-title a {
     font-weight: 500;
+  }
+
+  .series-strip {
+    margin-top: 0.5rem;
   }
 
   .series-steps {

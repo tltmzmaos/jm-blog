@@ -18,6 +18,18 @@ export interface SeriesInfo {
 }
 
 /**
+ * A series' posts as numbered parts, in the series' own order (part number
+ * or date). The number is the position, so date-sorted series count too.
+ */
+export function seriesParts(series: SeriesWithPosts): SeriesPart[] {
+  return series.posts.map((p, i) => ({
+    slug: p.slug,
+    title: displayPartTitle(p.title, series),
+    partNumber: i + 1,
+  }));
+}
+
+/**
  * Series navigation for a post, built from the series metadata in
  * src/content/series. Parts are numbered by position in the series' own
  * order (part number or date), so date-sorted series get navigation too.
@@ -29,11 +41,7 @@ export function getSeriesInfo(
   const series = allSeries.find((s) => s.posts.some((p) => p.slug === postId));
   if (!series || series.posts.length < 2) return null;
 
-  const parts = series.posts.map((p, i) => ({
-    slug: p.slug,
-    title: displayPartTitle(p.title, series),
-    partNumber: i + 1,
-  }));
+  const parts = seriesParts(series);
   const index = parts.findIndex((p) => p.slug === postId);
 
   return {

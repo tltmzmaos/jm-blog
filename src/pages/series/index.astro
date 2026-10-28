@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
+import SeriesStrip from '../../components/SeriesStrip.astro';
 import { getAllSeries, displayPartTitle } from '../../utils/seriesIndex';
+import { seriesParts } from '../../utils/seriesPosts';
 
 const seriesList = await getAllSeries();
 const baseUrl = import.meta.env.BASE_URL;
@@ -63,6 +65,10 @@ const formatShortDate = (date: Date) =>
           </p>
           <p class="series-desc">{s.description}</p>
 
+          <div class="strip">
+            <SeriesStrip name={s.title} parts={seriesParts(s)} />
+          </div>
+
           <ol class="parts" role="list">
             {s.posts.map((post, i) => (
               <li class="part">
@@ -115,9 +121,13 @@ const formatShortDate = (date: Date) =>
     margin: 0.625rem 0 0;
   }
 
+  .strip {
+    margin-top: 0.75rem;
+  }
+
   .parts {
     list-style: none;
-    margin: 1.25rem 0 0;
+    margin: 1rem 0 0;
     padding: 0;
     border-top: 1px solid var(--color-border);
   }
