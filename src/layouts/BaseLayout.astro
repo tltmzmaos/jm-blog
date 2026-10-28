@@ -96,38 +96,41 @@ const {
     <!-- Prevent dark mode flash -->
     <script is:inline>
       (function () {
-        const theme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia(
-          '(prefers-color-scheme: dark)'
-        ).matches;
+        // Same values as --color-bg; the browser UI color follows the
+        // chosen theme, not only the OS setting.
+        const BG = { light: '#ffffff', dark: '#1e1e1e' };
+        const media = window.matchMedia('(prefers-color-scheme: dark)');
+        const stored = () => {
+          try {
+            return localStorage.getItem('theme');
+          } catch {
+            return null;
+          }
+        };
+        const isDark = () => {
+          const t = stored();
+          return t === 'dark' || (!t && media.matches);
+        };
+        const apply = (doc, dark) => {
+          doc.documentElement.classList.toggle('dark', dark);
+          doc.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          doc
+            .querySelectorAll('meta[name="theme-color"]')
+            .forEach((m) =>
+              m.setAttribute('content', dark ? BG.dark : BG.light)
+            );
+        };
 
-        if (theme === 'dark' || (!theme && prefersDark)) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.colorScheme = 'dark';
-        }
+        apply(document, isDark());
 
         // Preserve theme across View Transitions page swaps
-        document.addEventListener('astro:before-swap', (e) => {
-          const t = localStorage.getItem('theme');
-          const dark =
-            t === 'dark' ||
-            (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          e.newDocument.documentElement.classList.toggle('dark', dark);
-          e.newDocument.documentElement.style.colorScheme = dark
-            ? 'dark'
-            : 'light';
-        });
+        document.addEventListener('astro:before-swap', (e) =>
+          apply(e.newDocument, isDark())
+        );
 
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', (e) => {
-            if (!localStorage.getItem('theme')) {
-              document.documentElement.classList.toggle('dark', e.matches);
-              document.documentElement.style.colorScheme = e.matches
-                ? 'dark'
-                : 'light';
-            }
-          });
+        media.addEventListener('change', () => {
+          if (!stored()) apply(document, isDark());
+        });
       })();
     </script>
   </head>
