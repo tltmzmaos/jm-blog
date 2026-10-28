@@ -11,28 +11,150 @@ const baseUrl = import.meta.env.BASE_URL;
   noindex
 >
   <Header />
-  <main class="container page" id="main-content">
-    <h1 class="page-title">This page got lost.</h1>
+  <main class="container page lost" id="main-content">
+    <!-- A page number, set like the years on the archive page. -->
+    <p class="folio" aria-hidden="true">p. 404</p>
+    <h1 class="page-title">This page was torn out.</h1>
     <p class="page-lead">
-      The address you followed doesn't lead anywhere — at least not here. The
-      post may have moved, or the link might be a typo.
+      Nothing is written at <code class="path" id="lost-path">this address</code
+      >. The post may have moved, or the link has a typo.
+    </p>
+    <p class="guess" id="lost-guess" hidden>
+      Maybe you meant <a href={`${baseUrl}posts/`} class="text-link"></a>?
     </p>
     <nav class="links" aria-label="Recovery">
       <a href={`${baseUrl}posts/`} class="text-link">All posts</a>
       <span aria-hidden="true">·</span>
-      <a href={`${baseUrl}tags/`} class="text-link">Tags</a>
-      <span aria-hidden="true">·</span>
       <a href={`${baseUrl}series/`} class="text-link">Series</a>
+      <span aria-hidden="true">·</span>
+      <a href={`${baseUrl}tags/`} class="text-link">Tags</a>
     </nav>
   </main>
+
+  <script>
+    interface IndexedPost {
+      slug: string;
+      title: string;
+    }
+
+    // The address that was asked for, shown back as written.
+    let path = location.pathname;
+    try {
+      path = decodeURI(path);
+    } catch {
+      // A malformed address is shown as it came.
+    }
+    const pathEl = document.getElementById('lost-path');
+    if (pathEl) pathEl.textContent = path;
+
+    // "/posts/ml-stanford/2-regresion/" -> "ml-stanford/2-regresion"
+    const normalize = (p: string) =>
+      p
+        .toLowerCase()
+        .replace(/\.html?$/, '')
+        .replace(/^\/+|\/+$/g, '')
+        .replace(/^(posts|blog)\//, '');
+    const lastPart = (p: string) => p.split('/').pop() ?? '';
+
+    // 1 for equal strings, falling toward 0 as more letters must change.
+    const similarity = (a: string, b: string) => {
+      if (!a || !b) return 0;
+      let row = Array.from({ length: b.length + 1 }, (_, j) => j);
+      for (let i = 1; i <= a.length; i++) {
+        const next = [i];
+        for (let j = 1; j <= b.length; j++) {
+          next[j] = Math.min(
+            row[j] + 1,
+            next[j - 1] + 1,
+            row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+          );
+        }
+        row = next;
+      }
+      return 1 - row[b.length] / Math.max(a.length, b.length);
+    };
+
+    // Offer the post whose address is closest to the one asked for, if any
+    // is close enough to be a typo or an old address of the same post.
+    const asked = normalize(path);
+    if (asked.length >= 3 && asked !== '404') {
+      fetch('/api/posts.json')
+        .then((r) => (r.ok ? r.json() : []))
+        .then((posts: IndexedPost[]) => {
+          let best: IndexedPost | undefined;
+          let bestScore = 0;
+          for (const post of posts) {
+            const score = Math.max(
+              similarity(asked, post.slug),
+              similarity(lastPart(asked), lastPart(post.slug))
+            );
+            if (score > bestScore) {
+              best = post;
+              bestScore = score;
+            }
+          }
+          const guess = document.getElementById('lost-guess');
+          const link = guess?.querySelector('a');
+          if (!best || bestScore < 0.6 || !guess || !link) return;
+          link.href = `/posts/${best.slug}/`;
+          link.textContent = best.title;
+          guess.hidden = false;
+        })
+        .catch(() => {
+          // No suggestion; the links below still help.
+        });
+    }
+  </script>
 </BaseLayout>
 
 <style>
+  .lost {
+    position: relative;
+  }
+
+  .folio {
+    margin: 0 0 1rem;
+    font-size: 2.25rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+
+  .path {
+    padding: 0.0625em 0.1875em;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border-radius: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .guess {
+    margin: 1.25rem 0 0;
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+  }
+
   .links {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-top: 1.5rem;
     color: var(--color-text-muted);
+  }
+
+  /* Wide screens: the page number hangs in the left margin, where the
+     archive keeps its years. */
+  @media (min-width: 1100px) {
+    .folio {
+      position: absolute;
+      right: calc(100% - 1.5rem + 2.5rem);
+      top: 2.5rem;
+      margin: 0;
+      white-space: nowrap;
+    }
   }
 </style>
