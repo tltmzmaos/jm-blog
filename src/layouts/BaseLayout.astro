@@ -326,6 +326,27 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     }
   }
 
+  /* Theme switch (ThemeToggle): the new theme is revealed as a circle
+     growing from the toggle, a script animation on the new snapshot. For
+     that one transition the default cross-fade is off, and so are color
+     transitions and the post title names, so the snapshot is the finished
+     theme and the whole page is revealed as one piece. */
+  .theme-reveal::view-transition-old(root),
+  .theme-reveal::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  .theme-reveal *,
+  .theme-reveal *::before,
+  .theme-reveal *::after {
+    transition: none !important;
+  }
+
+  .theme-reveal .post-title-vt {
+    view-transition-name: none;
+  }
+
   body {
     font-family:
       'Inter',

@@ -93,15 +93,14 @@
   // The theme script in <head> re-applies the theme on a back/forward
   // cache restore; this listener runs after it.
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted) syncPressed();
+    if (e.persisted) {
+      root.classList.remove('theme-reveal');
+      requested = undefined;
+      syncPressed();
+    }
   });
 
-  toggle?.addEventListener('click', () => {
-    const dark = !root.classList.contains('dark');
-
-    // Enable transition animation
-    root.classList.add('theme-transition');
-
+  const setTheme = (dark: boolean) => {
     root.classList.toggle('dark', dark);
     root.style.colorScheme = dark ? 'dark' : 'light';
     try {
@@ -109,16 +108,75 @@
     } catch {
       // Storage can be blocked; the choice then lasts for this page only.
     }
-    toggle.setAttribute('aria-pressed', String(dark));
+    toggle?.setAttribute('aria-pressed', String(dark));
 
     const bg = getComputedStyle(root).getPropertyValue('--color-bg').trim();
     document
       .querySelectorAll('meta[name="theme-color"]')
       .forEach((m) => m.setAttribute('content', bg));
+  };
 
-    // Remove class after animation completes (performance)
-    setTimeout(() => {
-      root.classList.remove('theme-transition');
-    }, 200);
+  // A reveal applies the theme a frame after the click. Until it settles,
+  // the theme the last click asked for is the one to flip, so a quick
+  // second click undoes the first instead of repeating it.
+  let requested: boolean | undefined;
+  // The newest reveal; an older one cut short by a quick second click must
+  // not clean up after the one that replaced it.
+  let reveal: ViewTransition | undefined;
+
+  toggle?.addEventListener('click', () => {
+    const dark = !(requested ?? root.classList.contains('dark'));
+    const reduce = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+    // Without view transitions, or with reduced motion: switch in place.
+    if (!('startViewTransition' in document) || reduce) {
+      if (!reduce) root.classList.add('theme-transition');
+      setTheme(dark);
+      setTimeout(() => root.classList.remove('theme-transition'), 200);
+      return;
+    }
+
+    // Otherwise the new theme is revealed as a circle growing from the
+    // middle of this button out to the farthest corner of the window.
+    const box = toggle.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    root.classList.add('theme-reveal');
+    requested = dark;
+    const transition = document.startViewTransition(() => setTheme(dark));
+    reveal = transition;
+
+    transition.ready
+      .then(() => {
+        root.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${radius}px at ${x}px ${y}px)`,
+            ],
+          },
+          {
+            duration: 400,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            pseudoElement: '::view-transition-new(root)',
+          }
+        );
+      })
+      // A skipped transition rejects here; the theme has still changed.
+      .catch(() => {});
+
+    const done = () => {
+      if (reveal !== transition) return;
+      root.classList.remove('theme-reveal');
+      requested = undefined;
+    };
+    transition.finished.then(done, done);
   });
 </script>
