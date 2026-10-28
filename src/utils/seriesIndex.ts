@@ -108,8 +108,9 @@ export async function getAllSeries(): Promise<SeriesWithPosts[]> {
         lastDate,
       } satisfies SeriesWithPosts;
     })
+    .filter((s) => s.count > 0)
     .sort((a, b) => {
-      // Most recent activity first; series with no posts go to the end.
+      // Most recent activity first; series whose posts are all drafts are dropped above.
       const al = a.lastDate?.valueOf() ?? 0;
       const bl = b.lastDate?.valueOf() ?? 0;
       return bl - al;
