@@ -167,6 +167,8 @@ const baseUrl = import.meta.env.BASE_URL;
   </main>
 
   <script>
+    import { scramble } from '../../scripts/scramble';
+
     document.addEventListener('astro:page-load', () => {
       const list = document.getElementById('tag-list');
       const searchInput = document.getElementById(
@@ -182,53 +184,6 @@ const baseUrl = import.meta.env.BASE_URL;
       const reducedMotion = window.matchMedia(
         '(prefers-reduced-motion: reduce)'
       ).matches;
-
-      const DIGIT_POOL = '0123456789';
-      const ALPHA_POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
-
-      function scramble(
-        el: HTMLElement,
-        finalText: string,
-        opts: { duration?: number; digitsOnly?: boolean } = {}
-      ) {
-        const duration = opts.duration ?? 600;
-        const chars = finalText.split('');
-        const start = performance.now();
-
-        const anyEl = el as HTMLElement & { _scrambleRaf?: number };
-        if (anyEl._scrambleRaf) cancelAnimationFrame(anyEl._scrambleRaf);
-
-        const step = (now: number) => {
-          const t = Math.min((now - start) / duration, 1);
-          let out = '';
-          for (let i = 0; i < chars.length; i++) {
-            const ch = chars[i];
-            if (ch === ' ' || ch === '·' || ch === '.') {
-              out += ch;
-              continue;
-            }
-            const threshold = (i / Math.max(chars.length - 1, 1)) * 0.6 + 0.18;
-            if (t > threshold) {
-              out += ch;
-            } else {
-              const pool = opts.digitsOnly
-                ? DIGIT_POOL
-                : /\d/.test(ch)
-                  ? DIGIT_POOL
-                  : ALPHA_POOL;
-              out += pool[Math.floor(Math.random() * pool.length)];
-            }
-          }
-          el.textContent = out;
-          if (t < 1) {
-            anyEl._scrambleRaf = requestAnimationFrame(step);
-          } else {
-            el.textContent = finalText;
-            anyEl._scrambleRaf = undefined;
-          }
-        };
-        anyEl._scrambleRaf = requestAnimationFrame(step);
-      }
 
       function scrambleVisibleMeta() {
         if (reducedMotion) return;
