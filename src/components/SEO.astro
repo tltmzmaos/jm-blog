@@ -191,17 +191,10 @@ const breadcrumbData =
   )
 }
 
-<!-- jsdelivr only ever serves the KaTeX stylesheet -->
-{hasMath && <link rel="preconnect" href="https://cdn.jsdelivr.net" />}
-
-<!-- Preload KaTeX only where BaseLayout will actually load the stylesheet;
-     an unused preload costs a round trip and warns in the console. -->
+<!-- jsdelivr only ever serves the KaTeX stylesheet, which BaseLayout loads
+     with crossorigin="anonymous"; the preconnect must match to be reused. -->
 {
   hasMath && (
-    <link
-      rel="preload"
-      href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css"
-      as="style"
-    />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   )
 }
