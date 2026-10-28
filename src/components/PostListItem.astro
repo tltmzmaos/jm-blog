@@ -1,4 +1,6 @@
 ---
+import { postTitleTransitionName } from '../utils/viewTransition';
+
 export interface Props {
   title: string;
   description: string;
@@ -18,7 +20,10 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <article class="post">
-  <h3 class="title">
+  <h3
+    class="title post-title-vt"
+    style={`--post-title-vt: ${postTitleTransitionName(slug)}`}
+  >
     <a href={`${baseUrl}posts/${slug}/`}>{title}</a>
   </h3>
   <time class="date" datetime={pubDate.toISOString()}>{formattedDate}</time>
@@ -34,7 +39,11 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     row-gap: 0.25rem;
   }
 
+  /* As wide as its words, not the column: the morph into the post's h1
+     (see .post-title-vt) scales the box, and a box wider than the text
+     would shrink the words on the way. */
   .title {
+    justify-self: start;
     font-size: 1.0625rem;
     font-weight: 500;
     line-height: 1.4;

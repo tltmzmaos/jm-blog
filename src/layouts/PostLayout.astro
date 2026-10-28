@@ -8,6 +8,7 @@ import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
 import { tagLabel, tagSlug } from '../utils/tags';
+import { postTitleTransitionName } from '../utils/viewTransition';
 
 export interface Props {
   frontmatter: {
@@ -97,7 +98,12 @@ const formatDate = (date: Date) => {
   <main id="main-content" class="container">
     <article class="article">
       <header class="article-header">
-        <h1>{title}</h1>
+        <h1
+          class="post-title-vt"
+          style={`--post-title-vt: ${postTitleTransitionName(slug)}`}
+        >
+          {title}
+        </h1>
 
         {description && <p class="description">{description}</p>}
 
@@ -345,7 +351,9 @@ const formatDate = (date: Date) => {
     margin-bottom: 2.5rem;
   }
 
+  /* As wide as its words, like the list titles it morphs from. */
   h1 {
+    width: fit-content;
     font-size: 2rem;
     font-weight: 600;
     letter-spacing: -0.02em;

@@ -292,8 +292,19 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     scrollbar-gutter: stable;
   }
 
-  /* Native cross-document transitions: a short cross-fade between pages,
-     and none at all when reduced motion is requested. */
+  /* A post's title in the lists and the h1 of the post share a name, set
+     per post in --post-title-vt (utils/viewTransition.ts). */
+  .post-title-vt {
+    view-transition-name: var(--post-title-vt);
+    view-transition-class: post-title;
+  }
+
+  /* Native cross-document transitions, and none at all when reduced motion
+     is requested. The page cross-fades quickly; the title that was clicked
+     morphs into the post's h1 (and back again on Back) a little slower, so
+     it reads as the one thing that moved. Titles with no partner on the
+     other page fade out with the page. Browsers without cross-document
+     view transitions just navigate. */
   @media (prefers-reduced-motion: no-preference) {
     @view-transition {
       navigation: auto;
@@ -301,6 +312,16 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
     ::view-transition-old(root),
     ::view-transition-new(root) {
+      animation-duration: 0.15s;
+    }
+
+    ::view-transition-group(*.post-title) {
+      animation-duration: 0.28s;
+      animation-timing-function: ease;
+    }
+
+    ::view-transition-old(*.post-title):only-child,
+    ::view-transition-new(*.post-title):only-child {
       animation-duration: 0.15s;
     }
   }
