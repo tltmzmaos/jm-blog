@@ -261,7 +261,9 @@ const formatDate = (date: Date) => {
         heading.appendChild(anchor);
       });
 
-    // Code block: language badge + copy button
+    // Code blocks: a small language label and a copy button. Plain text
+    // blocks get only the button.
+    const PLAIN = new Set(['', 'plaintext', 'text', 'txt']);
     document.querySelectorAll('.article-content pre').forEach((pre) => {
       if (pre.querySelector('.code-header')) return;
       const code = pre.querySelector('code');
@@ -273,36 +275,36 @@ const formatDate = (date: Date) => {
       const header = document.createElement('div');
       header.className = 'code-header';
 
-      const langSpan = document.createElement('span');
-      langSpan.className = 'code-lang';
-      langSpan.textContent = lang;
-      header.appendChild(langSpan);
+      if (!PLAIN.has(lang)) {
+        const langSpan = document.createElement('span');
+        langSpan.className = 'code-lang';
+        langSpan.textContent = lang;
+        header.appendChild(langSpan);
+      }
 
       const btn = document.createElement('button');
       btn.className = 'copy-btn';
       btn.textContent = 'Copy';
       btn.type = 'button';
 
+      let resetTimer: ReturnType<typeof setTimeout> | undefined;
       btn.addEventListener('click', async () => {
         const text = code?.textContent || pre.textContent || '';
         try {
           await navigator.clipboard.writeText(text);
-          btn.textContent = 'Copied!';
+          btn.textContent = 'Copied';
           btn.classList.add('copied');
-          setTimeout(() => {
-            btn.textContent = 'Copy';
-            btn.classList.remove('copied');
-          }, 2000);
         } catch {
-          btn.textContent = 'Failed';
-          setTimeout(() => {
-            btn.textContent = 'Copy';
-          }, 2000);
+          btn.textContent = 'Copy failed';
         }
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
       });
 
       header.appendChild(btn);
-      (pre as HTMLElement).style.position = 'relative';
       pre.insertBefore(header, pre.firstChild);
     });
 
@@ -635,77 +637,98 @@ const formatDate = (date: Date) => {
     text-decoration-color: currentColor;
   }
 
+  /* ═══ Code ═══ */
   .article-content :global(code) {
     font-family: var(--font-mono);
     font-size: 0.875em;
-    padding: 0.2em 0.5em;
+    padding: 0.125em 0.375em;
     background: var(--color-surface);
     border: 1px solid var(--color-border-light);
-    border-radius: 6px;
+    border-radius: 4px;
     color: var(--color-text);
-    font-weight: 500;
   }
 
+  /* Shiki writes the light theme's colors inline and the dark theme's into
+     --shiki-dark variables. The block itself sits on the page's surface
+     color in both themes instead of the theme's own background. */
   .article-content :global(pre) {
     position: relative;
+    margin: 1.5rem 0;
     padding: 1rem;
-    background: var(--color-code-bg) !important;
-    border: 1px solid var(--color-code-border);
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    background: var(--color-surface) !important;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     overflow-x: auto;
-    margin: 1.5rem 0;
+  }
+
+  .article-content :global(pre:has(.code-header)) {
+    padding-top: 2.25rem;
   }
 
   .article-content :global(pre code) {
+    font-size: inherit;
     padding: 0;
-    background: transparent !important;
+    background: none;
     border: none;
-    font-size: 0.875rem;
-    color: var(--color-code-text);
-    font-weight: 400;
-    line-height: 1.45;
+    border-radius: 0;
+    color: inherit;
   }
 
-  /* Reset Shiki line backgrounds */
-  .article-content :global(pre code .line),
-  .article-content :global(pre code span) {
-    background: transparent !important;
+  :global(.dark) .article-content :global(.astro-code),
+  :global(.dark) .article-content :global(.astro-code code span) {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+
+  /* github-light-default's comment grey is 4.2:1 on the surface color; the
+     muted text grey (4.9:1) keeps comments grey and readable. */
+  :global(html:not(.dark))
+    .article-content
+    :global(.astro-code code span[style*='color:#6E7781' i]) {
+    color: var(--color-text-muted) !important;
   }
 
   .article-content :global(.code-header) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    padding: 0.375rem 0.75rem;
-    background: var(--color-code-header-bg);
-    border-bottom: 1px solid var(--color-code-border);
-    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.375rem 0.5rem 0 1rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
   }
 
   .article-content :global(.code-lang) {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-code-muted);
+    color: var(--color-text-muted);
   }
 
   .article-content :global(.copy-btn) {
+    margin-left: auto;
     padding: 0.125rem 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 400;
-    color: var(--color-code-muted);
-    background: transparent;
-    border: 1px solid var(--color-code-border);
+    font: inherit;
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     cursor: pointer;
     opacity: 0;
-    transition: all 0.15s ease;
+    transition:
+      opacity 0.15s ease,
+      color 0.15s ease;
   }
 
-  .article-content :global(pre:hover .copy-btn) {
+  .article-content :global(pre:hover .copy-btn),
+  .article-content :global(.copy-btn:focus-visible),
+  .article-content :global(.copy-btn.copied) {
     opacity: 1;
   }
 
@@ -716,17 +739,7 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(.copy-btn:hover) {
-    background: var(--color-code-border);
-    color: var(--color-code-text);
-  }
-
-  .article-content :global(.copy-btn.copied) {
-    color: var(--color-code-text);
-    border-color: var(--color-code-muted);
-  }
-
-  .article-content :global(pre:has(.code-header)) {
-    padding-top: 2.5rem;
+    color: var(--color-text);
   }
 
   .article-content :global(blockquote) {

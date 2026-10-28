@@ -17,7 +17,11 @@ export default defineConfig({
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
-      theme: 'github-dark',
+      // Both GitHub themes are emitted: the light colors inline, the dark ones
+      // as --shiki-dark variables that the .dark class switches to (see
+      // PostLayout). The "default" pair is GitHub's current one; its token
+      // colors hold 4.5:1 on the code background where the older pair doesn't.
+      themes: { light: 'github-light-default', dark: 'github-dark-default' },
       wrap: true,
     },
     // Astro 7 defaults to the Satteri processor; remark-math / rehype-katex are
