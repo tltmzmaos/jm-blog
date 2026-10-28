@@ -5,226 +5,119 @@ import SearchBox from './SearchBox.astro';
 const baseUrl = import.meta.env.BASE_URL;
 const pathname = Astro.url.pathname;
 
-const isActive = (path: string) => {
-  if (path === baseUrl || path === '/')
-    return pathname === baseUrl || pathname === '/';
-  return pathname.startsWith(path);
-};
+// The active link is the current section: posts count as "Posts", since
+// that's where they are listed, and a tag page counts as "Tags".
+const isActive = (href: string) =>
+  href === baseUrl
+    ? pathname === baseUrl || pathname.startsWith(`${baseUrl}posts/`)
+    : pathname.startsWith(href);
+
+const links = [
+  { href: baseUrl, label: 'Posts' },
+  { href: `${baseUrl}series/`, label: 'Series' },
+  { href: `${baseUrl}tags/`, label: 'Tags' },
+  { href: `${baseUrl}about/`, label: 'About' },
+].map((link) => ({
+  ...link,
+  active: isActive(link.href),
+  current: pathname === link.href,
+}));
 ---
 
 <header class="header">
   <div class="header-inner">
-    <a href={baseUrl} class="logo">Jongmin</a>
+    <a href={baseUrl} class="site-name">Jongmin Lee</a>
 
-    <nav class="nav">
-      <a href={baseUrl} class:list={['nav-link', { active: isActive('/') }]}
-        >Home</a
-      >
-      <a
-        href={`${baseUrl}series/`}
-        class:list={['nav-link', { active: isActive('/series') }]}>Series</a
-      >
-      <a
-        href={`${baseUrl}tags/`}
-        class:list={['nav-link', { active: isActive('/tags') }]}>Tags</a
-      >
-      <a
-        href={`${baseUrl}about/`}
-        class:list={['nav-link', { active: isActive('/about') }]}>About</a
-      >
+    <nav class="nav" aria-label="Main">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class:list={['nav-link', { active: link.active }]}
+            aria-current={link.current ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
     </nav>
 
     <div class="actions">
       <SearchBox />
       <ThemeToggle />
     </div>
-
-    <button
-      class="mobile-menu-btn"
-      aria-label="Open menu"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-    >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        aria-hidden="true"
-      >
-        <path d="M3 12h18M3 6h18M3 18h18"></path>
-      </svg>
-    </button>
   </div>
-
-  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
-    <a
-      href={baseUrl}
-      class:list={['mobile-nav-link', { active: isActive('/') }]}>Home</a
-    >
-    <a
-      href={`${baseUrl}series/`}
-      class:list={['mobile-nav-link', { active: isActive('/series') }]}
-      >Series</a
-    >
-    <a
-      href={`${baseUrl}tags/`}
-      class:list={['mobile-nav-link', { active: isActive('/tags') }]}>Tags</a
-    >
-    <a
-      href={`${baseUrl}about/`}
-      class:list={['mobile-nav-link', { active: isActive('/about') }]}>About</a
-    >
-  </nav>
 </header>
 
 <style>
   .header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: color-mix(in srgb, var(--color-bg) 92%, transparent);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .header-inner {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    height: 64px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas: 'name nav actions';
     align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
+    column-gap: 1.75rem;
+    max-width: calc(680px + 3rem);
+    margin: 0 auto;
+    padding: 0.875rem 1.5rem;
   }
 
-  .logo {
-    font-size: 1.3125rem;
+  .site-name {
+    grid-area: name;
+    justify-self: start;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: -0.01em;
     color: var(--color-text);
     text-decoration: none;
-    flex-shrink: 0;
   }
 
   .nav {
+    grid-area: nav;
     display: flex;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
   .nav-link {
-    position: relative;
-    padding: 0.375rem 0;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     color: var(--color-text-secondary);
     text-decoration: none;
+    text-underline-offset: 0.4em;
+    text-decoration-thickness: 1px;
     transition: color 0.15s ease;
-  }
-
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0.125rem;
-    height: 1px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .nav-link:hover {
     color: var(--color-text);
   }
 
-  .nav-link:hover::after {
-    transform: scaleX(1);
-  }
-
   .nav-link.active {
     color: var(--color-text);
-  }
-
-  .nav-link.active::after {
-    background: var(--color-text);
-    transform: scaleX(1);
+    text-decoration-line: underline;
   }
 
   .actions {
+    grid-area: actions;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    flex-shrink: 0;
+    gap: 0.125rem;
+    /* The icon buttons carry their own padding; this lines the last icon
+       up with the right edge of the text column. */
+    margin-right: -0.5rem;
   }
 
-  .mobile-menu-btn {
-    display: none;
-    padding: 0.5rem;
-    color: var(--color-text-secondary);
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-
-  .mobile-nav {
-    display: none;
-    padding: 0.5rem 1.5rem 1rem;
-    border-top: 1px solid var(--color-border-light);
-  }
-
-  .mobile-nav-link {
-    display: block;
-    padding: 0.875rem 0;
-    font-size: 0.9375rem;
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    border-bottom: 1px solid var(--color-border-light);
-    transition: color 0.15s ease;
-  }
-
-  .mobile-nav-link:hover {
-    color: var(--color-text);
-  }
-
-  .mobile-nav-link:last-child {
-    border-bottom: none;
-  }
-
-  .mobile-nav-link.active {
-    color: var(--color-text);
-    font-weight: 500;
-  }
-
-  @media (max-width: 768px) {
-    .nav {
-      display: none;
-    }
-
-    .mobile-menu-btn {
-      display: block;
-    }
-
-    .header.open .mobile-nav {
-      display: block;
-    }
-
+  /* Too narrow for one row: the links move under the name. */
+  @media (max-width: 559px) {
     .header-inner {
-      padding: 0 1rem;
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'name actions'
+        'nav nav';
+      row-gap: 0.25rem;
+      padding: 0.625rem 1rem 0.75rem;
     }
   }
 </style>
-
-<script>
-  const header = document.querySelector('.header');
-  const menuBtn = document.querySelector('.mobile-menu-btn');
-
-  menuBtn?.addEventListener('click', () => {
-    const isOpen = header?.classList.toggle('open');
-    menuBtn.setAttribute('aria-expanded', String(isOpen));
-    menuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-  });
-</script>
