@@ -41,6 +41,16 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The page opts in to cross-document view transitions here, inline and
+         first, so the opt-in never waits on a stylesheet download. The
+         animations themselves are in the global styles below. -->
+    <style is:inline>
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition {
+          navigation: auto;
+        }
+      }
+    </style>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/logo.svg" />
     <meta name="generator" content={Astro.generator} />
@@ -312,10 +322,6 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
      other page fade out with the page. Browsers without cross-document
      view transitions just navigate. */
   @media (prefers-reduced-motion: no-preference) {
-    @view-transition {
-      navigation: auto;
-    }
-
     ::view-transition-old(root),
     ::view-transition-new(root) {
       animation-duration: 0.15s;
