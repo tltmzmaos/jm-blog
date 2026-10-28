@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import PostListItem from '../../components/PostListItem.astro';
 import { shouldShowDrafts } from '../../utils/env';
+import { tagSlug } from '../../utils/tags';
 
 export async function getStaticPaths() {
   const showDrafts = shouldShowDrafts();
@@ -15,6 +16,22 @@ export async function getStaticPaths() {
   const uniqueTags = [
     ...new Set(publishedPosts.flatMap((post) => post.data.tags)),
   ];
+
+  // Slugs are lossy ("C#" and "C" both give "c"); fail loudly rather than
+  // let one tag page silently overwrite another.
+  const slugOwners = new Map<string, string>();
+  for (const tag of uniqueTags) {
+    const slug = tagSlug(tag);
+    const owner = slugOwners.get(slug);
+    if (!slug || owner) {
+      throw new Error(
+        `Tag "${tag}" has slug "${slug}"` +
+          (owner ? `, already used by "${owner}"` : '') +
+          '. Rename one of the tags.'
+      );
+    }
+    slugOwners.set(slug, tag);
+  }
 
   return uniqueTags.map((tag) => {
     const filteredPosts = publishedPosts
@@ -37,14 +54,13 @@ export async function getStaticPaths() {
       .map(([t]) => t);
 
     return {
-      params: { tag },
-      props: { posts: filteredPosts, relatedTags },
+      params: { tag: tagSlug(tag) },
+      props: { tag, posts: filteredPosts, relatedTags },
     };
   });
 }
 
-const { tag } = Astro.params;
-const { posts, relatedTags } = Astro.props;
+const { tag, posts, relatedTags } = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
@@ -86,10 +102,7 @@ const baseUrl = import.meta.env.BASE_URL;
             {relatedTags.map((t, i) => (
               <>
                 {i > 0 && <span class="dot"> · </span>}
-                <a
-                  href={`${baseUrl}tags/${encodeURIComponent(t)}`}
-                  class="related-tag"
-                >
+                <a href={`${baseUrl}tags/${tagSlug(t)}`} class="related-tag">
                   {t}
                 </a>
               </>

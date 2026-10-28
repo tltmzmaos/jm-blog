@@ -1,4 +1,6 @@
 ---
+import { tagSlug } from '../utils/tags';
+
 export interface Props {
   title: string;
   description: string;
@@ -57,7 +59,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     tags.length > 0 && (
       <div class="tags">
         {visibleTags.map((tag) => (
-          <a href={`${baseUrl}tags/${encodeURIComponent(tag)}`} class="tag">
+          <a href={`${baseUrl}tags/${tagSlug(tag)}`} class="tag">
             {tag}
           </a>
         ))}

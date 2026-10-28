@@ -5,6 +5,7 @@ import TableOfContents from '../components/TableOfContents.astro';
 import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
+import { tagSlug } from '../utils/tags';
 
 export interface Props {
   frontmatter: {
@@ -105,7 +106,7 @@ const formatDate = (date: Date) => {
         tags.length > 0 && (
           <div class="tags">
             {tags.map((tag) => (
-              <a href={`/tags/${tag}`} class="tag">
+              <a href={`/tags/${tagSlug(tag)}`} class="tag">
                 {tag}
               </a>
             ))}
