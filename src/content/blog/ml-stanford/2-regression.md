@@ -12,7 +12,7 @@ draft: false
 
 ## Multiple Features
 
-![Screenshot 2024-03-20 at 10.30.22 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.webp)
+![Slide: house price table with features x_1 to x_4 (size, bedrooms, floors, age); row 2 is x^(2) and x_3^(2) = 2](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.webp)
 
 ## Model
 
@@ -230,35 +230,35 @@ Feature scaling enables gradient descent to run much faster by rescaling the ran
         - 98.6 ≤ x ≤ 105
 - example
     
-    ![Screenshot 2024-03-24 at 12.00.55 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.00.55_PM.webp)
+    ![Slide: for price = w_1 x_1 + w_2 x_2 + b, size spans 300 to 2,000 and bedrooms 0 to 5, so a small w_1 and large w_2 give a sensible price](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.00.55_PM.webp)
     
-    ![Screenshot 2024-03-24 at 12.01.42 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.01.42_PM.webp)
+    ![Slide: a large-range feature gets a small weight; unscaled features give a flat scatterplot and tall, narrow J(w,b) contours](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.01.42_PM.webp)
     
-    ![Screenshot 2024-03-24 at 12.02.04 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.02.04_PM.webp)
+    ![Slide: after rescaling, the features spread evenly and J(w,b) contours turn circular, so gradient descent stops bouncing back and forth](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.02.04_PM.webp)
     
 
 ### Mean normalization
 
-![Screenshot 2024-03-24 at 12.05.06 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.05.06_PM.webp)
+![Slide: mean normalization, x_1 = (x_1 - mu_1) / (max - min), turning 300 to 2000 into -0.18 to 0.82 and 0 to 5 into -0.46 to 0.54](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.05.06_PM.webp)
 
 ### Z-score normalization
 
-![Screenshot 2024-03-24 at 12.07.16 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.07.16_PM.webp)
+![Slide: z-score normalization, x_1 = (x_1 - mu_1) / sigma_1 with sigma_1 = 450, giving ranges like -0.67 to 3.1 and -1.6 to 1.9](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.07.16_PM.webp)
 
 ## Checking Gradient descent for convergence
 
-![Screenshot 2024-03-24 at 12.13.24 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.13.24_PM.webp)
+![Slide: learning curve of J(w,b) falling with iterations and flattening by 400, plus an automatic convergence test with epsilon 0.001](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.13.24_PM.webp)
 
 ## Choosing the learning rate
 
-![Screenshot 2024-03-24 at 12.15.14 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.15.14_PM.webp)
+![Slide: J(w,b) rising or bouncing over iterations points to a bug or too large alpha; a small enough alpha makes it drop every iteration](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.15.14_PM.webp)
 
 ## Feature engineering
 
-![Screenshot 2024-03-24 at 12.16.45 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.16.45_PM.webp)
+![Slide: feature engineering for house price, adding area x_3 = x_1 x_2 (frontage times depth) as a new feature](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.16.45_PM.webp)
 
 ## Polynomial regression
 
-![Screenshot 2024-03-24 at 12.18.30 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.18.30_PM.webp)
+![Slide: quadratic and cubic fits of price vs size; size, size^2 and size^3 have very different ranges, so feature scaling matters](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.18.30_PM.webp)
 
-![Screenshot 2024-03-24 at 12.19.20 PM.png](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.19.20_PM.webp)
+![Slide: price vs size fit with f(x) = w_1 x + w_2 sqrt(x) + b, a curve that keeps rising instead of bending down](/2-Regression-with-multiple-input-variables/Screenshot_2024-03-24_at_12.19.20_PM.webp)
