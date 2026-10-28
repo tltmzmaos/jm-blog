@@ -4,10 +4,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import PostListItem from '../components/PostListItem.astro';
 import SeriesStrip from '../components/SeriesStrip.astro';
+import Timeline from '../components/Timeline.astro';
 import { shouldShowDrafts } from '../utils/env';
 import { getEntryNumbers, newestFirst } from '../utils/entryNumbers';
 import { getAllSeries } from '../utils/seriesIndex';
 import { resolveShelves } from '../utils/shelves';
+import { buildTimeline } from '../utils/timeline';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../utils/site';
 import { assertUniqueTransitionNames } from '../utils/viewTransition';
 
@@ -30,6 +32,7 @@ const posts = (await getCollection('blog'))
 
 const recent = posts.slice(0, RECENT_COUNT);
 const shelves = resolveShelves(posts, await getAllSeries());
+const timeline = buildTimeline(shelves, entries, new Date());
 
 // A post can be both recent and on a shelf. Its title morphs into the post
 // from the Recent row; the shelf row carries no name.
@@ -60,6 +63,14 @@ const baseUrl = import.meta.env.BASE_URL;
       <h1 class="name">{SITE_TITLE}</h1>
       <p class="lead">{SITE_DESCRIPTION}</p>
     </div>
+
+    {
+      posts.length > 0 && (
+        <div class="map">
+          <Timeline timeline={timeline} />
+        </div>
+      )
+    }
 
     {
       recent.length > 0 && (
@@ -142,7 +153,7 @@ const baseUrl = import.meta.env.BASE_URL;
   /* The one large thing on the site: the name, set tight, and what the
      notes are about under it. */
   .intro {
-    margin: 0 0 3.5rem;
+    margin: 0 0 2.5rem;
   }
 
   /* Plex at 90% width: a little narrower and taller in feel than the
@@ -155,6 +166,10 @@ const baseUrl = import.meta.env.BASE_URL;
     line-height: 1.05;
     color: var(--color-text);
     margin: 0;
+  }
+
+  .map {
+    margin: 0 0 3.5rem;
   }
 
   .lead {
