@@ -1,183 +1,142 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-
-const now: string[] = [
-  "Doing an M.S. through Georgia Tech's OMSCS.",
-  'Building AI-powered applications.',
-  'Figuring out how to actually use AI tools well in my own work.',
-];
-
-const allPosts = await getCollection('blog');
-const selectedPosts = allPosts
-  .filter((p) => p.data.featured && !p.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .map((p) => ({
-    slug: p.id,
-    title: p.data.title,
-    description: p.data.description,
-  }));
+import {
+  CAREER,
+  EDUCATION,
+  EMAIL,
+  GITHUB_URL,
+  LINKEDIN_URL,
+} from '../utils/site';
 
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
   title="About — Jongmin Lee"
-  description="Software engineer in the Bay Area. Notes on software craft, working with AI, and what I'm trying to make sense of."
+  description="Software engineer in the Bay Area."
 >
   <Header />
 
-  <main class="container page" id="main-content">
-    <h1 class="page-title">About</h1>
-    <p class="page-lead">
-      Software engineer in the Bay Area. Writing about software craft, working
-      with AI, and what I'm trying to make sense of.
+  <main class="container page about" id="main-content">
+    <h1 class="page-title">Jongmin Lee</h1>
+    <p class="page-lead">Software Engineer · Bay Area</p>
+
+    <p class="bio">
+      I've worked across industries — automotive services, lab automation, and
+      now applied AI. Each move has taken me into a new domain, and I've gotten
+      used to picking up context quickly and figuring out <mark
+        >what actually matters</mark
+      >.
     </p>
 
-    <div class="prose">
-      <p>
-        Most of my work has been about systems that need to coordinate — API
-        integrations and data reconciliation across automotive services,
-        scheduling and instrument orchestration in lab automation, and now
-        AI-powered applications, exploring what AI can actually do for each
-        industry. I studied computer science at UC Irvine and am working on an
-        M.S. through Georgia Tech's OMSCS. Each move has taken me into a new
-        industry, and I've gotten used to picking up domain context quickly and
-        figuring out what actually matters.
-      </p>
-      <p>
-        A lot of what I write here is me thinking out loud about my own work —
-        how AI tools fit in, what graduate school feels like the second time
-        around, what I'm figuring out as I go. I don't claim to have answers;
-        I'm mostly sharing the questions as they come up.
-      </p>
-    </div>
-
-    <section class="section" aria-labelledby="now">
-      <h2 class="section-title" id="now">Now</h2>
-      <ul class="now-list">
-        {now.map((line) => <li>{line}</li>)}
+    {
+      /* A short page on purpose: three labeled lists, set like a colophon,
+         the labels in a narrow column on the left. */
+    }
+    <section class="row" aria-labelledby="work">
+      <h2 class="label" id="work">Work</h2>
+      <ul class="list" role="list">
+        {
+          CAREER.map(({ years, label }) => (
+            <li class="work">
+              <span class="years">{years}</span>
+              <span>{label}</span>
+            </li>
+          ))
+        }
       </ul>
     </section>
 
-    {
-      selectedPosts.length > 0 && (
-        <section class="section" aria-labelledby="selected">
-          <h2 class="section-title" id="selected">
-            Selected writing
-          </h2>
-          <ul class="selected-list" role="list">
-            {selectedPosts.map((post) => (
-              <li>
-                <a href={`${baseUrl}posts/${post.slug}/`} class="selected-link">
-                  {post.title}
-                </a>
-                <p class="selected-desc">{post.description}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
+    <section class="row" aria-labelledby="education">
+      <h2 class="label" id="education">Education</h2>
+      <ul class="list" role="list">
+        {EDUCATION.map((line) => <li>{line}</li>)}
+      </ul>
+    </section>
 
-    <section class="section" aria-labelledby="contact">
-      <h2 class="section-title" id="contact">Contact</h2>
+    <section class="row" aria-labelledby="contact">
+      <h2 class="label" id="contact">Contact</h2>
       <p class="contact">
-        <a href="mailto:tltmzmaos@gmail.com" class="text-link">Email</a>
+        <a href={`mailto:${EMAIL}`} class="text-link">Email</a>
         <span aria-hidden="true">·</span>
-        <a
-          href="https://github.com/tltmzmaos"
-          class="text-link"
-          target="_blank"
-          rel="noopener">GitHub</a
-        >
+        <a href={GITHUB_URL} class="text-link">GitHub</a>
         <span aria-hidden="true">·</span>
-        <a
-          href="https://linkedin.com/in/jml1228"
-          class="text-link"
-          target="_blank"
-          rel="noopener">LinkedIn</a
-        >
+        <a href={LINKEDIN_URL} class="text-link">LinkedIn</a>
+        <span aria-hidden="true">·</span>
+        <a href={`${baseUrl}rss.xml`} class="text-link">RSS</a>
       </p>
     </section>
   </main>
 </BaseLayout>
 
 <style>
-  .prose {
-    margin-top: 2rem;
-    font-size: 1.0625rem;
-    line-height: 1.7;
-    color: var(--color-text-body);
+  .about {
+    padding-bottom: 6rem;
   }
 
-  .prose p {
-    margin: 0 0 1.25rem;
-  }
-
-  .prose p:last-child {
-    margin-bottom: 0;
-  }
-
-  .section {
-    margin-top: 2.75rem;
-  }
-
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    line-height: 1.35;
-    color: var(--color-text);
-    margin: 0 0 0.875rem;
-  }
-
-  .now-list {
-    margin: 0;
-    padding-left: 1.5rem;
-    font-size: 1rem;
+  /* The one paragraph, a size up from body text, with the page's only
+     mark on its last words. */
+  .bio {
+    max-width: 34em;
+    margin: 2.5rem 0 4rem;
+    font-size: 1.1875rem;
     line-height: 1.6;
     color: var(--color-text-body);
+    text-wrap: pretty;
   }
 
-  .now-list li {
-    margin: 0.375rem 0;
-    padding-left: 0.125rem;
+  /* The marked words stay together on one line. */
+  .bio mark {
+    white-space: nowrap;
   }
 
-  .now-list li::marker {
-    color: var(--color-text-muted);
+  .row {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--color-border);
   }
 
-  .selected-list {
-    list-style: none;
+  .row:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .label {
     margin: 0;
-    padding: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+  }
+
+  .list {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .selected-link {
-    font-size: 1.0625rem;
-    font-weight: 500;
-    line-height: 1.4;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1rem;
+    line-height: 1.6;
     color: var(--color-text);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    text-decoration-line: none;
   }
 
-  .selected-link:hover {
-    text-decoration-line: underline;
+  /* Years in a column of their own, so the labels line up. */
+  .work {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: 1rem;
   }
 
-  .selected-desc {
-    font-size: 0.9375rem;
-    line-height: 1.55;
-    color: var(--color-text-secondary);
-    margin: 0.25rem 0 0;
+  .years {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
   }
 
   .contact {
@@ -186,6 +145,23 @@ const baseUrl = import.meta.env.BASE_URL;
     gap: 0.5rem;
     margin: 0;
     font-size: 1rem;
+    line-height: 1.6;
     color: var(--color-text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .bio {
+      margin: 2rem 0 3rem;
+      font-size: 1.0625rem;
+    }
+
+    .row {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0.375rem;
+    }
+
+    .work {
+      grid-template-columns: 6.75rem minmax(0, 1fr);
+    }
   }
 </style>
