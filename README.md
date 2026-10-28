@@ -16,8 +16,11 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Features
 
-- Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it
-- Search over post titles, descriptions and tags with Fuse.js
+- Home page by topic: the newest posts, then topic shelves (a series as a strip of its parts, or posts picked by tags); edit the shelves in `src/data/shelves.ts`
+- Every post by year at `/posts/`
+- One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
+- Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
+- Search over post titles, descriptions and tags with Fuse.js; matched words are marked
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
 - `==text==` in a post marks the words with the highlighter (`<mark>`, src/plugins/remark-mark.mjs); code and math are left alone
@@ -26,7 +29,9 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs
 - Self-hosted Inter font (Latin subset)
-- Native cross-document view transitions in CSS, no client-side router
+- Native cross-document view transitions in CSS, no client-side router; a post's title morphs from the list into the post
+- A 404 page that suggests the post closest to the address asked for
+- Print styles: a post prints as plain light notes
 - Generated OG image per post, plus a default card (`/og.png`)
 - RSS feed (`/rss.xml`) and sitemap via @astrojs/sitemap
 - Series index page and a JSON post API (`/api/posts.json`)
@@ -42,6 +47,8 @@ src/
 │   ├── TableOfContents.astro
 │   ├── PostList.astro      # posts grouped by year
 │   ├── PostListItem.astro
+│   ├── SeriesStrip.astro   # one segment per part of a series
+│   ├── Footer.astro        # colophon
 │   └── SEO.astro
 ├── content/
 │   ├── blog/          # Blog posts (Markdown)
@@ -51,6 +58,8 @@ src/
 │   │   └── omscs/
 │   └── series/        # Series metadata (JSON)
 ├── content.config.ts  # Collection schemas + loaders
+├── data/
+│   └── shelves.ts     # topic shelves on the home page
 ├── layouts/
 │   ├── BaseLayout.astro
 │   └── PostLayout.astro
@@ -58,6 +67,7 @@ src/
 │   ├── index.astro
 │   ├── about.astro
 │   ├── 404.astro
+│   ├── posts/index.astro      # archive by year
 │   ├── posts/[...slug].astro
 │   ├── series/index.astro
 │   ├── tags/
@@ -66,7 +76,7 @@ src/
 │   ├── og.png.ts
 │   ├── rss.xml.ts
 │   └── robots.txt.ts
-├── plugins/           # rehype plugins
+├── plugins/           # remark and rehype plugins
 └── utils/
 ```
 
