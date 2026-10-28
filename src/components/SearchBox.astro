@@ -627,7 +627,7 @@
           const dateHtml = dateStr
             ? `<div class="sr-date">${escapeHtml(dateStr)}</div>`
             : '';
-          return `<a href="/posts/${post.slug}" class="search-result${
+          return `<a href="/posts/${post.slug}/" class="search-result${
             index === 0 ? ' selected' : ''
           }" data-index="${index}">
             ${dateHtml}
@@ -710,7 +710,7 @@
       } else if (e.key === 'Enter') {
         e.preventDefault();
         const target = results[selectedIndex];
-        if (target) window.location.href = `/posts/${target.slug}`;
+        if (target) window.location.href = `/posts/${target.slug}/`;
       }
     };
     const onGlobalKey = (e: KeyboardEvent) => {

@@ -9,6 +9,10 @@ import rehypeImageAttrs from './src/plugins/rehype-image-attrs.mjs';
 export default defineConfig({
   site: 'https://jongmin.me',
   base: '/',
+  // Pages are built as folders (/posts/x/index.html), and GitHub Pages
+  // redirects /posts/x to /posts/x/. Links with the slash skip that hop,
+  // and the dev server 404s on any link that forgets it.
+  trailingSlash: 'always',
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {

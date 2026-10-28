@@ -74,7 +74,7 @@ const baseUrl = import.meta.env.BASE_URL;
         {posts.length}
         {posts.length === 1 ? 'post' : 'posts'}
       </p>
-      <a href={`${baseUrl}tags`} class="back-link">← All tags</a>
+      <a href={`${baseUrl}tags/`} class="back-link">← All tags</a>
     </header>
 
     <section class="posts" aria-label={`Posts tagged ${tag}`}>
@@ -101,7 +101,7 @@ const baseUrl = import.meta.env.BASE_URL;
             {relatedTags.map((t, i) => (
               <>
                 {i > 0 && <span class="dot"> · </span>}
-                <a href={`${baseUrl}tags/${tagSlug(t)}`} class="related-tag">
+                <a href={`${baseUrl}tags/${tagSlug(t)}/`} class="related-tag">
                   {t}
                 </a>
               </>

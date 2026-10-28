@@ -135,7 +135,7 @@ const baseUrl = import.meta.env.BASE_URL;
           <ul class="selected-list">
             {selectedPosts.map((post) => (
               <li>
-                <a href={`${baseUrl}posts/${post.slug}`} class="selected-link">
+                <a href={`${baseUrl}posts/${post.slug}/`} class="selected-link">
                   <span class="selected-title">{post.title}</span>
                   <span class="selected-desc">{post.description}</span>
                   <span class="selected-meta">{post.readingTime}</span>

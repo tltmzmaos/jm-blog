@@ -117,7 +117,7 @@ const formatDate = (date: Date) => {
           tags.length > 0 && (
             <div class="tags">
               {tags.map((tag) => (
-                <a href={`/tags/${tagSlug(tag)}`} class="tag">
+                <a href={`/tags/${tagSlug(tag)}/`} class="tag">
                   {tag}
                 </a>
               ))}
@@ -144,7 +144,7 @@ const formatDate = (date: Date) => {
                     {part.partNumber === seriesInfo.currentPart ? (
                       <span class="series-current">{part.title}</span>
                     ) : (
-                      <a href={`/posts/${part.slug}`}>{part.title}</a>
+                      <a href={`/posts/${part.slug}/`}>{part.title}</a>
                     )}
                   </li>
                 ))}
@@ -208,7 +208,7 @@ const formatDate = (date: Date) => {
               <ul>
                 {relatedPosts.map((post) => (
                   <li>
-                    <a href={`/posts/${post.slug}`}>
+                    <a href={`/posts/${post.slug}/`}>
                       <span class="related-title">{post.title}</span>
                       {post.description && (
                         <span class="related-desc">{post.description}</span>
@@ -226,7 +226,7 @@ const formatDate = (date: Date) => {
             <nav class="post-nav" aria-label="Post navigation">
               <h2 class="section-title">Continue Reading</h2>
               {prevPost ? (
-                <a href={`/posts/${prevPost.slug}`} class="nav-link prev">
+                <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
                   <span class="nav-label">Previous</span>
                   <span class="nav-title">{prevPost.title}</span>
                 </a>
@@ -235,7 +235,7 @@ const formatDate = (date: Date) => {
               )}
 
               {nextPost && (
-                <a href={`/posts/${nextPost.slug}`} class="nav-link next">
+                <a href={`/posts/${nextPost.slug}/`} class="nav-link next">
                   <span class="nav-label">Next</span>
                   <span class="nav-title">{nextPost.title}</span>
                 </a>

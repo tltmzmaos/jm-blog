@@ -86,7 +86,7 @@ const baseUrl = import.meta.env.BASE_URL;
           const dateText = formatLatest(latest);
           return (
             <li class="tag-item" data-tag={tag.toLowerCase()}>
-              <a href={`${baseUrl}tags/${tagSlug(tag)}`} class="tag">
+              <a href={`${baseUrl}tags/${tagSlug(tag)}/`} class="tag">
                 <span class="tag-name">{tag}</span>
                 <span class="tag-meta">
                   <span class="tag-count" data-count={count}>
@@ -113,7 +113,7 @@ const baseUrl = import.meta.env.BASE_URL;
               data-tag={tag.toLowerCase()}
               hidden
             >
-              <a href={`${baseUrl}tags/${tagSlug(tag)}`} class="tag">
+              <a href={`${baseUrl}tags/${tagSlug(tag)}/`} class="tag">
                 <span class="tag-name">{tag}</span>
                 <span class="tag-meta">
                   <span class="tag-count" data-count={count}>
