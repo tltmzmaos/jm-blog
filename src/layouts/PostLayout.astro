@@ -112,9 +112,11 @@ const formatDate = (date: Date) => {
             <ul class="tags" aria-label="Tags">
               {tags.map((tag) => (
                 <li>
-                  <a href={`/tags/${tagSlug(tag)}/`} class="tag">
-                    {tagLabel(tag)}
-                  </a>
+                  <a
+                    href={`/tags/${tagSlug(tag)}/`}
+                    class="tag"
+                    set:text={tagLabel(tag)}
+                  />
                 </li>
               ))}
             </ul>
@@ -386,11 +388,11 @@ const formatDate = (date: Date) => {
     transition: color 0.15s ease;
   }
 
-  /* The "#" is drawn, with empty alt text so screen readers skip it. */
+  /* The "#" is drawn, with empty alt text so screen readers skip it. The
+     link holds only the label (set:text), so no space follows the "#". */
   .tag::before {
     content: '#';
     content: '#' / '';
-    margin-right: 0.05em;
   }
 
   .tag:hover {
