@@ -71,11 +71,11 @@ const INITIAL_COUNT = 10;
   </noscript>
 
   <script>
-    document.addEventListener('astro:page-load', () => {
-      // Lazy load-more
-      const sentinel = document.getElementById('load-sentinel');
-      if (!sentinel) return;
+    // Lazy load-more
+    const sentinel = document.getElementById('load-sentinel');
+    if (sentinel) revealOnScroll(sentinel);
 
+    function revealOnScroll(sentinel: HTMLElement) {
       const posts = document.querySelectorAll<HTMLElement>('.post-wrapper');
       const BATCH = 10;
       let shown = 0;
@@ -110,13 +110,7 @@ const INITIAL_COUNT = 10;
       );
 
       observer.observe(sentinel);
-
-      document.addEventListener(
-        'astro:before-swap',
-        () => observer.disconnect(),
-        { once: true }
-      );
-    });
+    }
   </script>
 </BaseLayout>
 

@@ -78,41 +78,47 @@
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    const toggle = document.querySelector('.theme-toggle');
-    const root = document.documentElement;
+  const toggle = document.querySelector('.theme-toggle');
+  const root = document.documentElement;
 
-    // A toggle button keeps one label and reports its state through
-    // aria-pressed; changing the label as well would be read twice.
+  // A toggle button keeps one label and reports its state through
+  // aria-pressed; changing the label as well would be read twice.
+  const syncPressed = () =>
     toggle?.setAttribute(
       'aria-pressed',
       String(root.classList.contains('dark'))
     );
+  syncPressed();
 
-    toggle?.addEventListener('click', () => {
-      const dark = !root.classList.contains('dark');
+  // The theme script in <head> re-applies the theme on a back/forward
+  // cache restore; this listener runs after it.
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) syncPressed();
+  });
 
-      // Enable transition animation
-      root.classList.add('theme-transition');
+  toggle?.addEventListener('click', () => {
+    const dark = !root.classList.contains('dark');
 
-      root.classList.toggle('dark', dark);
-      root.style.colorScheme = dark ? 'dark' : 'light';
-      try {
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-      } catch {
-        // Storage can be blocked; the choice then lasts for this page only.
-      }
-      toggle.setAttribute('aria-pressed', String(dark));
+    // Enable transition animation
+    root.classList.add('theme-transition');
 
-      const bg = getComputedStyle(root).getPropertyValue('--color-bg').trim();
-      document
-        .querySelectorAll('meta[name="theme-color"]')
-        .forEach((m) => m.setAttribute('content', bg));
+    root.classList.toggle('dark', dark);
+    root.style.colorScheme = dark ? 'dark' : 'light';
+    try {
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    } catch {
+      // Storage can be blocked; the choice then lasts for this page only.
+    }
+    toggle.setAttribute('aria-pressed', String(dark));
 
-      // Remove class after animation completes (performance)
-      setTimeout(() => {
-        root.classList.remove('theme-transition');
-      }, 200);
-    });
+    const bg = getComputedStyle(root).getPropertyValue('--color-bg').trim();
+    document
+      .querySelectorAll('meta[name="theme-color"]')
+      .forEach((m) => m.setAttribute('content', bg));
+
+    // Remove class after animation completes (performance)
+    setTimeout(() => {
+      root.classList.remove('theme-transition');
+    }, 200);
   });
 </script>

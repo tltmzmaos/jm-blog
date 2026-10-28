@@ -169,7 +169,9 @@ const baseUrl = import.meta.env.BASE_URL;
   <script>
     import { scramble } from '../../scripts/scramble';
 
-    document.addEventListener('astro:page-load', () => {
+    initTags();
+
+    function initTags() {
       const list = document.getElementById('tag-list');
       const searchInput = document.getElementById(
         'tag-search'
@@ -305,13 +307,7 @@ const baseUrl = import.meta.env.BASE_URL;
         }
       };
       document.addEventListener('keydown', onKey);
-
-      document.addEventListener(
-        'astro:before-swap',
-        () => document.removeEventListener('keydown', onKey),
-        { once: true }
-      );
-    });
+    }
   </script>
 </BaseLayout>
 

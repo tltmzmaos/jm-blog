@@ -1,5 +1,4 @@
 ---
-import { ClientRouter } from 'astro:transitions';
 import katex from 'katex';
 import SEO from '../components/SEO.astro';
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION } from '../utils/site';
@@ -93,7 +92,15 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
     <title>{title}</title>
 
-    <ClientRouter />
+    <!-- Prefetch same-site pages on hover (Chromium; ignored elsewhere).
+         The client router used to do this in JavaScript. -->
+    <script
+      is:inline
+      type="speculationrules"
+      set:html={JSON.stringify({
+        prefetch: [{ where: { href_matches: '/*' }, eagerness: 'moderate' }],
+      })}
+    />
 
     <!-- Prevent dark mode flash -->
     <script is:inline>
@@ -113,25 +120,26 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
           const t = stored();
           return t === 'dark' || (!t && media.matches);
         };
-        const apply = (doc, dark) => {
-          doc.documentElement.classList.toggle('dark', dark);
-          doc.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-          doc
+        const apply = (dark) => {
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+          document
             .querySelectorAll('meta[name="theme-color"]')
             .forEach((m) =>
               m.setAttribute('content', dark ? BG.dark : BG.light)
             );
         };
 
-        apply(document, isDark());
-
-        // Preserve theme across View Transitions page swaps
-        document.addEventListener('astro:before-swap', (e) =>
-          apply(e.newDocument, isDark())
-        );
+        apply(isDark());
 
         media.addEventListener('change', () => {
-          if (!stored()) apply(document, isDark());
+          if (!stored()) apply(isDark());
+        });
+
+        // A page restored from the back/forward cache keeps the theme it
+        // had when it was left, even if another page changed it since.
+        window.addEventListener('pageshow', (e) => {
+          if (e.persisted) apply(isDark());
         });
       })();
     </script>
@@ -312,6 +320,19 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   html {
     scroll-behavior: smooth;
     scrollbar-gutter: stable;
+  }
+
+  /* Native cross-document transitions: a short cross-fade between pages,
+     and none at all when reduced motion is requested. */
+  @media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+      navigation: auto;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.15s;
+    }
   }
 
   body {

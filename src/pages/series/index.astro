@@ -117,7 +117,9 @@ const formatShortDate = (date: Date) =>
   </main>
 
   <script>
-    document.addEventListener('astro:page-load', () => {
+    initSeries();
+
+    function initSeries() {
       const blocks = Array.from(
         document.querySelectorAll<HTMLDetailsElement>('.series-block')
       );
@@ -157,7 +159,7 @@ const formatShortDate = (date: Date) =>
       });
 
       blocks.forEach((b) => b.addEventListener('toggle', syncBtn));
-    });
+    }
   </script>
 </BaseLayout>
 

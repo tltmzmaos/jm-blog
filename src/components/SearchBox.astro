@@ -498,7 +498,7 @@
     pubDate: string;
   }
 
-  // Module-level cache (persists across view transitions)
+  // Filled on the first search of this page load.
   let postsData: Post[] = [];
   let fuse: Fuse<Post> | null = null;
 
@@ -737,24 +737,12 @@
     document.addEventListener('keydown', onGlobalKey);
     resultsContainer?.addEventListener('click', onResultsClick);
 
-    document.addEventListener(
-      'astro:before-swap',
-      () => {
-        trigger.removeEventListener('click', onTrigger);
-        trigger.removeEventListener('pointerenter', onTriggerIntent);
-        trigger.removeEventListener('focus', onTriggerIntent);
-        backdrop?.removeEventListener('click', onBackdrop);
-        input.removeEventListener('input', onInput);
-        input.removeEventListener('keydown', onInputKey);
-        document.removeEventListener('keydown', onGlobalKey);
-        resultsContainer?.removeEventListener('click', onResultsClick);
-        // Reset in case we're navigating away while the modal is open
-        setBackgroundInert(false);
-        document.body.style.overflow = '';
-      },
-      { once: true }
-    );
+    // A page restored from the back/forward cache comes back as it was
+    // left; don't bring it back with the dialog open over an inert page.
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) closeModal();
+    });
   }
 
-  document.addEventListener('astro:page-load', initSearch);
+  initSearch();
 </script>

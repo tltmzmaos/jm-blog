@@ -221,14 +221,12 @@ const isActive = (path: string) => {
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    const header = document.querySelector('.header');
-    const menuBtn = document.querySelector('.mobile-menu-btn');
+  const header = document.querySelector('.header');
+  const menuBtn = document.querySelector('.mobile-menu-btn');
 
-    menuBtn?.addEventListener('click', () => {
-      const isOpen = header?.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded', String(isOpen));
-      menuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-    });
+  menuBtn?.addEventListener('click', () => {
+    const isOpen = header?.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+    menuBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
   });
 </script>

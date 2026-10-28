@@ -179,14 +179,7 @@ const sections = headings.filter((h) => h.depth === 2);
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    document.addEventListener('astro:before-swap', () => controller.abort(), {
-      once: true,
-    });
-
+  function initToc() {
     const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
     if (tocLinks.length === 0) return;
 
@@ -246,10 +239,9 @@ const sections = headings.filter((h) => h.depth === 2);
       });
     });
 
-    window.addEventListener('scroll', updateActiveLink, {
-      passive: true,
-      signal,
-    });
+    window.addEventListener('scroll', updateActiveLink, { passive: true });
     updateActiveLink();
-  });
+  }
+
+  initToc();
 </script>
