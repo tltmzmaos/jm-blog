@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeImageAttrs from './src/plugins/rehype-image-attrs.mjs';
+import rehypeTableWrap from './src/plugins/rehype-table-wrap.mjs';
 
 export default defineConfig({
   site: 'https://jongmin.me',
@@ -23,7 +24,7 @@ export default defineConfig({
     // unified plugins, so the unified processor stays opt-in here.
     processor: unified({
       remarkPlugins: [remarkMath],
-      rehypePlugins: [rehypeKatex, rehypeImageAttrs],
+      rehypePlugins: [rehypeKatex, rehypeImageAttrs, rehypeTableWrap],
     }),
   },
   vite: {

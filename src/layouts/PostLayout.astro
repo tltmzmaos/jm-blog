@@ -945,16 +945,35 @@ const formatDate = (date: Date) => {
     margin: 1.5rem 0;
   }
 
+  /* Dark mode dims screenshots a little; hovering shows them as they are. */
+  .article-content :global(img),
+  .hero-image img {
+    filter: var(--image-filter);
+    transition: filter 0.2s ease;
+  }
+
+  .article-content :global(img:hover),
+  .hero-image img:hover {
+    filter: none;
+  }
+
   .article-content :global(hr) {
     border: none;
     border-top: 1px solid var(--color-border);
     margin: 2rem 0;
   }
 
+  /* rehype-table-wrap puts each table in .table-wrap: the table fills the
+     column, and the wrapper scrolls when the table is wider than that. */
+  .article-content :global(.table-wrap) {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
   .article-content :global(table) {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.5rem 0;
+    margin: 0;
     font-size: 0.95rem;
   }
 
@@ -976,15 +995,6 @@ const formatDate = (date: Date) => {
 
   .article-content :global(table) :global(tr:nth-child(even) td) {
     background: var(--color-bg-tertiary);
-  }
-
-  .article-content :global(.table-wrap) {
-    overflow-x: auto;
-  }
-
-  .article-content :global(table) {
-    display: block;
-    overflow-x: auto;
   }
 
   .article-content :global(table) :global(code) {
