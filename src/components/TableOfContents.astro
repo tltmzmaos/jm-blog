@@ -25,7 +25,7 @@ const sections = headings.filter((h) => h.depth === 2);
                 class="toc-link"
                 data-slug={heading.slug}
               >
-                {heading.text}
+                <span class="toc-text">{heading.text}</span>
               </a>
             </li>
           ))}
@@ -77,25 +77,41 @@ const sections = headings.filter((h) => h.depth === 2);
 
   .toc-link {
     display: block;
-    margin-left: -1px;
     padding: 0.3125rem 0 0.3125rem 0.875rem;
-    border-left: 1px solid transparent;
     font-size: 0.875rem;
     line-height: 1.4;
     color: var(--color-text-secondary);
     text-decoration: none;
-    transition:
-      color 0.15s ease,
-      border-color 0.15s ease;
+    transition: color 0.15s ease;
   }
 
   .toc-link:hover {
     color: var(--color-text);
   }
 
+  /* The section in view gets a highlighter stroke behind its words, drawn
+     in as the reader scrolls into it. Wrapped titles get one per line. */
+  .toc-text {
+    background-image: linear-gradient(var(--color-mark), var(--color-mark));
+    background-repeat: no-repeat;
+    background-position: 0 var(--mark-top);
+    background-size: 0 var(--mark-height);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
   .toc-link.active {
     color: var(--color-text);
-    border-left-color: var(--color-text);
+  }
+
+  .toc-link.active .toc-text {
+    background-size: 100% var(--mark-height);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .toc-text {
+      transition: background-size 0.2s ease-out;
+    }
   }
 
   .toc-inline {

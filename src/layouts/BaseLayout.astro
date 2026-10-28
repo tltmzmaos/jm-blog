@@ -232,8 +232,8 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
   /* Every color lives here. Components use these tokens, and dark mode
      comes from the .dark overrides below, not from per-rule copies.
-     Neutral greys only: there is no accent color. Every text color is
-     4.5:1 or better on both --color-bg and --color-surface. */
+     Neutral greys, plus one highlighter. Every text color is 4.5:1 or
+     better on both --color-bg and --color-surface. */
   :root {
     --color-bg: #ffffff;
     --color-surface: #f6f6f6; /* code blocks, inline code */
@@ -245,13 +245,23 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     --color-border: #e5e5e5;
     --color-border-light: #efefef;
     --color-link-underline: #b4b4b4;
-    --color-selection-bg: #dadada;
+    /* The highlighter. Only ever a background behind text, never a text
+       color, and the text on it is always --color-text (14.1:1 here,
+       7.3:1 in dark). --color-mark-wash is a lighter pass of the same pen,
+       for hover hints. */
+    --color-mark: #ffe45c;
+    --color-mark-wash: #fff0a0;
     --color-scrollbar: #d4d4d4;
     --color-scrollbar-hover: #a3a3a3;
     --color-overlay: rgb(0 0 0 / 0.2); /* behind the search dialog */
     --image-filter: none;
     /* Width of the text column on every page. */
     --column: 680px;
+    /* Where a highlighter stroke sits on an inline run of text: from about
+       halfway up the lowercase letters to just under the baseline. In em,
+       so it follows the font size of whatever it marks. */
+    --mark-top: 0.6em;
+    --mark-height: 0.44em;
     /* System monospace, for code only: never for dates or labels. */
     --font-mono:
       ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas,
@@ -269,7 +279,8 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     --color-border: #262626;
     --color-border-light: #1f1f1f;
     --color-link-underline: #555555;
-    --color-selection-bg: #3d3d3d;
+    --color-mark: #5a4b10;
+    --color-mark-wash: #332c0f;
     --color-scrollbar: #333333;
     --color-scrollbar-hover: #4d4d4d;
     --color-overlay: rgb(0 0 0 / 0.6);
@@ -336,9 +347,9 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     height: auto;
   }
 
-  /* Selection styles */
+  /* Selecting text marks it with the highlighter. */
   ::selection {
-    background: var(--color-selection-bg);
+    background: var(--color-mark);
     color: var(--color-text);
   }
 
@@ -379,18 +390,36 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     margin: 0.5rem 0 0;
   }
 
-  /* A link inside running text: text color, light underline. */
-  .text-link {
+  /* A link inside running text: text color and a light underline at rest.
+     On hover or keyboard focus a highlighter stroke sweeps in behind the
+     lower part of the words, left to right. The stroke is a background, so
+     a link that wraps gets one stroke per line (box-decoration-break).
+     Post bodies use it too: .article-content is the Markdown output. */
+  .text-link,
+  .article-content a:not(.heading-anchor) {
     color: var(--color-text);
     text-decoration-line: underline;
     text-decoration-color: var(--color-link-underline);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
-    transition: text-decoration-color 0.15s ease;
+    background-image: linear-gradient(var(--color-mark), var(--color-mark));
+    background-repeat: no-repeat;
+    background-position: 0 var(--mark-top);
+    background-size: 0 var(--mark-height);
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
 
-  .text-link:hover {
-    text-decoration-color: currentColor;
+  .text-link:is(:hover, :focus-visible),
+  .article-content a:not(.heading-anchor):is(:hover, :focus-visible) {
+    background-size: 100% var(--mark-height);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .text-link,
+    .article-content a:not(.heading-anchor) {
+      transition: background-size 0.2s ease-out;
+    }
   }
 
   @media (max-width: 640px) {

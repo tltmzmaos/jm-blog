@@ -81,22 +81,43 @@ const links = [
     gap: 1.25rem;
   }
 
+  /* The current section is marked with a short, thick highlighter stroke
+     behind the lower half of the word; hovering another item sweeps in a
+     fainter pass of the same pen. The stroke runs a little past each end
+     of the word (padding), and the matching negative margin keeps the
+     words where they were. Text on the stroke is always --color-text. */
   .nav-link {
+    margin: 0 -0.2em;
+    padding: 0 0.2em;
     font-size: 0.9375rem;
     color: var(--color-text-secondary);
     text-decoration: none;
-    text-underline-offset: 0.4em;
-    text-decoration-thickness: 1px;
-    transition: color 0.15s ease;
+    background-image: linear-gradient(
+      var(--color-mark-wash),
+      var(--color-mark-wash)
+    );
+    background-repeat: no-repeat;
+    background-position: 0 0.72em;
+    background-size: 0 0.56em;
   }
 
-  .nav-link:hover {
+  .nav-link:is(:hover, :focus-visible) {
     color: var(--color-text);
+    background-size: 100% 0.56em;
   }
 
   .nav-link.active {
     color: var(--color-text);
-    text-decoration-line: underline;
+    background-image: linear-gradient(var(--color-mark), var(--color-mark));
+    background-size: 100% 0.56em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-link {
+      transition:
+        color 0.15s ease,
+        background-size 0.2s ease-out;
+    }
   }
 
   .actions {
