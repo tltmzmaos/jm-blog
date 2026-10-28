@@ -2,10 +2,13 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import satori from 'satori';
 import sharp from 'sharp';
+import { shouldShowDrafts } from '../../utils/env';
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const showDrafts = shouldShowDrafts();
   const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  const visible = posts.filter((post) => showDrafts || !post.data.draft);
+  return visible.map((post) => ({
     params: { slug: post.id },
     props: {
       title: post.data.title,
