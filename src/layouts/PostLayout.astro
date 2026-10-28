@@ -242,7 +242,7 @@ const formatDate = (date: Date) => {
         {
           relatedPosts.length > 0 && (
             <section class="related-posts">
-              <h2 class="section-title">Related Posts</h2>
+              <h2 class="section-title">Related posts</h2>
               <ul>
                 {relatedPosts.map((post) => (
                   <li>
@@ -262,7 +262,7 @@ const formatDate = (date: Date) => {
         {
           (prevPost || nextPost) && (
             <nav class="post-nav" aria-label="Post navigation">
-              <h2 class="section-title">Continue Reading</h2>
+              <h2 class="section-title">Continue reading</h2>
               {prevPost ? (
                 <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
                   <span class="nav-label">Previous</span>
@@ -451,9 +451,7 @@ const formatDate = (date: Date) => {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-family: var(--font-mono);
     font-size: 0.75rem;
-    letter-spacing: 0.02em;
     color: var(--color-text-muted);
     margin-bottom: 1.25rem;
   }
@@ -474,27 +472,19 @@ const formatDate = (date: Date) => {
   }
 
   h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(1.875rem, 4.5vw, 2.625rem);
-    font-weight: 500;
-    /* The 144 poster cut sets letters too close at this size; 72 keeps the
-       display contrast with open spacing. */
-    font-variation-settings: 'opsz' 72;
-    letter-spacing: -0.015em;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
     color: var(--color-text);
-    line-height: 1.15;
-    margin: 0 0 1.25rem;
+    line-height: 1.25;
+    margin: 0 0 1rem;
   }
 
   .description {
-    font-family: var(--font-serif);
-    font-size: 1.1875rem;
-    font-style: italic;
-    font-weight: 400;
+    font-size: 1.0625rem;
     color: var(--color-text-secondary);
-    line-height: 1.55;
-    margin: 0 0 1.5rem;
-    max-width: 54ch;
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
   }
 
   .tags {
@@ -505,7 +495,6 @@ const formatDate = (date: Date) => {
   }
 
   .tag {
-    font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--color-text-muted);
     text-decoration: none;
@@ -555,7 +544,6 @@ const formatDate = (date: Date) => {
   }
 
   .series-count {
-    font-family: var(--font-mono);
     font-size: 0.75rem;
     font-variant-numeric: tabular-nums;
     color: var(--color-text-muted);
@@ -584,15 +572,11 @@ const formatDate = (date: Date) => {
   }
 
   .step-label {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.8125rem;
     color: var(--color-text-muted);
   }
 
   .step-title {
-    font-family: var(--font-serif);
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.35;
@@ -618,10 +602,7 @@ const formatDate = (date: Date) => {
     gap: 0.5rem;
     width: fit-content;
     padding: 0.75rem 0;
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.8125rem;
     color: var(--color-text-muted);
     list-style: none;
     cursor: pointer;
@@ -669,7 +650,6 @@ const formatDate = (date: Date) => {
   }
 
   .part-num {
-    font-family: var(--font-mono);
     font-size: 0.75rem;
     font-variant-numeric: tabular-nums;
     color: var(--color-text-muted);
@@ -704,7 +684,7 @@ const formatDate = (date: Date) => {
 
   .article-content {
     font-size: 1.0625rem;
-    line-height: 1.8;
+    line-height: 1.7;
     color: var(--color-text-body);
   }
 
@@ -717,22 +697,28 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(h2) {
-    font-family: var(--font-serif);
-    font-size: 1.625rem;
+    font-size: 1.375rem;
     font-weight: 600;
-    font-variation-settings: 'opsz' 36;
     letter-spacing: -0.01em;
-    line-height: 1.3;
+    line-height: 1.35;
     color: var(--color-text);
-    margin: 3.25rem 0 1rem;
+    margin: 3rem 0 0.875rem;
   }
 
   .article-content :global(h3) {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.4;
     color: var(--color-text);
-    margin: 2.25rem 0 0.75rem;
+    margin: 2.25rem 0 0.625rem;
+  }
+
+  .article-content :global(h4) {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-text);
+    margin: 1.75rem 0 0.5rem;
   }
 
   .article-content :global(.heading-anchor) {
@@ -780,9 +766,7 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(code) {
-    font-family:
-      'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, Monaco, Consolas,
-      monospace;
+    font-family: var(--font-mono);
     font-size: 0.875em;
     padding: 0.2em 0.5em;
     background: var(--color-surface);
@@ -833,16 +817,14 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(.code-lang) {
-    font-size: 0.6875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     color: var(--color-code-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
   }
 
   .article-content :global(.copy-btn) {
     padding: 0.125rem 0.5rem;
-    font-size: 0.6875rem;
+    font-size: 0.8125rem;
     font-weight: 400;
     color: var(--color-code-muted);
     background: transparent;
@@ -975,8 +957,6 @@ const formatDate = (date: Date) => {
 
   .article-content :global(table) :global(th) {
     font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
     color: var(--color-text-secondary);
     background: var(--color-surface);
   }
@@ -1002,13 +982,10 @@ const formatDate = (date: Date) => {
   }
 
   .section-title {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     color: var(--color-text-muted);
     margin: 0 0 1.25rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
   }
 
   .related-posts ul {
@@ -1045,7 +1022,6 @@ const formatDate = (date: Date) => {
   }
 
   .related-title {
-    font-family: var(--font-serif);
     font-size: 1.125rem;
     font-weight: 500;
     letter-spacing: -0.005em;
@@ -1101,15 +1077,11 @@ const formatDate = (date: Date) => {
   }
 
   .nav-label {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.8125rem;
     color: var(--color-text-muted);
   }
 
   .nav-title {
-    font-family: var(--font-serif);
     font-size: 1.0625rem;
     font-weight: 500;
     letter-spacing: -0.005em;
@@ -1248,7 +1220,7 @@ const formatDate = (date: Date) => {
     }
 
     h1 {
-      font-size: 1.5rem;
+      font-size: 1.625rem;
     }
 
     .post-nav {

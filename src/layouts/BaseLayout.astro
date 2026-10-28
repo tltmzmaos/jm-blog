@@ -58,11 +58,18 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
       media="(prefers-color-scheme: dark)"
     />
 
-    <!-- Fraunces is self-hosted like Inter (public/fonts). The upright
-         face sets every page title, so it is preloaded. -->
+    <!-- Inter is self-hosted (public/fonts). Regular sets the body text and
+         semibold every title, so both are fetched before first paint. -->
     <link
       rel="preload"
-      href="/fonts/fraunces-latin.woff2"
+      href="/fonts/inter-latin-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-600.woff2"
       as="font"
       type="font/woff2"
       crossorigin
@@ -217,32 +224,6 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
       U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   }
 
-  /* Variable font: one file covers weights 400-700 and the opsz axis. */
-  @font-face {
-    font-family: 'Fraunces';
-    font-style: normal;
-    font-weight: 400 700;
-    font-display: swap;
-    src: url('/fonts/fraunces-latin.woff2') format('woff2');
-    unicode-range:
-      U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-      U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-      U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
-  /* Variable font: one file covers weights 400-700 and the opsz axis. */
-  @font-face {
-    font-family: 'Fraunces';
-    font-style: italic;
-    font-weight: 400 700;
-    font-display: swap;
-    src: url('/fonts/fraunces-latin-italic.woff2') format('woff2');
-    unicode-range:
-      U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-      U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-      U+2212, U+2215, U+FEFF, U+FFFD;
-  }
-
   * {
     margin: 0;
     padding: 0;
@@ -274,12 +255,10 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     --color-code-text: #ededed;
     --color-code-muted: #a3a3a3;
     --image-filter: none;
-    --font-serif:
-      'Fraunces', 'Iowan Old Style', 'Apple Garamond', 'Baskerville',
-      'Times New Roman', serif;
+    /* System monospace, for code only: never for dates or labels. */
     --font-mono:
-      ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Monaco, Consolas,
-      monospace;
+      ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas,
+      'Liberation Mono', monospace;
   }
 
   .dark {
@@ -330,7 +309,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-bg);
     color: var(--color-text);
-    line-height: 1.65;
+    line-height: 1.6;
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
