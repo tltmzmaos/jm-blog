@@ -149,6 +149,10 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
         window.addEventListener('pageshow', (e) => {
           if (e.persisted) apply(isDark());
         });
+
+        // Paper is white: print in the light theme, then switch back.
+        window.addEventListener('beforeprint', () => apply(false));
+        window.addEventListener('afterprint', () => apply(isDark()));
       })();
     </script>
   </head>
@@ -555,6 +559,57 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-scrollbar-hover);
+  }
+
+  /* Printing a page gives the notes alone: the light theme (switched by
+     the theme script), no header, footer, contents or buttons, highlighter
+     marks kept, and the address after each link that leaves the site. */
+  @media print {
+    .skip-to-content,
+    .header,
+    .footer,
+    .toc-sidebar,
+    .toc-inline,
+    #search-modal,
+    .heading-anchor,
+    .code-header,
+    .share,
+    .post-nav,
+    .series-strip,
+    .series-steps,
+    .series-all {
+      display: none !important;
+    }
+
+    .container {
+      max-width: none;
+      padding: 0;
+    }
+
+    .article-content pre {
+      padding-top: 1rem !important;
+      break-inside: avoid;
+    }
+
+    .article-content :is(img, .table-wrap, blockquote) {
+      break-inside: avoid;
+    }
+
+    .article-content :is(h2, h3, h4) {
+      break-after: avoid;
+    }
+
+    .article-content a[href^='http']::after {
+      content: ' (' attr(href) ')';
+      font-size: 0.85em;
+      color: var(--color-text-secondary);
+      overflow-wrap: anywhere;
+    }
+
+    mark {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
   }
 
   /* Reduced motion preference */
