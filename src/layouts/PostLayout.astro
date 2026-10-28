@@ -539,7 +539,7 @@ const formatDate = (date: Date) => {
 
   .series-count {
     font-size: 0.75rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .series-list {
@@ -560,7 +560,7 @@ const formatDate = (date: Date) => {
 
   .series-list li::before {
     content: counter(series) '. ';
-    color: #888;
+    color: var(--color-text-muted);
     font-weight: 500;
   }
 
@@ -757,7 +757,7 @@ const formatDate = (date: Date) => {
   .article-content :global(.code-lang) {
     font-size: 0.6875rem;
     font-weight: 500;
-    color: #808080;
+    color: #a0a0a0;
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -766,7 +766,7 @@ const formatDate = (date: Date) => {
     padding: 0.125rem 0.5rem;
     font-size: 0.6875rem;
     font-weight: 400;
-    color: #808080;
+    color: #a0a0a0;
     background: transparent;
     border: 1px solid #3c3c3c;
     border-radius: 4px;
@@ -809,7 +809,7 @@ const formatDate = (date: Date) => {
 
   :global(.dark) .article-content :global(blockquote) {
     background: #252526;
-    color: #808080;
+    color: var(--color-text-secondary);
     border-left-color: var(--color-accent);
   }
 
@@ -847,7 +847,7 @@ const formatDate = (date: Date) => {
   }
 
   :global(.dark) .article-content :global(ol li::marker) {
-    color: #808080;
+    color: var(--color-text-muted);
   }
 
   .article-content :global(img) {
@@ -886,12 +886,11 @@ const formatDate = (date: Date) => {
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    color: #666;
+    color: var(--color-text-secondary);
     background: #fafafa;
   }
 
   :global(.dark) .article-content :global(table) :global(th) {
-    color: #808080;
     background: #252526;
   }
 
@@ -1085,7 +1084,7 @@ const formatDate = (date: Date) => {
 
   .share-status {
     font-size: 0.8125rem;
-    color: #888;
+    color: var(--color-text-muted);
   }
 
   .share-btn {
@@ -1153,7 +1152,7 @@ const formatDate = (date: Date) => {
 
   .author-desc {
     font-size: 0.8125rem;
-    color: #888;
+    color: var(--color-text-muted);
     line-height: 1.5;
   }
 
