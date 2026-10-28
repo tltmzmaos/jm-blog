@@ -1,12 +1,14 @@
 ---
 import PostListItem from './PostListItem.astro';
 import { assertUniqueTransitionNames } from '../utils/viewTransition';
+import { newestFirst } from '../utils/entryNumbers';
 
 interface Post {
   slug: string;
   title: string;
   description: string;
   pubDate: Date;
+  entry?: number;
 }
 
 export interface Props {
@@ -23,9 +25,7 @@ assertUniqueTransitionNames(posts.map((p) => p.slug));
 
 // Newest first, grouped by the year shown in the dates (UTC).
 const byYear = new Map<number, Post[]>();
-for (const post of [...posts].sort(
-  (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
-)) {
+for (const post of [...posts].sort(newestFirst)) {
   const year = post.pubDate.getUTCFullYear();
   const group = byYear.get(year) ?? [];
   group.push(post);

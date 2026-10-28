@@ -5,6 +5,7 @@ import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import SeriesStrip from '../components/SeriesStrip.astro';
+import EntryNumber from '../components/EntryNumber.astro';
 import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
@@ -27,6 +28,8 @@ export interface Props {
   seriesInfo?: SeriesInfo | null;
   content?: string;
   slug?: string;
+  /** Entry number; drafts (dev only) have none. */
+  entry?: number;
 }
 
 const {
@@ -37,6 +40,7 @@ const {
   seriesInfo,
   content,
   slug: postSlug,
+  entry,
 } = Astro.props;
 const {
   title,
@@ -109,6 +113,16 @@ const formatDate = (date: Date) => {
         {description && <p class="description">{description}</p>}
 
         <p class="meta">
+          {
+            entry !== undefined && (
+              <>
+                <EntryNumber n={entry} />
+                <span class="separator" aria-hidden="true">
+                  ·
+                </span>
+              </>
+            )
+          }
           <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
           <span class="separator" aria-hidden="true">·</span>
           <span>{readingTime.text}</span>

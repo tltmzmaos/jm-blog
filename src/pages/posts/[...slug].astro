@@ -4,6 +4,7 @@ import PostLayout from '../../layouts/PostLayout.astro';
 import { getSeriesInfo } from '../../utils/seriesPosts';
 import { getAllSeries } from '../../utils/seriesIndex';
 import { shouldShowDrafts } from '../../utils/env';
+import { getEntryNumbers, newestFirst } from '../../utils/entryNumbers';
 
 export async function getStaticPaths() {
   const showDrafts = shouldShowDrafts();
@@ -25,8 +26,12 @@ const allPosts = await getCollection('blog');
 const visiblePosts = allPosts.filter(
   (p) => shouldShowDrafts() || !p.data.draft
 );
-const sortedPosts = visiblePosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+const entries = await getEntryNumbers();
+const sortedPosts = visiblePosts.sort((a, b) =>
+  newestFirst(
+    { pubDate: a.data.pubDate, entry: entries.get(a.id) },
+    { pubDate: b.data.pubDate, entry: entries.get(b.id) }
+  )
 );
 const currentIndex = sortedPosts.findIndex((p) => p.id === post.id);
 
@@ -48,6 +53,12 @@ const nextPost =
       }
     : undefined;
 
+// Drafts have no entry number; a published post always has one.
+const entry = entries.get(post.id);
+if (!post.data.draft && entry === undefined) {
+  throw new Error(`Published post "${post.id}" has no entry number.`);
+}
+
 // Detect series membership
 const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
 ---
@@ -60,6 +71,7 @@ const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
   seriesInfo={seriesInfo}
   content={post.body}
   slug={post.id}
+  entry={entry}
 >
   <Content />
 </PostLayout>

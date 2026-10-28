@@ -1,0 +1,27 @@
+---
+import { formatEntryNumber } from '../utils/entryNumbers';
+
+export interface Props {
+  /** The post's entry number (utils/entryNumbers.ts). */
+  n: number;
+  class?: string;
+}
+
+const { n, class: className } = Astro.props;
+// Drawn as "№ 016"; read as "Entry 16".
+---
+
+<span class:list={['entry-no', className]}
+  ><span class="sr-only">Entry {n}</span><span aria-hidden="true"
+    >№&nbsp;{formatEntryNumber(n)}</span
+  ></span
+>
+
+<style>
+  .entry-no {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+</style>

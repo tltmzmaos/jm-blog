@@ -1,6 +1,7 @@
 import { shelves } from '../data/shelves';
 import type { SeriesWithPosts } from './seriesIndex';
 import { seriesParts, type SeriesPart } from './seriesPosts';
+import { newestFirst } from './entryNumbers';
 
 export interface ShelfPost {
   slug: string;
@@ -8,6 +9,7 @@ export interface ShelfPost {
   description: string;
   pubDate: Date;
   tags: string[];
+  entry?: number;
 }
 
 interface ShelfBase {
@@ -63,7 +65,7 @@ export function resolveShelves(
         (p) =>
           !taken.has(p.slug) && from.allTags.every((t) => p.tags.includes(t))
       )
-      .sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf());
+      .sort(newestFirst);
     picked.forEach((p) => taken.add(p.slug));
     if (picked.length > 0) {
       resolved.push({ title, description, kind: 'posts', posts: picked });

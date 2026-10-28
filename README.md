@@ -18,6 +18,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 - Home page by topic: the newest posts, then topic shelves (a series as a strip of its parts, or posts picked by tags); edit the shelves in `src/data/shelves.ts`
 - Every post by year at `/posts/`
+- Entry numbers: each published post is numbered by publishing order, oldest first (`№ 016`), in the lists, the post header and the OG card (src/utils/entryNumbers.ts). Drafts are not counted
 - One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
 - Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
 - Search over post titles, descriptions and tags with Fuse.js; matched words are marked

@@ -5,6 +5,7 @@ import Header from '../../components/Header.astro';
 import PostList from '../../components/PostList.astro';
 import { shouldShowDrafts } from '../../utils/env';
 import { tagLabel, tagSlug } from '../../utils/tags';
+import { getEntryNumbers } from '../../utils/entryNumbers';
 
 export async function getStaticPaths() {
   const showDrafts = shouldShowDrafts();
@@ -36,6 +37,7 @@ export async function getStaticPaths() {
   return uniqueTags.map((tag) => {
     const filteredPosts = publishedPosts
       .filter((post) => post.data.tags.includes(tag))
+      // Newest first; PostList settles same-day posts by entry number.
       .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
     const relatedTagCounts = filteredPosts.reduce(
@@ -61,6 +63,7 @@ export async function getStaticPaths() {
 }
 
 const { tag, posts, relatedTags } = Astro.props;
+const entries = await getEntryNumbers();
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
@@ -83,6 +86,7 @@ const baseUrl = import.meta.env.BASE_URL;
           title: post.data.title,
           description: post.data.description,
           pubDate: post.data.pubDate,
+          entry: entries.get(post.id),
         }))}
       />
     </div>
