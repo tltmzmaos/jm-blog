@@ -52,8 +52,8 @@ export async function renderOgImage({
           // which pushes the footer below the 630px canvas.
           boxSizing: 'border-box',
           padding: '60px',
-          backgroundColor: '#1e1e1e',
-          color: '#d4d4d4',
+          backgroundColor: '#181715',
+          color: '#e6e2dc',
           fontFamily: 'Inter, sans-serif',
         },
         children: [
@@ -69,7 +69,7 @@ export async function renderOgImage({
                       fontSize: '42px',
                       fontWeight: '700',
                       lineHeight: '1.3',
-                      color: '#ffffff',
+                      color: '#f5f1eb',
                       maxWidth: '900px',
                     },
                     children: title,
@@ -90,8 +90,8 @@ export async function renderOgImage({
                             style: {
                               fontSize: '18px',
                               padding: '4px 12px',
-                              backgroundColor: 'rgba(217, 138, 102, 0.18)',
-                              color: '#d98a66',
+                              backgroundColor: 'rgba(220, 141, 105, 0.18)',
+                              color: '#dc8d69',
                               borderRadius: '6px',
                             },
                             children: tag,
@@ -110,21 +110,21 @@ export async function renderOgImage({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderTop: '1px solid #3c3c3c',
+                borderTop: '1px solid #34312d',
                 paddingTop: '24px',
               },
               children: [
                 {
                   type: 'span',
                   props: {
-                    style: { fontSize: '22px', color: '#888' },
+                    style: { fontSize: '22px', color: '#9d958b' },
                     children: 'jongmin.me',
                   },
                 },
                 {
                   type: 'span',
                   props: {
-                    style: { fontSize: '22px', color: '#888' },
+                    style: { fontSize: '22px', color: '#9d958b' },
                     children: 'Jongmin Lee',
                   },
                 },

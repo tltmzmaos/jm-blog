@@ -50,12 +50,12 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       name="theme-color"
-      content="#ffffff"
+      content="#fbfaf7"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#1e1e1e"
+      content="#181715"
       media="(prefers-color-scheme: dark)"
     />
 
@@ -100,7 +100,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
       (function () {
         // Same values as --color-bg; the browser UI color follows the
         // chosen theme, not only the OS setting.
-        const BG = { light: '#ffffff', dark: '#1e1e1e' };
+        const BG = { light: '#fbfaf7', dark: '#181715' };
         const media = window.matchMedia('(prefers-color-scheme: dark)');
         const stored = () => {
           try {
@@ -244,36 +244,36 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   /* Every color lives here. Components use these tokens, and dark mode
      comes from the .dark overrides below, not from per-rule copies. */
   :root {
-    --color-bg: #ffffff;
-    --color-bg-secondary: #f5f5f5;
-    --color-bg-tertiary: #fafafa;
-    --color-surface: #fafafa; /* table headers, blockquotes */
-    --color-text: #1a1a1a;
-    --color-text-body: #333333; /* article prose */
-    --color-text-secondary: #5c5148;
-    --color-text-subtle: #555555; /* secondary links: series list, TOC */
-    --color-text-soft: #666666; /* icon buttons, small labels, quotes */
-    --color-text-muted: #736a61;
-    --color-text-faint: #cccccc; /* heading anchors, TOC markers */
-    --color-border: #e5e5e5;
-    --color-border-light: #f0f0f0;
-    --color-accent: #a8583a;
-    --color-accent-hover: #8c4a30;
+    --color-bg: #fbfaf7;
+    --color-bg-secondary: #f3f0ea;
+    --color-bg-tertiary: #f7f5f0;
+    --color-surface: #f3f0ea; /* table headers, blockquotes */
+    --color-text: #1c1a17;
+    --color-text-body: #2b2723; /* article prose */
+    --color-text-secondary: #57504a;
+    --color-text-subtle: #57504a; /* secondary links: series list, TOC */
+    --color-text-soft: #655d55; /* icon buttons, small labels, quotes */
+    --color-text-muted: #6e665e;
+    --color-text-faint: #cdc5ba; /* heading anchors, TOC markers */
+    --color-border: #e6e1d9;
+    --color-border-light: #efebe4;
+    --color-accent: #a3532f;
+    --color-accent-hover: #86432a;
     --color-on-accent: #ffffff;
     --color-selection-bg: var(--color-accent);
-    --color-scrollbar: #cccccc;
-    --color-scrollbar-hover: #999999;
+    --color-scrollbar: #d3ccc2;
+    --color-scrollbar-hover: #a59d93;
     /* Inline code */
-    --color-code-inline-text: #d63384;
-    --color-code-inline-bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    --color-code-inline-border: #e0e4e8;
+    --color-code-inline-text: #7a4129;
+    --color-code-inline-bg: #f1ece4;
+    --color-code-inline-border: #e6e0d6;
     /* Code blocks stay dark in both themes. */
-    --color-code-bg: #1e1e1e;
-    --color-code-header-bg: #252526;
-    --color-code-border: #3c3c3c;
-    --color-code-text: #d4d4d4;
-    --color-code-muted: #a0a0a0;
-    --color-code-success: #6a9955;
+    --color-code-bg: #1e1c19;
+    --color-code-header-bg: #262320;
+    --color-code-border: #36322d;
+    --color-code-text: #e6e2dc;
+    --color-code-muted: #a59d93;
+    --color-code-success: #8fb573;
     --font-serif:
       'Fraunces', 'Iowan Old Style', 'Apple Garamond', 'Baskerville',
       'Times New Roman', serif;
@@ -283,27 +283,28 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   }
 
   .dark {
-    --color-bg: #1e1e1e;
-    --color-bg-secondary: #252526;
-    --color-bg-tertiary: #2a2d2e;
-    --color-surface: #252526;
-    --color-text: #d4d4d4;
-    --color-text-body: #d4d4d4;
-    --color-text-secondary: #aea69c;
-    --color-text-subtle: #999999;
-    --color-text-soft: #999999;
-    --color-text-muted: #9b9289;
-    --color-text-faint: #555555;
-    --color-border: #3c3c3c;
-    --color-border-light: #333333;
-    --color-accent: #d98a66;
-    --color-accent-hover: #e5a485;
-    --color-selection-bg: color-mix(in srgb, var(--color-accent) 45%, #000);
-    --color-scrollbar: #3c3c3c;
-    --color-scrollbar-hover: #4f4f4f;
-    --color-code-inline-text: #ce9178;
-    --color-code-inline-bg: linear-gradient(135deg, #2a2d2e 0%, #252526 100%);
-    --color-code-inline-border: #3c3c3c;
+    --color-bg: #181715;
+    --color-bg-secondary: #211f1c;
+    --color-bg-tertiary: #272522;
+    --color-surface: #211f1c;
+    --color-text: #e6e2dc;
+    --color-text-body: #dbd6cf;
+    --color-text-secondary: #b3aca2;
+    --color-text-subtle: #b3aca2;
+    --color-text-soft: #a39b91;
+    --color-text-muted: #9d958b;
+    --color-text-faint: #4a4540;
+    --color-border: #34312d;
+    --color-border-light: #2c2a27;
+    --color-accent: #dc8d69;
+    --color-accent-hover: #e7a585;
+    --color-on-accent: #181715;
+    --color-selection-bg: var(--color-accent);
+    --color-scrollbar: #3a3632;
+    --color-scrollbar-hover: #524c46;
+    --color-code-inline-text: #e2b29a;
+    --color-code-inline-bg: #272522;
+    --color-code-inline-border: #34312d;
   }
 
   html {
