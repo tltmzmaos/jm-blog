@@ -377,6 +377,20 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     margin: 0.5rem 0 0;
   }
 
+  /* A link inside running text: text color, light underline. */
+  .text-link {
+    color: var(--color-text);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-link-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .text-link:hover {
+    text-decoration-color: currentColor;
+  }
+
   @media (max-width: 640px) {
     .page {
       padding-top: 2rem;

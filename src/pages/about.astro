@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import { calculateReadingTime } from '../utils/readingTime.js';
 
 const now: string[] = [
   "Doing an M.S. through Georgia Tech's OMSCS.",
@@ -18,7 +17,6 @@ const selectedPosts = allPosts
     slug: p.id,
     title: p.data.title,
     description: p.data.description,
-    readingTime: calculateReadingTime(p.body || '').text,
   }));
 
 const baseUrl = import.meta.env.BASE_URL;
@@ -30,99 +28,34 @@ const baseUrl = import.meta.env.BASE_URL;
 >
   <Header />
 
-  <main class="about-page" id="main-content">
-    <header class="intro-block">
-      <div class="identity">
-        <h1 class="name">Jongmin Lee</h1>
-        <p class="tagline">Software engineer · Bay Area</p>
-        <ul class="contacts" aria-label="Contact">
-          <li>
-            <a href="mailto:tltmzmaos@gmail.com" aria-label="Email">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"></rect>
-                <path d="m3 7 9 6 9-6"></path>
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://linkedin.com/in/jml1228"
-              target="_blank"
-              rel="noopener"
-              aria-label="LinkedIn"
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://github.com/tltmzmaos"
-              target="_blank"
-              rel="noopener"
-              aria-label="GitHub"
-            >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-        </ul>
-      </div>
+  <main class="container page" id="main-content">
+    <h1 class="page-title">About</h1>
+    <p class="page-lead">
+      Software engineer in the Bay Area. Writing about software craft, working
+      with AI, and what I'm trying to make sense of.
+    </p>
 
-      <p class="lead">
-        Software engineer in the Bay Area. Writing about software craft, working
-        with AI, and what I'm trying to make sense of.
+    <div class="prose">
+      <p>
+        Most of my work has been about systems that need to coordinate — API
+        integrations and data reconciliation across automotive services,
+        scheduling and instrument orchestration in lab automation, and now
+        AI-powered applications, exploring what AI can actually do for each
+        industry. I studied computer science at UC Irvine and am working on an
+        M.S. through Georgia Tech's OMSCS. Each move has taken me into a new
+        industry, and I've gotten used to picking up domain context quickly and
+        figuring out what actually matters.
       </p>
-    </header>
+      <p>
+        A lot of what I write here is me thinking out loud about my own work —
+        how AI tools fit in, what graduate school feels like the second time
+        around, what I'm figuring out as I go. I don't claim to have answers;
+        I'm mostly sharing the questions as they come up.
+      </p>
+    </div>
 
-    <section class="section prose-section">
-      <div class="prose">
-        <p>
-          Most of my work has been about systems that need to coordinate — API
-          integrations and data reconciliation across automotive services,
-          scheduling and instrument orchestration in lab automation, and now
-          AI-powered applications, exploring what AI can actually do for each
-          industry. I studied computer science at UC Irvine and am working on an
-          M.S. through Georgia Tech's OMSCS. Each move has taken me into a new
-          industry, and I've gotten used to picking up domain context quickly
-          and figuring out what actually matters.
-        </p>
-        <p>
-          A lot of what I write here is me thinking out loud about my own work —
-          how AI tools fit in, what graduate school feels like the second time
-          around, what I'm figuring out as I go. I don't claim to have answers;
-          I'm mostly sharing the questions as they come up.
-        </p>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2 class="section-label">Now</h2>
+    <section class="section" aria-labelledby="now">
+      <h2 class="section-title" id="now">Now</h2>
       <ul class="now-list">
         {now.map((line) => <li>{line}</li>)}
       </ul>
@@ -130,262 +63,129 @@ const baseUrl = import.meta.env.BASE_URL;
 
     {
       selectedPosts.length > 0 && (
-        <section class="section">
-          <h2 class="section-label">Selected writing</h2>
-          <ul class="selected-list">
+        <section class="section" aria-labelledby="selected">
+          <h2 class="section-title" id="selected">
+            Selected writing
+          </h2>
+          <ul class="selected-list" role="list">
             {selectedPosts.map((post) => (
               <li>
                 <a href={`${baseUrl}posts/${post.slug}/`} class="selected-link">
-                  <span class="selected-title">{post.title}</span>
-                  <span class="selected-desc">{post.description}</span>
-                  <span class="selected-meta">{post.readingTime}</span>
+                  {post.title}
                 </a>
+                <p class="selected-desc">{post.description}</p>
               </li>
             ))}
           </ul>
         </section>
       )
     }
+
+    <section class="section" aria-labelledby="contact">
+      <h2 class="section-title" id="contact">Contact</h2>
+      <p class="contact">
+        <a href="mailto:tltmzmaos@gmail.com" class="text-link">Email</a>
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://github.com/tltmzmaos"
+          class="text-link"
+          target="_blank"
+          rel="noopener">GitHub</a
+        >
+        <span aria-hidden="true">·</span>
+        <a
+          href="https://linkedin.com/in/jml1228"
+          class="text-link"
+          target="_blank"
+          rel="noopener">LinkedIn</a
+        >
+      </p>
+    </section>
   </main>
 </BaseLayout>
 
 <style>
-  .about-page {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 3.5rem 1.5rem 4rem;
-  }
-
-  /* ═══ Intro ═══ */
-  .intro-block {
-    padding-bottom: 2.75rem;
-    margin-bottom: 3rem;
-    border-bottom: 1px solid var(--color-border-light);
-  }
-
-  .identity {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  .name {
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    color: var(--color-text);
-    margin: 0;
-  }
-
-  .tagline {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    margin: 0;
-  }
-
-  .lead {
-    font-size: 1.1875rem;
-    font-weight: 400;
-    line-height: 1.55;
-    color: var(--color-text-secondary);
-    text-align: center;
-    max-width: 54ch;
-    margin: 0 auto;
-  }
-
-  /* ═══ Contacts ═══ */
-  .contacts {
-    display: flex;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0.25rem 0 0;
-    justify-content: center;
-  }
-
-  .contacts a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    border-radius: 50%;
-    transition: color 0.15s ease;
-  }
-
-  .contacts a:hover {
-    color: var(--color-text);
-  }
-
-  .contacts svg {
-    display: block;
-  }
-
-  /* ═══ Sections ═══ */
-  .section {
-    margin-bottom: 3rem;
-  }
-
-  .section:last-child {
-    margin-bottom: 0;
-  }
-
-  .section-label {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    margin: 0 0 1.25rem;
-  }
-
-  /* ═══ Prose ═══ */
-  .prose-section {
-    margin-bottom: 3.25rem;
-  }
-
   .prose {
-    font-size: 1rem;
-    line-height: 1.75;
-    color: var(--color-text-secondary);
-    max-width: 60ch;
+    margin-top: 2rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-body);
   }
 
   .prose p {
-    margin: 0 0 1.1rem;
+    margin: 0 0 1.25rem;
   }
 
   .prose p:last-child {
     margin-bottom: 0;
   }
 
-  /* ═══ Now ═══ */
+  .section {
+    margin-top: 2.75rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    color: var(--color-text);
+    margin: 0 0 0.875rem;
+  }
+
   .now-list {
-    list-style: none;
-    padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    padding-left: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-body);
   }
 
   .now-list li {
-    position: relative;
-    padding-left: 1.25rem;
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-    max-width: 60ch;
+    margin: 0.375rem 0;
+    padding-left: 0.125rem;
   }
 
-  .now-list li::before {
-    content: '·';
-    position: absolute;
-    left: 0.25rem;
-    top: 0;
-    color: var(--color-text);
-    font-weight: 700;
-    font-size: 1.125rem;
-    line-height: 1.4;
+  .now-list li::marker {
+    color: var(--color-text-muted);
   }
 
-  /* ═══ Selected Writing ═══ */
   .selected-list {
     list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-  }
-
-  .selected-list li {
-    border-bottom: 1px solid var(--color-border-light);
-  }
-
-  .selected-list li:last-child {
-    border-bottom: none;
+    gap: 1.25rem;
   }
 
   .selected-link {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      'title meta'
-      'desc desc';
-    column-gap: 1rem;
-    row-gap: 0.25rem;
-    padding: 0.9rem 0;
-    text-decoration: none;
-    transition: opacity 0.15s ease;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-line: none;
   }
 
   .selected-link:hover {
-    opacity: 0.78;
-  }
-
-  .selected-link:hover .selected-title {
-    color: var(--color-text);
-  }
-
-  .selected-title {
-    grid-area: title;
-    font-size: 1.0625rem;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    color: var(--color-text);
-    line-height: 1.3;
-    transition: color 0.15s ease;
-  }
-
-  .selected-meta {
-    grid-area: meta;
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    white-space: nowrap;
-    align-self: baseline;
+    text-decoration-line: underline;
   }
 
   .selected-desc {
-    grid-area: desc;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
     color: var(--color-text-secondary);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    margin: 0.25rem 0 0;
   }
 
-  @media (max-width: 640px) {
-    .about-page {
-      padding: 2.5rem 1.25rem 3rem;
-    }
-
-    .intro-block {
-      padding-bottom: 2rem;
-      margin-bottom: 2rem;
-    }
-
-    .contacts {
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .lead {
-      font-size: 1.0625rem;
-    }
-
-    .selected-link {
-      grid-template-columns: 1fr;
-      grid-template-areas:
-        'title'
-        'meta'
-        'desc';
-      row-gap: 0.3rem;
-    }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-text-muted);
   }
 </style>
