@@ -1,0 +1,184 @@
+---
+import type { Section } from '../utils/sections';
+
+export interface Props {
+  title: string;
+  sections: Section[];
+}
+
+const { title, sections } = Astro.props;
+---
+
+{
+  /* A thin bar that slides in at the top once the post's title has
+    scrolled away: the title on the left, the section being read on the
+    right, and under them a rail with one segment per section, as long as
+    the section is. scripts/reading.ts runs it; without that script it
+    stays hidden. Screen readers skip it: everything in it is on the page
+    already. */
+}
+<div class="runhead" data-runhead hidden aria-hidden="true">
+  <div class="runhead-bar">
+    <span class="runhead-title">{title}</span>
+    <span class="runhead-section"
+      ><span class="runhead-n"></span><span class="runhead-text"></span></span
+    >
+  </div>
+  {
+    sections.length > 0 && (
+      <div class="runhead-rail">
+        {sections.map((section) => (
+          <span
+            class="rail-seg"
+            data-slug={section.slug}
+            data-n={section.n}
+            data-text={section.text}
+          >
+            <span class="rail-fill" />
+          </span>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .runhead {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 40;
+    height: var(--runhead-height);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+
+  .runhead.is-shown {
+    transform: none;
+    visibility: visible;
+  }
+
+  /* Slides down when it appears and back up when the title returns. The
+     visibility flips after the slide out, so the bar can't be found by
+     touch or a screen reader while it is away. */
+  @media (prefers-reduced-motion: no-preference) {
+    .runhead {
+      transition:
+        transform 0.2s ease,
+        visibility 0s linear 0.2s;
+    }
+
+    .runhead.is-shown {
+      transition:
+        transform 0.2s ease,
+        visibility 0s;
+    }
+  }
+
+  .runhead-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: calc(var(--column) + 3rem);
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+  }
+
+  .runhead-title,
+  .runhead-section {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .runhead-title {
+    flex: 1 1 auto;
+    color: var(--color-text-secondary);
+  }
+
+  .runhead-section {
+    flex: 0 1 auto;
+    max-width: 55%;
+    color: var(--color-text);
+  }
+
+  .runhead-n {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .runhead-n:not(:empty)::after {
+    content: ' · ';
+    content: ' · ' / '';
+  }
+
+  /* The rail sits on the bar's bottom line, as wide as the text column.
+     Sections already read are grey, the one being read fills with the
+     highlighter as it is read, and the rest are left as the line. */
+  .runhead-rail {
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    display: flex;
+    gap: 2px;
+    width: min(var(--column), 100% - 3rem);
+    height: 3px;
+    transform: translateX(-50%);
+  }
+
+  .rail-seg {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 2px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+
+  .rail-seg.done {
+    background: var(--color-text-faint);
+  }
+
+  .rail-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-mark);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
+  .rail-seg.current .rail-fill {
+    transform: scaleX(var(--progress, 0));
+  }
+
+  @media (max-width: 640px) {
+    .runhead-bar {
+      padding: 0 1rem;
+    }
+
+    /* Phones: the section alone, from the left. */
+    .runhead-title {
+      display: none;
+    }
+
+    .runhead-section {
+      max-width: none;
+    }
+
+    .runhead-rail {
+      width: calc(100% - 2rem);
+    }
+  }
+
+  @media print {
+    .runhead {
+      display: none;
+    }
+  }
+</style>

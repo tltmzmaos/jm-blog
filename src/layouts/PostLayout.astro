@@ -4,6 +4,7 @@ import sharp from 'sharp';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import RunningHeader from '../components/RunningHeader.astro';
 import SeriesStrip from '../components/SeriesStrip.astro';
 import EntryNumber from '../components/EntryNumber.astro';
 import { calculateReadingTime } from '../utils/readingTime.js';
@@ -11,6 +12,7 @@ import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
 import { tagLabel, tagSlug } from '../utils/tags';
 import { postTitleTransitionName } from '../utils/viewTransition';
+import { postSections } from '../utils/sections';
 
 export interface Props {
   frontmatter: {
@@ -74,14 +76,16 @@ const heroSize = heroImage?.startsWith('/')
 // Detect math formulas ($ or $$ usage)
 const hasMath = hasMathContent(content);
 
-const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     timeZone: 'UTC',
   }).format(date);
-};
+
+// The h2s, numbered when there are enough of them (utils/sections.ts).
+const { sections, numbered } = postSections(headings);
 ---
 
 <BaseLayout
@@ -98,7 +102,9 @@ const formatDate = (date: Date) => {
 >
   <Header />
 
-  <TableOfContents headings={headings} />
+  <RunningHeader title={title} sections={sections} />
+
+  <TableOfContents sections={sections} />
 
   <main id="main-content" class="container">
     <article class="article">
@@ -112,37 +118,115 @@ const formatDate = (date: Date) => {
 
         {description && <p class="description">{description}</p>}
 
-        <p class="meta">
+        <!-- One row of facts under the title, each in its own cell. -->
+        <dl class="facts">
           {
             entry !== undefined && (
-              <>
-                <EntryNumber n={entry} />
-                <span class="separator" aria-hidden="true">
-                  ·
-                </span>
-              </>
+              <div class="fact">
+                <dt>Entry</dt>
+                <dd class="fact-num">
+                  <EntryNumber n={entry} bare />
+                </dd>
+              </div>
             )
           }
-          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-          <span class="separator" aria-hidden="true">·</span>
-          <span>{readingTime.text}</span>
-        </p>
+          <div class="fact">
+            <dt>Published</dt>
+            <dd class="fact-num">
+              <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time
+              >
+            </dd>
+          </div>
+          <div class="fact">
+            <dt>Reading</dt>
+            <dd class="fact-num">{readingTime.minutes} min</dd>
+          </div>
+          {
+            seriesInfo && (
+              <div class="fact fact-wide">
+                <dt>Series</dt>
+                <dd>
+                  <a href={`/series/#${seriesInfo.id}`} class="fact-link">
+                    {seriesInfo.name}
+                  </a>
+                  <span class="fact-part">
+                    part {seriesInfo.currentPart} of {seriesInfo.totalParts}
+                  </span>
+                </dd>
+              </div>
+            )
+          }
+          {
+            tags.length > 0 && (
+              <div class="fact fact-wide fact-tags">
+                <dt>Tags</dt>
+                <dd>
+                  <ul class="tags">
+                    {tags.map((tag) => (
+                      <li>
+                        <a
+                          href={`/tags/${tagSlug(tag)}/`}
+                          class="tag"
+                          set:text={tagLabel(tag)}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+      </header>
 
-        {
-          tags.length > 0 && (
-            <ul class="tags" aria-label="Tags">
-              {tags.map((tag) => (
-                <li>
-                  <a
-                    href={`/tags/${tagSlug(tag)}/`}
-                    class="tag"
-                    set:text={tagLabel(tag)}
-                  />
-                </li>
-              ))}
-            </ul>
-          )
-        }
+      {
+        heroImage && (
+          <div class="hero-image">
+            <img
+              src={heroImage}
+              alt={title}
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+              width={heroSize?.width}
+              height={heroSize?.height}
+            />
+          </div>
+        )
+      }
+
+      <TableOfContents sections={sections} variant="inline" />
+
+      <div class:list={['article-content', { numbered }]}>
+        <slot />
+      </div>
+
+      <footer class="article-footer">
+        <div class="share">
+          <button
+            class="share-btn"
+            id="copy-link-btn"
+            type="button"
+            data-url={postUrl}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+              ><path
+                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+              ></path><path
+                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              ></path></svg
+            >
+            Copy link
+          </button>
+          <span class="share-status" id="copy-link-status" role="status"></span>
+        </div>
 
         {
           seriesInfo && (
@@ -205,59 +289,9 @@ const formatDate = (date: Date) => {
             </nav>
           )
         }
-      </header>
-
-      {
-        heroImage && (
-          <div class="hero-image">
-            <img
-              src={heroImage}
-              alt={title}
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
-              width={heroSize?.width}
-              height={heroSize?.height}
-            />
-          </div>
-        )
-      }
-
-      <TableOfContents headings={headings} variant="inline" />
-
-      <div class="article-content">
-        <slot />
-      </div>
-
-      <footer class="article-footer">
-        <div class="share">
-          <button
-            class="share-btn"
-            id="copy-link-btn"
-            type="button"
-            data-url={postUrl}
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-              ><path
-                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-              ></path><path
-                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-              ></path></svg
-            >
-            Copy link
-          </button>
-          <span class="share-status" id="copy-link-status" role="status"></span>
-        </div>
 
         {
-          (prevPost || nextPost) && (
+          !seriesInfo && (prevPost || nextPost) && (
             <nav class="post-nav" aria-label="More posts">
               {prevPost && (
                 <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
@@ -277,6 +311,10 @@ const formatDate = (date: Date) => {
       </footer>
     </article>
   </main>
+
+  <script>
+    import '../scripts/reading';
+  </script>
 
   <script>
     // Heading anchor links
@@ -385,41 +423,99 @@ const formatDate = (date: Date) => {
     margin: 0 0 0.75rem;
   }
 
+  /* The dek: what the post is about, a step down from the title. */
   .description {
-    font-size: 1.0625rem;
-    line-height: 1.6;
+    max-width: 40em;
+    font-size: 1.1875rem;
+    line-height: 1.55;
     color: var(--color-text-secondary);
-    margin: 0 0 1rem;
-  }
-
-  .meta {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
     margin: 0;
   }
 
-  .meta time {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
+  /* One hairline-bordered row of small cells: the entry number, date and
+     reading time in Plex Mono, then series and tags. The lines between
+     the cells are the row's background showing through a 1px gap, so
+     they stay right when the cells wrap. */
+  .facts {
+    display: flex;
+    gap: 1px;
+    margin: 1.75rem 0 0;
+    background: var(--color-border);
+    border-block: 1px solid var(--color-border);
   }
 
-  .separator {
-    margin: 0 0.375rem;
+  .fact {
+    flex: 0 0 auto;
+    min-width: 0;
+    padding: 0.5rem 0.875rem 0.625rem;
+    background: var(--color-bg);
+  }
+
+  .fact:first-child {
+    padding-left: 0;
+  }
+
+  .fact-wide {
+    flex: 0 1 auto;
+  }
+
+  .fact-tags {
+    flex: 1 1 12rem;
+    padding-right: 0;
+  }
+
+  .facts dt {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  .facts dd {
+    margin: 0.125rem 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+
+  .facts .fact-num {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+  }
+
+  .facts .fact-num :global(.entry-no) {
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .fact-link {
+    white-space: nowrap;
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-link-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .fact-link:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .fact-part {
+    display: block;
+    color: var(--color-text-muted);
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
-    column-gap: 0.875rem;
-    row-gap: 0.25rem;
+    column-gap: 0.75rem;
     list-style: none;
-    margin: 0.375rem 0 0;
+    margin: 0;
     padding: 0;
   }
 
   .tag {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     text-decoration: none;
     white-space: nowrap;
     transition: color 0.15s ease;
@@ -430,6 +526,7 @@ const formatDate = (date: Date) => {
   .tag::before {
     content: '#';
     content: '#' / '';
+    color: var(--color-text-muted);
   }
 
   .tag:hover {
@@ -437,13 +534,11 @@ const formatDate = (date: Date) => {
   }
 
   /* ═══ Series ═══ */
-  /* Stays the same height however long the series gets: the full list
+  /* At the end of a part: where it sits in its series, and the way on.
+     Stays the same height however long the series gets: the full list
      waits behind a native <details>. */
   .series {
     margin-top: 2rem;
-    padding: 1rem 1.25rem;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
   }
 
   .series-title {
@@ -601,8 +696,63 @@ const formatDate = (date: Date) => {
   .article-content :global(h4) {
     position: relative;
     color: var(--color-text);
-    /* A little room above a heading that a link jumps to. */
+    /* A little room above a heading that a link jumps to, under the
+       running header (the page's scroll-padding, below). */
     scroll-margin-top: 1.5rem;
+  }
+
+  /* Jumps to an anchor stop below the running header. */
+  :global(html) {
+    scroll-padding-top: var(--runhead-height);
+  }
+
+  /* Section numbers: a counter on the h2s of a post with three or more
+     sections (utils/sections.ts), drawn small and grey. A heading that
+     starts with its own number ("2. Regression...") keeps it and isn't
+     counted; its id starts with a digit. Wide screens hang the number in
+     the margin, level with the heading's baseline; narrower ones put it
+     in front of the words. Screen readers skip it. */
+  .article-content.numbered {
+    counter-reset: section;
+  }
+
+  .article-content.numbered
+    :global(
+      h2:not(
+          [id^='0'],
+          [id^='1'],
+          [id^='2'],
+          [id^='3'],
+          [id^='4'],
+          [id^='5'],
+          [id^='6'],
+          [id^='7'],
+          [id^='8'],
+          [id^='9']
+        )::before
+    ) {
+    counter-increment: section;
+    content: counter(section);
+    content: counter(section) / '';
+    display: inline-block;
+    width: var(--section-num-width, auto);
+    margin: 0 var(--section-num-gap, 0.75rem) 0 var(--section-num-hang, 0);
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--color-text-muted);
+  }
+
+  /* In the margin: as much negative margin as the number takes, so the
+     heading's words stay on the text column's edge. */
+  @media (min-width: 1024px) {
+    .article-content.numbered {
+      --section-num-width: 3rem;
+      --section-num-gap: 1.25rem;
+      --section-num-hang: -4.25rem;
+    }
   }
 
   .article-content :global(h2) {
@@ -961,8 +1111,20 @@ const formatDate = (date: Date) => {
       font-size: 1.75rem;
     }
 
-    .series {
-      padding: 0.875rem 1rem;
+    .description {
+      font-size: 1.0625rem;
+    }
+
+    /* Phones: number, date and reading time share the first line; series
+       and tags get a line each. */
+    .facts {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr);
+    }
+
+    .fact-wide {
+      grid-column: 1 / -1;
+      padding-left: 0;
     }
 
     .series-steps,

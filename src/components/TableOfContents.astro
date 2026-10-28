@@ -1,15 +1,17 @@
 ---
+import type { Section } from '../utils/sections';
+
 export interface Props {
-  headings: Array<{ depth: number; slug: string; text: string }>;
+  /** The post's h2s (utils/sections.ts): h3s made the list as long as the
+   *  article on some posts. Numbered like the headings, when they are. */
+  sections: Section[];
   /** sidebar: fixed beside the article on wide screens.
    *  inline: collapsed block at the top of the article on narrower ones. */
   variant?: 'sidebar' | 'inline';
 }
 
-const { headings, variant = 'sidebar' } = Astro.props;
-
-// Sections only: h3s made the list as long as the article on some posts.
-const sections = headings.filter((h) => h.depth === 2);
+const { sections, variant = 'sidebar' } = Astro.props;
+const numbered = sections.some((s) => s.n !== undefined);
 ---
 
 {
@@ -17,15 +19,20 @@ const sections = headings.filter((h) => h.depth === 2);
     (variant === 'sidebar' ? (
       <nav class="toc-sidebar" aria-label="Table of contents">
         <p class="toc-title">Contents</p>
-        <ul class="toc-list">
-          {sections.map((heading) => (
+        <ul class:list={['toc-list', { numbered }]}>
+          {sections.map((section) => (
             <li>
               <a
-                href={`#${heading.slug}`}
+                href={`#${section.slug}`}
                 class="toc-link"
-                data-slug={heading.slug}
+                data-slug={section.slug}
               >
-                <span class="toc-text">{heading.text}</span>
+                {numbered && (
+                  <span class="toc-num" aria-hidden="true">
+                    {section.n}
+                  </span>
+                )}
+                <span class="toc-text">{section.text}</span>
               </a>
             </li>
           ))}
@@ -35,10 +42,15 @@ const sections = headings.filter((h) => h.depth === 2);
       <nav class="toc-inline" aria-label="Table of contents">
         <details>
           <summary>Contents</summary>
-          <ul class="toc-inline-list">
-            {sections.map((heading) => (
+          <ul class:list={['toc-inline-list', { numbered }]}>
+            {sections.map((section) => (
               <li>
-                <a href={`#${heading.slug}`}>{heading.text}</a>
+                {numbered && (
+                  <span class="toc-num" aria-hidden="true">
+                    {section.n}
+                  </span>
+                )}
+                <a href={`#${section.slug}`}>{section.text}</a>
               </li>
             ))}
           </ul>
@@ -89,8 +101,26 @@ const sections = headings.filter((h) => h.depth === 2);
     color: var(--color-text);
   }
 
-  /* The section in view gets a highlighter stroke behind its words, drawn
-     in as the reader scrolls into it. Wrapped titles get one per line. */
+  /* Section numbers, as in the margin of the article. The number is
+     taken out of the line so the words stay one inline run, which the
+     highlighter stroke needs. */
+  .numbered .toc-link {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+
+  .toc-num {
+    position: absolute;
+    left: 0.875rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  /* The section being read (set by scripts/reading.ts) gets a highlighter
+     stroke behind its words, drawn in as the reader scrolls into it.
+     Wrapped titles get one per line. */
   .toc-text {
     background-image: linear-gradient(var(--color-mark), var(--color-mark));
     background-repeat: no-repeat;
@@ -165,6 +195,12 @@ const sections = headings.filter((h) => h.depth === 2);
     gap: 0.375rem;
   }
 
+  .toc-inline-list.numbered li {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+
   .toc-inline-list a {
     font-size: 0.9375rem;
     line-height: 1.45;
@@ -195,60 +231,3 @@ const sections = headings.filter((h) => h.depth === 2);
     }
   }
 </style>
-
-<script>
-  function initToc() {
-    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
-    if (tocLinks.length === 0) return;
-
-    const headingElements = Array.from(tocLinks)
-      .map((link) => {
-        const slug = link.dataset.slug;
-        return document.getElementById(slug || '');
-      })
-      .filter(Boolean) as HTMLElement[];
-
-    if (headingElements.length === 0) return;
-
-    const updateActiveLink = () => {
-      const scrollY = window.scrollY;
-      const offset = 120;
-
-      // Update active link
-      let activeIndex = 0;
-      for (let i = 0; i < headingElements.length; i++) {
-        if (headingElements[i].offsetTop <= scrollY + offset) {
-          activeIndex = i;
-        }
-      }
-
-      tocLinks.forEach((link, index) => {
-        const isActive = index === activeIndex;
-        link.classList.toggle('active', isActive);
-
-        // Scroll to keep active link visible
-        if (isActive) {
-          const toc = link.closest('.toc-sidebar');
-          if (toc) {
-            const linkRect = link.getBoundingClientRect();
-            const tocRect = toc.getBoundingClientRect();
-            if (
-              linkRect.top < tocRect.top ||
-              linkRect.bottom > tocRect.bottom
-            ) {
-              link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }
-          }
-        }
-      });
-    };
-
-    // Clicking a link is a plain jump to the heading: the browser scrolls
-    // (smoothly unless reduced motion is set) and keeps the hash in the URL.
-
-    window.addEventListener('scroll', updateActiveLink, { passive: true });
-    updateActiveLink();
-  }
-
-  initToc();
-</script>

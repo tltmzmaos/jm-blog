@@ -25,7 +25,10 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
 - `==text==` in a post marks the words with the highlighter (`<mark>`, src/plugins/remark-mark.mjs); code and math are left alone
-- Table of contents (auto-generated)
+- Post header: title, the description as a dek, and one row of facts (entry number, date, reading time, series part, tags)
+- Section numbers on the h2s of posts with three or more, drawn by a CSS counter (src/utils/sections.ts); headings that already start with a number keep it
+- A running header on posts: once the title scrolls away, a thin bar shows the title and the current section over a rail with one segment per section (src/scripts/reading.ts)
+- Table of contents (auto-generated), numbered like the sections
 - Copy-link button
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs

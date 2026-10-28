@@ -4,16 +4,18 @@ import { formatEntryNumber } from '../utils/entryNumbers';
 export interface Props {
   /** The post's entry number (utils/entryNumbers.ts). */
   n: number;
+  /** Read as the bare number, where a label already says what it is. */
+  bare?: boolean;
   class?: string;
 }
 
-const { n, class: className } = Astro.props;
+const { n, bare = false, class: className } = Astro.props;
 // Drawn as "№ 016"; read as "Entry 16".
 ---
 
 <span class:list={['entry-no', className]}
-  ><span class="sr-only">Entry {n}</span><span aria-hidden="true"
-    >№&nbsp;{formatEntryNumber(n)}</span
+  ><span class="sr-only">{bare ? n : `Entry ${n}`}</span><span
+    aria-hidden="true">№&nbsp;{formatEntryNumber(n)}</span
   ></span
 >
 
