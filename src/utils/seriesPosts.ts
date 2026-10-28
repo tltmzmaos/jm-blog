@@ -1,10 +1,20 @@
-import type { SeriesWithPosts } from './seriesIndex';
+import { displayPartTitle, type SeriesWithPosts } from './seriesIndex';
+
+export interface SeriesPart {
+  slug: string;
+  title: string;
+  partNumber: number;
+}
 
 export interface SeriesInfo {
   name: string;
+  /** Anchor of this series on the /series/ page. */
+  id: string;
   currentPart: number;
   totalParts: number;
-  parts: Array<{ slug: string; title: string; partNumber: number }>;
+  parts: SeriesPart[];
+  prev?: SeriesPart;
+  next?: SeriesPart;
 }
 
 /**
@@ -21,14 +31,18 @@ export function getSeriesInfo(
 
   const parts = series.posts.map((p, i) => ({
     slug: p.slug,
-    title: p.title,
+    title: displayPartTitle(p.title, series),
     partNumber: i + 1,
   }));
+  const index = parts.findIndex((p) => p.slug === postId);
 
   return {
     name: series.title,
-    currentPart: parts.findIndex((p) => p.slug === postId) + 1,
+    id: series.dir,
+    currentPart: index + 1,
     totalParts: parts.length,
     parts,
+    prev: parts[index - 1],
+    next: parts[index + 1],
   };
 }
