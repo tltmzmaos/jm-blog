@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import PostListItem from '../../components/PostListItem.astro';
 import { shouldShowDrafts } from '../../utils/env';
-import { tagSlug } from '../../utils/tags';
+import { tagLabel, tagSlug } from '../../utils/tags';
 
 export async function getStaticPaths() {
   const showDrafts = shouldShowDrafts();
@@ -98,13 +98,10 @@ const baseUrl = import.meta.env.BASE_URL;
         <section class="related-tags">
           <h2 class="section-label">Related</h2>
           <p class="related-list">
-            {relatedTags.map((t, i) => (
-              <>
-                {i > 0 && <span class="dot"> · </span>}
-                <a href={`${baseUrl}tags/${tagSlug(t)}/`} class="related-tag">
-                  {t}
-                </a>
-              </>
+            {relatedTags.map((t) => (
+              <a href={`${baseUrl}tags/${tagSlug(t)}/`} class="related-tag">
+                {tagLabel(t)}
+              </a>
             ))}
           </p>
         </section>
@@ -187,24 +184,31 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .related-list {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+    row-gap: 0.375rem;
     margin: 0;
-    line-height: 1.8;
-    color: var(--color-text-secondary);
-    font-size: 0.9375rem;
   }
 
   .related-tag {
-    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
     text-decoration: none;
+    white-space: nowrap;
     transition: color 0.15s ease;
+  }
+
+  /* The "#" is drawn, with empty alt text so screen readers skip it. */
+  .related-tag::before {
+    content: '#';
+    content: '#' / '';
+    margin-right: -0.15em;
   }
 
   .related-tag:hover {
     color: var(--color-accent);
-  }
-
-  .dot {
-    color: var(--color-border);
   }
 
   @media (max-width: 640px) {
