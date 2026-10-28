@@ -36,7 +36,6 @@ export default defineConfig({
           },
         },
       },
-      minify: 'esbuild',
       cssMinify: true,
     },
     ssr: {
