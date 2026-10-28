@@ -355,6 +355,39 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     }
   }
 
+  /* Index pages (series, tags, about...): a title and one line under it. */
+  .page {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .page-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    margin: 0.5rem 0 0;
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding-top: 2rem;
+      padding-bottom: 3rem;
+    }
+
+    .page-title {
+      font-size: 1.625rem;
+    }
+  }
+
   /* Skip to content link */
   /* Visually hidden, still read by screen readers. */
   .sr-only {
