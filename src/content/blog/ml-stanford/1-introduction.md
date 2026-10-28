@@ -4,7 +4,6 @@ description: "Overview of supervised and unsupervised learning, linear regressio
 pubDate: "2024-03-20"
 updatedDate: "2024-08-04"
 tags: ["Machine Learning", "Regression", "Gradient Descent"]
-heroImage: "/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_9.31.37_PM.webp"
 author: "Jongmin Lee"
 draft: false
 ---

@@ -4,7 +4,6 @@ description: "Explore core concepts of unsupervised learning, including K-means 
 pubDate: "2024-04-09"
 tags: ["Machine Learning", "Unsupervised Learning", "Clustering"]
 author: "Jongmin Lee"
-heroImage: "/1-Unsupervised-learning/Screenshot_2024-04-09_at_5.51.38_PM.webp"
 draft: false
 ---
 

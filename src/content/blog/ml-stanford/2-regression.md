@@ -4,7 +4,6 @@ description: "Deep dive into multiple linear regression, vectorization, gradient
 pubDate: "2024-03-20T10:00:00Z"
 updatedDate: "2024-03-20"
 tags: ["Machine Learning", "Regression", "Gradient Descent"]
-heroImage: "/2-Regression-with-multiple-input-variables/Screenshot_2024-03-20_at_10.30.22_PM.webp"
 author: "Jongmin Lee"
 draft: false
 ---

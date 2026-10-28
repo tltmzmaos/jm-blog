@@ -4,7 +4,6 @@ description: "A complete guide to decision trees, covering entropy, information 
 pubDate: "2024-04-03"
 tags: ["Machine Learning", "Decision Trees", "XGBoost"]
 author: "Jongmin Lee"
-heroImage: "/4-Decision-trees/Screenshot_2024-04-03_at_5.44.16_PM.webp"
 draft: false
 ---
 

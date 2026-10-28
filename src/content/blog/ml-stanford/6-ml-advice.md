@@ -4,7 +4,6 @@ description: "Learn how to make decisions, evaluate models, handle bias and vari
 pubDate: "2024-04-01"
 tags: ["Machine Learning", "Model Evaluation", "Best Practices"]
 author: "Jongmin Lee"
-heroImage: "/3-Advice-for-applying-machine-learning/Screenshot_2024-04-01_at_6.07.39_PM.webp"
 draft: false
 ---
 

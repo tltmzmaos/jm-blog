@@ -4,7 +4,6 @@ description: "Explore how neural networks are trained with gradient descent, sof
 pubDate: "2024-03-28"
 tags: ["Machine Learning", "Neural Networks", "TensorFlow"]
 author: "Jongmin Lee"
-heroImage: "/2-Neural-network-training/Screenshot_2024-03-28_at_8.20.09_PM.webp"
 draft: false
 ---
 
