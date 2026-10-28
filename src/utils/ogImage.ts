@@ -3,11 +3,11 @@ import sharp from 'sharp';
 import { tagLabel } from './tags';
 
 // Satori can't read the self-hosted woff2 files, so the OG card uses TTFs
-// (URLs from fonts.googleapis.com/css2?family=Inter:wght@400;600).
-const INTER_400 =
-  'https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf';
-const INTER_600 =
-  'https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf';
+// (URLs from fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600).
+const PLEX_SANS_400 =
+  'https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSD6llzAA.ttf';
+const PLEX_SANS_600 =
+  'https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSDNF5zAA.ttf';
 
 async function fetchFont(url: string): Promise<ArrayBuffer> {
   const res = await fetch(url);
@@ -22,8 +22,8 @@ async function fetchFont(url: string): Promise<ArrayBuffer> {
 let fontsPromise: Promise<[ArrayBuffer, ArrayBuffer]> | undefined;
 function loadFonts() {
   fontsPromise ??= Promise.all([
-    fetchFont(INTER_400),
-    fetchFont(INTER_600),
+    fetchFont(PLEX_SANS_400),
+    fetchFont(PLEX_SANS_600),
   ]).catch((error: unknown) => {
     fontsPromise = undefined;
     throw error;
@@ -40,7 +40,7 @@ export async function renderOgImage({
 }): Promise<Response> {
   const [regular, semibold] = await loadFonts();
 
-  // Same look as the site: white page, near-black Inter title, and the
+  // Same look as the site: white page, near-black Plex Sans title, and the
   // tags and footer in the muted grey. No color accents, no chips.
   const svg = await satori(
     {
@@ -58,7 +58,7 @@ export async function renderOgImage({
           padding: '72px',
           backgroundColor: '#ffffff',
           color: '#171717',
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: 'IBM Plex Sans, sans-serif',
         },
         children: [
           {
@@ -125,8 +125,8 @@ export async function renderOgImage({
       width: 1200,
       height: 630,
       fonts: [
-        { name: 'Inter', data: regular, weight: 400, style: 'normal' },
-        { name: 'Inter', data: semibold, weight: 600, style: 'normal' },
+        { name: 'IBM Plex Sans', data: regular, weight: 400, style: 'normal' },
+        { name: 'IBM Plex Sans', data: semibold, weight: 600, style: 'normal' },
       ],
     }
   );

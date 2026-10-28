@@ -28,7 +28,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Copy-link button
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs
-- Self-hosted Inter font (Latin subset)
+- Self-hosted IBM Plex Sans and Plex Mono (Latin subset), with size-matched local fallbacks so the swap does not move text
 - Native cross-document view transitions in CSS, no client-side router; a post's title morphs from the list into the post
 - A 404 page that suggests the post closest to the address asked for
 - Print styles: a post prints as plain light notes

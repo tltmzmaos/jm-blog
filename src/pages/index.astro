@@ -142,10 +142,13 @@ const baseUrl = import.meta.env.BASE_URL;
     margin: 0 0 3.5rem;
   }
 
+  /* Plex at 90% width: a little narrower and taller in feel than the
+     text around it, still the same family and weight as every title. */
   .name {
     font-size: 3rem;
     font-weight: 600;
-    letter-spacing: -0.035em;
+    font-stretch: 90%;
+    letter-spacing: -0.02em;
     line-height: 1.05;
     color: var(--color-text);
     margin: 0;
