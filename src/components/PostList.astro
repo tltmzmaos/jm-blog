@@ -11,9 +11,12 @@ interface Post {
 
 export interface Props {
   posts: Post[];
+  /** On wide screens, hang each year in a gutter left of the text column,
+   *  where it stays in view while its posts scroll past. */
+  hangingYears?: boolean;
 }
 
-const { posts } = Astro.props;
+const { posts, hangingYears = false } = Astro.props;
 
 // Each title carries a view-transition-name made from its slug. Two equal
 // names on one page cancel the whole transition, so fail the build instead.
@@ -41,7 +44,10 @@ for (const post of [...posts].sort(
 
 {
   [...byYear].map(([year, group]) => (
-    <section class="year" aria-labelledby={`year-${year}`}>
+    <section
+      class:list={['year', { hanging: hangingYears }]}
+      aria-labelledby={`year-${year}`}
+    >
       <h2 class="year-heading" id={`year-${year}`}>
         {year}
       </h2>
@@ -78,5 +84,40 @@ for (const post of [...posts].sort(
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  /* Wide screens: the year moves out of the text column into a gutter on
+     its left, as a large, light numeral. The negative margin hangs the
+     gutter in the page margin, so the posts stay in line with the header
+     and the intro. The year is sticky inside its own group: it stays at
+     the top while that year's posts scroll past, then leaves with them. */
+  @media (min-width: 1100px) {
+    .hanging {
+      --gutter: 8.5rem;
+      --gutter-gap: 2.5rem;
+      display: grid;
+      grid-template-columns: var(--gutter) minmax(0, 1fr);
+      column-gap: var(--gutter-gap);
+      margin-left: calc(-1 * (var(--gutter) + var(--gutter-gap)));
+    }
+
+    .hanging + .hanging {
+      margin-top: 3.5rem;
+    }
+
+    .hanging .year-heading {
+      position: sticky;
+      top: 1.5rem;
+      align-self: start;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 2.25rem;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-align: right;
+      color: var(--color-text-muted);
+    }
   }
 </style>
