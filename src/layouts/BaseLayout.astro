@@ -49,12 +49,12 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta
       name="theme-color"
-      content="#fbfaf7"
+      content="#ffffff"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#181715"
+      content="#111111"
       media="(prefers-color-scheme: dark)"
     />
 
@@ -107,7 +107,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
       (function () {
         // Same values as --color-bg; the browser UI color follows the
         // chosen theme, not only the OS setting.
-        const BG = { light: '#fbfaf7', dark: '#181715' };
+        const BG = { light: '#ffffff', dark: '#111111' };
         const media = window.matchMedia('(prefers-color-scheme: dark)');
         const stored = () => {
           try {
@@ -250,38 +250,29 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   }
 
   /* Every color lives here. Components use these tokens, and dark mode
-     comes from the .dark overrides below, not from per-rule copies. */
+     comes from the .dark overrides below, not from per-rule copies.
+     Neutral greys only: there is no accent color. Every text color is
+     4.5:1 or better on both --color-bg and --color-surface. */
   :root {
-    --color-bg: #fbfaf7;
-    --color-bg-secondary: #f3f0ea;
-    --color-bg-tertiary: #f7f5f0;
-    --color-surface: #f3f0ea; /* table headers, blockquotes */
-    --color-text: #1c1a17;
-    --color-text-body: #2b2723; /* article prose */
-    --color-text-secondary: #57504a;
-    --color-text-subtle: #57504a; /* secondary links: series list, TOC */
-    --color-text-soft: #655d55; /* icon buttons, small labels, quotes */
-    --color-text-muted: #6e665e;
-    --color-text-faint: #cdc5ba; /* heading anchors, TOC markers */
-    --color-border: #e6e1d9;
-    --color-border-light: #efebe4;
-    --color-accent: #a3532f;
-    --color-accent-hover: #86432a;
-    --color-on-accent: #ffffff;
-    --color-selection-bg: var(--color-accent);
-    --color-scrollbar: #d3ccc2;
-    --color-scrollbar-hover: #a59d93;
-    /* Inline code */
-    --color-code-inline-text: #7a4129;
-    --color-code-inline-bg: #f1ece4;
-    --color-code-inline-border: #e6e0d6;
+    --color-bg: #ffffff;
+    --color-surface: #f6f6f6; /* code, table headers, hovered rows */
+    --color-text: #171717; /* headings, titles, links */
+    --color-text-body: #262626; /* article prose */
+    --color-text-secondary: #525252; /* descriptions, nav, secondary links */
+    --color-text-muted: #6b6b6b; /* dates, counts, small labels */
+    --color-text-faint: #c2c2c2; /* decorative marks only, never text */
+    --color-border: #e5e5e5;
+    --color-border-light: #efefef;
+    --color-link-underline: #b4b4b4;
+    --color-selection-bg: #dadada;
+    --color-scrollbar: #d4d4d4;
+    --color-scrollbar-hover: #a3a3a3;
     /* Code blocks stay dark in both themes. */
-    --color-code-bg: #1e1c19;
-    --color-code-header-bg: #262320;
-    --color-code-border: #36322d;
-    --color-code-text: #e6e2dc;
-    --color-code-muted: #a59d93;
-    --color-code-success: #8fb573;
+    --color-code-bg: #171717;
+    --color-code-header-bg: #1f1f1f;
+    --color-code-border: #2e2e2e;
+    --color-code-text: #ededed;
+    --color-code-muted: #a3a3a3;
     --image-filter: none;
     --font-serif:
       'Fraunces', 'Iowan Old Style', 'Apple Garamond', 'Baskerville',
@@ -292,28 +283,19 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   }
 
   .dark {
-    --color-bg: #181715;
-    --color-bg-secondary: #211f1c;
-    --color-bg-tertiary: #272522;
-    --color-surface: #211f1c;
-    --color-text: #e6e2dc;
-    --color-text-body: #dbd6cf;
-    --color-text-secondary: #b3aca2;
-    --color-text-subtle: #b3aca2;
-    --color-text-soft: #a39b91;
-    --color-text-muted: #9d958b;
-    --color-text-faint: #4a4540;
-    --color-border: #34312d;
-    --color-border-light: #2c2a27;
-    --color-accent: #dc8d69;
-    --color-accent-hover: #e7a585;
-    --color-on-accent: #181715;
-    --color-selection-bg: var(--color-accent);
-    --color-scrollbar: #3a3632;
-    --color-scrollbar-hover: #524c46;
-    --color-code-inline-text: #e2b29a;
-    --color-code-inline-bg: #272522;
-    --color-code-inline-border: #34312d;
+    --color-bg: #111111;
+    --color-surface: #1b1b1b;
+    --color-text: #ededed;
+    --color-text-body: #d9d9d9;
+    --color-text-secondary: #a3a3a3;
+    --color-text-muted: #8f8f8f;
+    --color-text-faint: #474747;
+    --color-border: #262626;
+    --color-border-light: #1f1f1f;
+    --color-link-underline: #555555;
+    --color-selection-bg: #3d3d3d;
+    --color-scrollbar: #333333;
+    --color-scrollbar-hover: #4d4d4d;
     --image-filter: brightness(0.9);
   }
 
@@ -380,7 +362,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   /* Selection styles */
   ::selection {
     background: var(--color-selection-bg);
-    color: var(--color-on-accent);
+    color: var(--color-text);
   }
 
   /* Skip to content link */
@@ -405,9 +387,9 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-on-accent);
-    background: var(--color-accent);
-    border-radius: 0 0 8px 8px;
+    color: var(--color-bg);
+    background: var(--color-text);
+    border-radius: 0 0 4px 4px;
     text-decoration: none;
     transition: top 0.2s ease;
   }
@@ -419,7 +401,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
   /* Focus styles */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid currentColor;
     outline-offset: 2px;
   }
 
@@ -430,7 +412,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-bg-secondary);
+    background: var(--color-bg);
   }
 
   ::-webkit-scrollbar-thumb {

@@ -139,7 +139,7 @@
   }
 
   .search-trigger:hover {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   /* Modal */
@@ -219,7 +219,7 @@
 
   .header-icon {
     flex-shrink: 0;
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   .search-input {
@@ -244,7 +244,7 @@
     font-size: 0.6875rem;
     font-family: var(--font-mono);
     color: var(--color-text-muted);
-    background: var(--color-bg-secondary);
+    background: var(--color-surface);
     border: none;
     border-radius: 4px;
   }
@@ -289,12 +289,12 @@
 
   .search-results :global(.search-result:hover),
   .search-results :global(.search-result.selected) {
-    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    background: var(--color-surface);
   }
 
   .search-results :global(.search-result:hover .sr-title),
   .search-results :global(.search-result.selected .sr-title) {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   .search-results :global(.sr-date) {
@@ -372,7 +372,7 @@
   .skeleton-desc {
     height: 14px;
     border-radius: 4px;
-    background: var(--color-bg-secondary);
+    background: var(--color-surface);
     animation: shimmer 1.5s infinite;
   }
 
@@ -449,7 +449,7 @@
     gap: 1.5rem;
     padding: 0.75rem 1rem;
     border-top: 1px solid var(--color-border-light);
-    background: var(--color-bg-secondary);
+    background: var(--color-surface);
   }
 
   .footer-hint {

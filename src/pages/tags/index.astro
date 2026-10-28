@@ -360,7 +360,7 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .search-box:has(#tag-search:focus) .search-icon {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   #tag-search {
@@ -382,7 +382,7 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   #tag-search:focus {
-    border-color: var(--color-accent);
+    border-color: var(--color-text-muted);
   }
 
   .shortcut {
@@ -394,7 +394,7 @@ const baseUrl = import.meta.env.BASE_URL;
     font-size: 0.6875rem;
     font-family: var(--font-mono);
     color: var(--color-text-muted);
-    background: var(--color-bg-secondary);
+    background: var(--color-surface);
     border-radius: 4px;
     pointer-events: none;
     transition: opacity 0.15s;
@@ -433,7 +433,7 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .tag:hover {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   .tag-name {
@@ -466,11 +466,11 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .tag:hover .tag-meta {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
   .tag:hover .tag-meta .dot {
-    color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+    color: var(--color-border);
   }
 
   /* ═══ Show more ═══ */
@@ -500,8 +500,8 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 
   .toggle-link:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
   }
 
   .toggle-link .chevron {
