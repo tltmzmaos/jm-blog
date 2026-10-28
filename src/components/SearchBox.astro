@@ -48,6 +48,7 @@
           type="text"
           class="search-input"
           id="search-input"
+          aria-label="Search posts"
           placeholder="Search posts..."
           autocomplete="off"
           spellcheck="false"
@@ -56,7 +57,7 @@
       </div>
 
       <div class="search-body" id="search-body">
-        <div class="search-count" id="search-count"></div>
+        <div class="search-count" id="search-count" role="status"></div>
         <div class="search-results" id="search-results"></div>
         <div class="search-loading" id="search-loading">
           <div class="skeleton-item">
@@ -486,7 +487,7 @@
 </style>
 
 <script>
-  import Fuse from 'fuse.js';
+  import type Fuse from 'fuse.js';
 
   interface Post {
     title: string;
@@ -506,8 +507,14 @@
     try {
       const response = await fetch('/api/posts.json');
       if (!response.ok) throw new Error('Failed to fetch posts');
-      postsData = await response.json();
-      fuse = new Fuse(postsData, {
+      // Loaded here, not at the top, so pages only pay for Fuse when
+      // someone actually searches.
+      const [data, { default: FuseCtor }] = await Promise.all([
+        response.json() as Promise<Post[]>,
+        import('fuse.js'),
+      ]);
+      postsData = data;
+      fuse = new FuseCtor(postsData, {
         keys: [
           { name: 'title', weight: 2 },
           { name: 'description', weight: 1 },
@@ -556,15 +563,34 @@
       timeZone: 'UTC',
     });
 
+    // While the modal is open, everything behind it is inert: focus can't
+    // tab out of the dialog and screen readers don't read the page.
+    let returnFocusTo: HTMLElement | null = null;
+    const setBackgroundInert = (inert: boolean) => {
+      for (const el of Array.from(document.body.children)) {
+        if (el !== modal && el instanceof HTMLElement) el.inert = inert;
+      }
+    };
+
     const openModal = () => {
+      if (modal.classList.contains('open')) return;
+      returnFocusTo =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       modal.classList.add('open');
+      setBackgroundInert(true);
       document.body.style.overflow = 'hidden';
       loadPosts(searchBody);
       setTimeout(() => input.focus(), 50);
     };
 
     const closeModal = () => {
+      if (!modal.classList.contains('open')) return;
       modal.classList.remove('open');
+      setBackgroundInert(false);
+      returnFocusTo?.focus();
+      returnFocusTo = null;
       document.body.style.overflow = '';
       input.value = '';
       if (resultsContainer) {
@@ -667,6 +693,8 @@
       openModal();
     };
     const onBackdrop = () => closeModal();
+    // Start downloading the index as soon as someone reaches for search.
+    const onTriggerIntent = () => loadPosts(searchBody);
     const onInput = (e: Event) =>
       handleSearch((e.target as HTMLInputElement).value.trim());
     const onInputKey = (e: KeyboardEvent) => {
@@ -697,6 +725,8 @@
     const onResultsClick = () => closeModal();
 
     trigger.addEventListener('click', onTrigger);
+    trigger.addEventListener('pointerenter', onTriggerIntent, { once: true });
+    trigger.addEventListener('focus', onTriggerIntent, { once: true });
     backdrop?.addEventListener('click', onBackdrop);
     input.addEventListener('input', onInput);
     input.addEventListener('keydown', onInputKey);
@@ -707,12 +737,15 @@
       'astro:before-swap',
       () => {
         trigger.removeEventListener('click', onTrigger);
+        trigger.removeEventListener('pointerenter', onTriggerIntent);
+        trigger.removeEventListener('focus', onTriggerIntent);
         backdrop?.removeEventListener('click', onBackdrop);
         input.removeEventListener('input', onInput);
         input.removeEventListener('keydown', onInputKey);
         document.removeEventListener('keydown', onGlobalKey);
         resultsContainer?.removeEventListener('click', onResultsClick);
-        // Reset overflow in case we're navigating away while modal is open
+        // Reset in case we're navigating away while the modal is open
+        setBackgroundInert(false);
         document.body.style.overflow = '';
       },
       { once: true }
