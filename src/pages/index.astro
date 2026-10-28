@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import PostListItem from '../components/PostListItem.astro';
 import { shouldShowDrafts } from '../utils/env';
+import { SITE_DESCRIPTION } from '../utils/site';
 import { calculateReadingTime } from '../utils/readingTime.js';
 
 const showDrafts = shouldShowDrafts();
@@ -19,10 +20,7 @@ const sortedPosts = allPosts
 const INITIAL_COUNT = 10;
 ---
 
-<BaseLayout
-  title="Jongmin Lee"
-  description="Notes on software engineering, working with AI, and what I'm picking up along the way."
->
+<BaseLayout title="Jongmin Lee" description={SITE_DESCRIPTION}>
   <Header />
 
   <main class="main-content" id="main-content">

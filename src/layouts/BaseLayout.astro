@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import SEO from '../components/SEO.astro';
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION } from '../utils/site';
 
 export interface Props {
   title: string;
@@ -17,8 +18,8 @@ export interface Props {
 
 const {
   title,
-  description = "Notes on software engineering, working with AI, and what I'm picking up along the way.",
-  image = '/og-image.jpg',
+  description = SITE_DESCRIPTION,
+  image = DEFAULT_OG_IMAGE,
   type = 'website',
   publishedTime,
   modifiedTime,

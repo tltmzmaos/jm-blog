@@ -54,7 +54,9 @@ const slug =
     .filter((p) => p)
     .pop() ||
   '';
-const ogImage = heroImage || `/og/${slug}.png`;
+// Always the generated 1200x630 PNG: hero images are WebP screenshots in
+// arbitrary sizes, which some link previews reject or crop badly.
+const ogImage = `/og/${slug}.png`;
 const postUrl = new URL(`/posts/${slug}/`, Astro.site).toString();
 
 // Detect math formulas ($ or $$ usage)
