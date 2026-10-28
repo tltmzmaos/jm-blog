@@ -1,5 +1,11 @@
 ---
-import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../utils/site';
+import {
+  DEFAULT_OG_IMAGE,
+  GITHUB_URL,
+  LINKEDIN_URL,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from '../utils/site';
 
 export interface Props {
   title: string;
@@ -180,10 +186,7 @@ const breadcrumbData =
         name: 'Jongmin Blog',
         url: siteUrl.toString(),
         logo: new URL('/logo.svg', siteUrl).toString(),
-        sameAs: [
-          'https://github.com/tltmzmaos',
-          'https://linkedin.com/in/jml1228',
-        ],
+        sameAs: [GITHUB_URL, LINKEDIN_URL],
       })}
     />
   )
