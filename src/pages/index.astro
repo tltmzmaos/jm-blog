@@ -24,7 +24,11 @@ const INITIAL_COUNT = 10;
   <Header />
 
   <main class="main-content" id="main-content">
-    <h1 class="sr-only">Posts</h1>
+    <header class="intro">
+      <h1 class="intro-name">Jongmin Lee</h1>
+      <p class="intro-lead">{SITE_DESCRIPTION}</p>
+    </header>
+
     <section class="posts-section" aria-label="Writing">
       <div class="posts" id="posts">
         {
@@ -67,24 +71,7 @@ const INITIAL_COUNT = 10;
   </noscript>
 
   <script>
-    import { scramble } from '../scripts/scramble';
-
     document.addEventListener('astro:page-load', () => {
-      const reducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)'
-      ).matches;
-
-      // Scramble visible post dates on load
-      if (!reducedMotion) {
-        const visibleDates = document.querySelectorAll<HTMLElement>(
-          '.post-wrapper:not(.hidden) .date'
-        );
-        visibleDates.forEach((el, idx) => {
-          const target = el.dataset.final || el.textContent || '';
-          setTimeout(() => scramble(el, target), Math.min(idx * 55, 440));
-        });
-      }
-
       // Lazy load-more
       const sentinel = document.getElementById('load-sentinel');
       if (!sentinel) return;
@@ -107,24 +94,12 @@ const INITIAL_COUNT = 10;
           if (!entries[0].isIntersecting) return;
 
           let revealed = 0;
-          const newlyRevealed: HTMLElement[] = [];
           for (let i = shown; i < posts.length && revealed < BATCH; i++) {
             posts[i].classList.remove('hidden');
             posts[i].classList.add('reveal');
-            newlyRevealed.push(posts[i]);
             revealed++;
           }
           shown += revealed;
-
-          // Scramble dates for newly revealed items
-          if (!reducedMotion) {
-            newlyRevealed.forEach((p, idx) => {
-              const dateEl = p.querySelector<HTMLElement>('.date');
-              if (!dateEl) return;
-              const target = dateEl.dataset.final || dateEl.textContent || '';
-              setTimeout(() => scramble(dateEl, target), idx * 45);
-            });
-          }
 
           if (shown >= posts.length) {
             sentinel.classList.add('done');
@@ -150,6 +125,31 @@ const INITIAL_COUNT = 10;
     max-width: 720px;
     margin: 0 auto;
     padding: 3.5rem 1.5rem 4rem;
+  }
+
+  /* ═══ Intro ═══ */
+  .intro {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .intro-name {
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 3.5vw, 2.125rem);
+    font-weight: 500;
+    font-variation-settings: 'opsz' 72;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: var(--color-text);
+    margin: 0 0 0.625rem;
+  }
+
+  .intro-lead {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+    max-width: 52ch;
+    margin: 0;
   }
 
   /* ═══ Posts ═══ */

@@ -34,11 +34,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 <article class="post-item">
   <a href={`${baseUrl}posts/${slug}/`} class="post-link">
     <div class="meta">
-      <time
-        class="date"
-        datetime={pubDate.toISOString()}
-        data-final={formattedDate}>{formattedDate}</time
-      >
+      <time class="date" datetime={pubDate.toISOString()}>{formattedDate}</time>
       {
         readingTime && (
           <>
