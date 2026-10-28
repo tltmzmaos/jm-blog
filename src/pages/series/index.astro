@@ -115,6 +115,50 @@ const formatShortDate = (date: Date) =>
       }
     </div>
   </main>
+
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const blocks = Array.from(
+        document.querySelectorAll<HTMLDetailsElement>('.series-block')
+      );
+      if (blocks.length === 0) return;
+
+      // Open the section matching the URL hash, if any.
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const target = document.getElementById(hash);
+        if (target instanceof HTMLDetailsElement) {
+          target.open = true;
+          requestAnimationFrame(() => {
+            target.scrollIntoView({ block: 'start' });
+          });
+        }
+      }
+
+      const toggleBtn = document.getElementById(
+        'toggle-all'
+      ) as HTMLButtonElement | null;
+      if (!toggleBtn) return;
+
+      const syncBtn = () => {
+        const allOpen = blocks.every((b) => b.open);
+        toggleBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
+        toggleBtn.dataset.state = allOpen ? 'open' : 'closed';
+      };
+
+      syncBtn();
+
+      toggleBtn.addEventListener('click', () => {
+        const allOpen = blocks.every((b) => b.open);
+        blocks.forEach((b) => {
+          b.open = !allOpen;
+        });
+        syncBtn();
+      });
+
+      blocks.forEach((b) => b.addEventListener('toggle', syncBtn));
+    });
+  </script>
 </BaseLayout>
 
 <style>
@@ -370,47 +414,3 @@ const formatShortDate = (date: Date) =>
     }
   }
 </style>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const blocks = Array.from(
-      document.querySelectorAll<HTMLDetailsElement>('.series-block')
-    );
-    if (blocks.length === 0) return;
-
-    // Open the section matching the URL hash, if any.
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-      const target = document.getElementById(hash);
-      if (target instanceof HTMLDetailsElement) {
-        target.open = true;
-        requestAnimationFrame(() => {
-          target.scrollIntoView({ block: 'start' });
-        });
-      }
-    }
-
-    const toggleBtn = document.getElementById(
-      'toggle-all'
-    ) as HTMLButtonElement | null;
-    if (!toggleBtn) return;
-
-    const syncBtn = () => {
-      const allOpen = blocks.every((b) => b.open);
-      toggleBtn.textContent = allOpen ? 'Collapse all' : 'Expand all';
-      toggleBtn.dataset.state = allOpen ? 'open' : 'closed';
-    };
-
-    syncBtn();
-
-    toggleBtn.addEventListener('click', () => {
-      const allOpen = blocks.every((b) => b.open);
-      blocks.forEach((b) => {
-        b.open = !allOpen;
-      });
-      syncBtn();
-    });
-
-    blocks.forEach((b) => b.addEventListener('toggle', syncBtn));
-  });
-</script>

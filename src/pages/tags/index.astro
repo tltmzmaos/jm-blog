@@ -165,200 +165,200 @@ const baseUrl = import.meta.env.BASE_URL;
       )
     }
   </main>
-</BaseLayout>
 
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const list = document.getElementById('tag-list');
-    const searchInput = document.getElementById(
-      'tag-search'
-    ) as HTMLInputElement | null;
-    const toggleBtn = document.getElementById(
-      'toggle-singletons'
-    ) as HTMLButtonElement | null;
-    const items = list?.querySelectorAll<HTMLElement>('.tag-item');
-    const singletons = list?.querySelectorAll<HTMLElement>(
-      '.tag-item.is-singleton'
-    );
-    const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
+  <script>
+    document.addEventListener('astro:page-load', () => {
+      const list = document.getElementById('tag-list');
+      const searchInput = document.getElementById(
+        'tag-search'
+      ) as HTMLInputElement | null;
+      const toggleBtn = document.getElementById(
+        'toggle-singletons'
+      ) as HTMLButtonElement | null;
+      const items = list?.querySelectorAll<HTMLElement>('.tag-item');
+      const singletons = list?.querySelectorAll<HTMLElement>(
+        '.tag-item.is-singleton'
+      );
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
 
-    const DIGIT_POOL = '0123456789';
-    const ALPHA_POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+      const DIGIT_POOL = '0123456789';
+      const ALPHA_POOL = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 
-    function scramble(
-      el: HTMLElement,
-      finalText: string,
-      opts: { duration?: number; digitsOnly?: boolean } = {}
-    ) {
-      const duration = opts.duration ?? 600;
-      const chars = finalText.split('');
-      const start = performance.now();
+      function scramble(
+        el: HTMLElement,
+        finalText: string,
+        opts: { duration?: number; digitsOnly?: boolean } = {}
+      ) {
+        const duration = opts.duration ?? 600;
+        const chars = finalText.split('');
+        const start = performance.now();
 
-      const anyEl = el as HTMLElement & { _scrambleRaf?: number };
-      if (anyEl._scrambleRaf) cancelAnimationFrame(anyEl._scrambleRaf);
+        const anyEl = el as HTMLElement & { _scrambleRaf?: number };
+        if (anyEl._scrambleRaf) cancelAnimationFrame(anyEl._scrambleRaf);
 
-      const step = (now: number) => {
-        const t = Math.min((now - start) / duration, 1);
-        let out = '';
-        for (let i = 0; i < chars.length; i++) {
-          const ch = chars[i];
-          if (ch === ' ' || ch === '·' || ch === '.') {
-            out += ch;
-            continue;
-          }
-          const threshold = (i / Math.max(chars.length - 1, 1)) * 0.6 + 0.18;
-          if (t > threshold) {
-            out += ch;
-          } else {
-            const pool = opts.digitsOnly
-              ? DIGIT_POOL
-              : /\d/.test(ch)
+        const step = (now: number) => {
+          const t = Math.min((now - start) / duration, 1);
+          let out = '';
+          for (let i = 0; i < chars.length; i++) {
+            const ch = chars[i];
+            if (ch === ' ' || ch === '·' || ch === '.') {
+              out += ch;
+              continue;
+            }
+            const threshold = (i / Math.max(chars.length - 1, 1)) * 0.6 + 0.18;
+            if (t > threshold) {
+              out += ch;
+            } else {
+              const pool = opts.digitsOnly
                 ? DIGIT_POOL
-                : ALPHA_POOL;
-            out += pool[Math.floor(Math.random() * pool.length)];
+                : /\d/.test(ch)
+                  ? DIGIT_POOL
+                  : ALPHA_POOL;
+              out += pool[Math.floor(Math.random() * pool.length)];
+            }
+          }
+          el.textContent = out;
+          if (t < 1) {
+            anyEl._scrambleRaf = requestAnimationFrame(step);
+          } else {
+            el.textContent = finalText;
+            anyEl._scrambleRaf = undefined;
+          }
+        };
+        anyEl._scrambleRaf = requestAnimationFrame(step);
+      }
+
+      function scrambleVisibleMeta() {
+        if (reducedMotion) return;
+        const counts = list?.querySelectorAll<HTMLElement>(
+          '.tag-item:not([hidden]) .tag-count'
+        );
+        counts?.forEach((el, idx) => {
+          const target = el.dataset.count || '0';
+          const delay = Math.min(idx * 18, 220);
+          el.textContent = '';
+          setTimeout(
+            () =>
+              scramble(el, target, {
+                duration: 420 + target.length * 80,
+                digitsOnly: true,
+              }),
+            delay
+          );
+        });
+
+        const dates = list?.querySelectorAll<HTMLElement>(
+          '.tag-item:not([hidden]) .tag-latest'
+        );
+        dates?.forEach((el, idx) => {
+          const target = el.dataset.final || el.textContent || '';
+          const delay = Math.min(idx * 20, 280);
+          setTimeout(() => scramble(el, target, { duration: 520 }), delay);
+        });
+      }
+
+      scrambleVisibleMeta();
+
+      toggleBtn?.addEventListener('click', () => {
+        const expanded = toggleBtn.dataset.expanded === 'true';
+        const next = !expanded;
+        toggleBtn.dataset.expanded = String(next);
+
+        singletons?.forEach((el) => {
+          if (next) {
+            el.removeAttribute('hidden');
+          } else {
+            el.setAttribute('hidden', '');
+          }
+        });
+
+        const n = toggleBtn.dataset.count || '0';
+        const label = toggleBtn.querySelector('.toggle-label');
+        if (label) {
+          label.textContent = next
+            ? 'Hide single-post tags'
+            : `Show ${n} single-post tags`;
+        }
+
+        if (next) {
+          // Scramble the newly revealed singletons' meta
+          if (!reducedMotion) {
+            singletons?.forEach((el, idx) => {
+              const countEl = el.querySelector<HTMLElement>('.tag-count');
+              const dateEl = el.querySelector<HTMLElement>('.tag-latest');
+              const delay = Math.min(idx * 18, 220);
+              if (countEl) {
+                const target = countEl.dataset.count || '0';
+                countEl.textContent = '';
+                setTimeout(
+                  () =>
+                    scramble(countEl, target, {
+                      duration: 360,
+                      digitsOnly: true,
+                    }),
+                  delay
+                );
+              }
+              if (dateEl) {
+                const target = dateEl.dataset.final || dateEl.textContent || '';
+                setTimeout(
+                  () => scramble(dateEl, target, { duration: 460 }),
+                  delay + 40
+                );
+              }
+            });
           }
         }
-        el.textContent = out;
-        if (t < 1) {
-          anyEl._scrambleRaf = requestAnimationFrame(step);
-        } else {
-          el.textContent = finalText;
-          anyEl._scrambleRaf = undefined;
+      });
+
+      if (!list || !items?.length) return;
+
+      const filterTags = (q: string) => {
+        const query = q.toLowerCase().trim();
+        const isExpanded = toggleBtn?.dataset.expanded === 'true';
+        for (const el of items) {
+          const tag = el.dataset.tag || '';
+          const matchesQuery = query.length === 0 || tag.includes(query);
+          const isSingleton = el.classList.contains('is-singleton');
+
+          if (query.length > 0) {
+            // While searching, reveal singletons that match
+            el.classList.toggle('filtered', !matchesQuery);
+            if (isSingleton && matchesQuery) el.removeAttribute('hidden');
+          } else {
+            el.classList.remove('filtered');
+            if (isSingleton && !isExpanded) el.setAttribute('hidden', '');
+          }
         }
       };
-      anyEl._scrambleRaf = requestAnimationFrame(step);
-    }
 
-    function scrambleVisibleMeta() {
-      if (reducedMotion) return;
-      const counts = list?.querySelectorAll<HTMLElement>(
-        '.tag-item:not([hidden]) .tag-count'
+      searchInput?.addEventListener('input', () => {
+        filterTags(searchInput.value);
+      });
+
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === '/' && document.activeElement !== searchInput) {
+          e.preventDefault();
+          searchInput?.focus();
+        }
+        if (e.key === 'Escape' && searchInput) {
+          searchInput.value = '';
+          searchInput.blur();
+          filterTags('');
+        }
+      };
+      document.addEventListener('keydown', onKey);
+
+      document.addEventListener(
+        'astro:before-swap',
+        () => document.removeEventListener('keydown', onKey),
+        { once: true }
       );
-      counts?.forEach((el, idx) => {
-        const target = el.dataset.count || '0';
-        const delay = Math.min(idx * 18, 220);
-        el.textContent = '';
-        setTimeout(
-          () =>
-            scramble(el, target, {
-              duration: 420 + target.length * 80,
-              digitsOnly: true,
-            }),
-          delay
-        );
-      });
-
-      const dates = list?.querySelectorAll<HTMLElement>(
-        '.tag-item:not([hidden]) .tag-latest'
-      );
-      dates?.forEach((el, idx) => {
-        const target = el.dataset.final || el.textContent || '';
-        const delay = Math.min(idx * 20, 280);
-        setTimeout(() => scramble(el, target, { duration: 520 }), delay);
-      });
-    }
-
-    scrambleVisibleMeta();
-
-    toggleBtn?.addEventListener('click', () => {
-      const expanded = toggleBtn.dataset.expanded === 'true';
-      const next = !expanded;
-      toggleBtn.dataset.expanded = String(next);
-
-      singletons?.forEach((el) => {
-        if (next) {
-          el.removeAttribute('hidden');
-        } else {
-          el.setAttribute('hidden', '');
-        }
-      });
-
-      const n = toggleBtn.dataset.count || '0';
-      const label = toggleBtn.querySelector('.toggle-label');
-      if (label) {
-        label.textContent = next
-          ? 'Hide single-post tags'
-          : `Show ${n} single-post tags`;
-      }
-
-      if (next) {
-        // Scramble the newly revealed singletons' meta
-        if (!reducedMotion) {
-          singletons?.forEach((el, idx) => {
-            const countEl = el.querySelector<HTMLElement>('.tag-count');
-            const dateEl = el.querySelector<HTMLElement>('.tag-latest');
-            const delay = Math.min(idx * 18, 220);
-            if (countEl) {
-              const target = countEl.dataset.count || '0';
-              countEl.textContent = '';
-              setTimeout(
-                () =>
-                  scramble(countEl, target, {
-                    duration: 360,
-                    digitsOnly: true,
-                  }),
-                delay
-              );
-            }
-            if (dateEl) {
-              const target = dateEl.dataset.final || dateEl.textContent || '';
-              setTimeout(
-                () => scramble(dateEl, target, { duration: 460 }),
-                delay + 40
-              );
-            }
-          });
-        }
-      }
     });
-
-    if (!list || !items?.length) return;
-
-    const filterTags = (q: string) => {
-      const query = q.toLowerCase().trim();
-      const isExpanded = toggleBtn?.dataset.expanded === 'true';
-      for (const el of items) {
-        const tag = el.dataset.tag || '';
-        const matchesQuery = query.length === 0 || tag.includes(query);
-        const isSingleton = el.classList.contains('is-singleton');
-
-        if (query.length > 0) {
-          // While searching, reveal singletons that match
-          el.classList.toggle('filtered', !matchesQuery);
-          if (isSingleton && matchesQuery) el.removeAttribute('hidden');
-        } else {
-          el.classList.remove('filtered');
-          if (isSingleton && !isExpanded) el.setAttribute('hidden', '');
-        }
-      }
-    };
-
-    searchInput?.addEventListener('input', () => {
-      filterTags(searchInput.value);
-    });
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === '/' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        searchInput?.focus();
-      }
-      if (e.key === 'Escape' && searchInput) {
-        searchInput.value = '';
-        searchInput.blur();
-        filterTags('');
-      }
-    };
-    document.addEventListener('keydown', onKey);
-
-    document.addEventListener(
-      'astro:before-swap',
-      () => document.removeEventListener('keydown', onKey),
-      { once: true }
-    );
-  });
-</script>
+  </script>
+</BaseLayout>
 
 <style>
   .main-content {
