@@ -642,6 +642,26 @@ const formatDate = (date: Date) => {
 
   /* Links in the body use the shared .text-link look (BaseLayout). */
 
+  /* ==text== in Markdown (plugins/remark-mark.mjs): a highlighter pass over
+     the words, a little taller than the stroke behind a hovered link and
+     running just past both ends. Wrapped marks get one per line. */
+  .article-content :global(mark) {
+    margin: 0 -0.1em;
+    padding: 0 0.1em;
+    color: var(--color-text);
+    background: linear-gradient(var(--color-mark), var(--color-mark)) 0 0.32em /
+      100% 0.78em no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  @media (forced-colors: active) {
+    .article-content :global(mark) {
+      background: Mark;
+      color: MarkText;
+    }
+  }
+
   /* ═══ Code ═══ */
   .article-content :global(code) {
     font-family: var(--font-mono);

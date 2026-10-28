@@ -20,6 +20,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Search over post titles, descriptions and tags with Fuse.js
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
+- `==text==` in a post marks the words with the highlighter (`<mark>`, src/plugins/remark-mark.mjs); code and math are left alone
 - Table of contents (auto-generated)
 - Copy-link button
 - Skip-to-content accessibility link

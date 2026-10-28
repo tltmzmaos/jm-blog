@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import remarkMark from './src/plugins/remark-mark.mjs';
 import rehypeImageAttrs from './src/plugins/rehype-image-attrs.mjs';
 import rehypeTableWrap from './src/plugins/rehype-table-wrap.mjs';
 
@@ -27,7 +28,7 @@ export default defineConfig({
     // Astro 7 defaults to the Satteri processor; remark-math / rehype-katex are
     // unified plugins, so the unified processor stays opt-in here.
     processor: unified({
-      remarkPlugins: [remarkMath],
+      remarkPlugins: [remarkMath, remarkMark],
       rehypePlugins: [rehypeKatex, rehypeImageAttrs, rehypeTableWrap],
     }),
   },
