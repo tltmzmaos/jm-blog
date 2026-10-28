@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 
@@ -10,10 +9,7 @@ import rehypeImageAttrs from './src/plugins/rehype-image-attrs.mjs';
 export default defineConfig({
   site: 'https://jongmin.me',
   base: '/',
-  integrations: [
-    mdx(),
-    sitemap(),
-  ],
+  integrations: [sitemap()],
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
