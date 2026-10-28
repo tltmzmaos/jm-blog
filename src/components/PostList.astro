@@ -1,6 +1,6 @@
 ---
 import PostListItem from './PostListItem.astro';
-import { postTitleTransitionName } from '../utils/viewTransition';
+import { assertUniqueTransitionNames } from '../utils/viewTransition';
 
 interface Post {
   slug: string;
@@ -18,17 +18,8 @@ export interface Props {
 
 const { posts, hangingYears = false } = Astro.props;
 
-// Each title carries a view-transition-name made from its slug. Two equal
-// names on one page cancel the whole transition, so fail the build instead.
-const names = new Map<string, string>();
-for (const { slug } of posts) {
-  const name = postTitleTransitionName(slug);
-  const owner = names.get(name);
-  if (owner) {
-    throw new Error(`Posts "${owner}" and "${slug}" share the name ${name}.`);
-  }
-  names.set(name, slug);
-}
+// Each title carries a view-transition-name made from its slug.
+assertUniqueTransitionNames(posts.map((p) => p.slug));
 
 // Newest first, grouped by the year shown in the dates (UTC).
 const byYear = new Map<number, Post[]>();

@@ -14,3 +14,20 @@ export function postTitleTransitionName(slug: string): string {
     .replace(/^-+|-+$/g, '');
   return `post-title-${ident}`;
 }
+
+/**
+ * Two equal view-transition-names on one page cancel the whole transition,
+ * so a page that would render them fails the build instead. Pass the slugs
+ * of every title on the page that carries a name.
+ */
+export function assertUniqueTransitionNames(slugs: string[]): void {
+  const owners = new Map<string, string>();
+  for (const slug of slugs) {
+    const name = postTitleTransitionName(slug);
+    const owner = owners.get(name);
+    if (owner !== undefined) {
+      throw new Error(`Posts "${owner}" and "${slug}" share the name ${name}.`);
+    }
+    owners.set(name, slug);
+  }
+}

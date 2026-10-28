@@ -60,8 +60,11 @@ const state = (n: number) =>
     padding: 0;
   }
 
+  /* A width rather than a flex-basis, so the strip also keeps its size
+     when it sits inside another flex row. */
   .segment {
-    flex: 0 1 2rem;
+    flex: 0 1 auto;
+    width: 2rem;
     min-width: 0.5rem;
   }
 
