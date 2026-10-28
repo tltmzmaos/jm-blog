@@ -14,6 +14,7 @@ export interface Props {
   author?: string;
   hasMath?: boolean;
   slug?: string;
+  noindex?: boolean;
 }
 
 const {
@@ -27,6 +28,7 @@ const {
   author,
   hasMath = false,
   slug,
+  noindex = false,
 } = Astro.props;
 ---
 
@@ -76,6 +78,7 @@ const {
       author={author}
       slug={slug}
       hasMath={hasMath}
+      noindex={noindex}
     />
 
     <!-- KaTeX CSS (only loaded on pages with math) -->

@@ -13,6 +13,7 @@ export interface Props {
   canonical?: string;
   slug?: string;
   hasMath?: boolean;
+  noindex?: boolean;
 }
 
 const {
@@ -27,12 +28,14 @@ const {
   canonical,
   slug,
   hasMath = false,
+  noindex = false,
 } = Astro.props;
 
 const siteUrl = Astro.site || 'https://jongmin.me';
 const currentUrl = new URL(Astro.url.pathname, siteUrl);
 const canonicalUrl = canonical ? new URL(canonical, siteUrl) : currentUrl;
 const imageUrl = new URL(image, siteUrl);
+const robots = noindex ? 'noindex, follow' : 'index, follow';
 
 // Generate structured data
 const structuredData: any = {
@@ -93,15 +96,15 @@ const breadcrumbData =
 <!-- Basic meta tags -->
 <meta name="description" content={description} />
 <meta name="author" content={author} />
-<meta name="robots" content="index, follow" />
-<meta name="googlebot" content="index, follow" />
+<meta name="robots" content={robots} />
+<meta name="googlebot" content={robots} />
 
 <!-- Language and region -->
 <meta name="language" content="en-US" />
 <meta name="geo.region" content="US" />
 
 <!-- Canonical URL -->
-<link rel="canonical" href={canonicalUrl.toString()} />
+{!noindex && <link rel="canonical" href={canonicalUrl.toString()} />}
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
