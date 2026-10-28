@@ -1,0 +1,69 @@
+---
+import PostListItem from './PostListItem.astro';
+
+interface Post {
+  slug: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+}
+
+export interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+
+// Newest first, grouped by the year shown in the dates (UTC).
+const byYear = new Map<number, Post[]>();
+for (const post of [...posts].sort(
+  (a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()
+)) {
+  const year = post.pubDate.getUTCFullYear();
+  const group = byYear.get(year) ?? [];
+  group.push(post);
+  byYear.set(year, group);
+}
+---
+
+{
+  [...byYear].map(([year, group]) => (
+    <section class="year" aria-labelledby={`year-${year}`}>
+      <h2 class="year-heading" id={`year-${year}`}>
+        {year}
+      </h2>
+      <ul class="rows" role="list">
+        {group.map((post) => (
+          <li>
+            <PostListItem {...post} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+
+<style>
+  .year + .year {
+    margin-top: 2.75rem;
+  }
+
+  .year-heading {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    margin: 0 0 1.25rem;
+    padding-bottom: 0.625rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+</style>

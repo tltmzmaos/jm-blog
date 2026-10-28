@@ -2,196 +2,60 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
-import PostListItem from '../components/PostListItem.astro';
+import PostList from '../components/PostList.astro';
 import { shouldShowDrafts } from '../utils/env';
-import { SITE_DESCRIPTION } from '../utils/site';
-import { calculateReadingTime } from '../utils/readingTime.js';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../utils/site';
 
 const showDrafts = shouldShowDrafts();
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts
+const posts = (await getCollection('blog'))
   .filter((post) => showDrafts || !post.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .map((post) => ({
-    ...post,
-    readingTime: calculateReadingTime(post.body || '').text,
+    slug: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate,
   }));
-
-const INITIAL_COUNT = 10;
 ---
 
-<BaseLayout title="Jongmin Lee" description={SITE_DESCRIPTION}>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <Header />
 
-  <main class="main-content" id="main-content">
-    <header class="intro">
-      <h1 class="intro-name">Jongmin Lee</h1>
-      <p class="intro-lead">{SITE_DESCRIPTION}</p>
-    </header>
+  <main class="container home" id="main-content">
+    <!-- The header already shows the name; the page opens on what it's about. -->
+    <h1 class="sr-only">{SITE_TITLE}</h1>
+    <p class="intro">{SITE_DESCRIPTION}</p>
 
-    <section class="posts-section" aria-label="Writing">
-      <div class="posts" id="posts">
-        {
-          sortedPosts.map((post, i) => (
-            <div class:list={['post-wrapper', { hidden: i >= INITIAL_COUNT }]}>
-              <PostListItem
-                title={post.data.title}
-                description={post.data.description}
-                pubDate={post.data.pubDate}
-                slug={post.id}
-                tags={post.data.tags}
-                readingTime={post.readingTime}
-              />
-            </div>
-          ))
-        }
+    <PostList posts={posts} />
 
-        {sortedPosts.length === 0 && <p class="empty">No posts yet.</p>}
-      </div>
-
-      {
-        sortedPosts.length > INITIAL_COUNT && (
-          <div class="load-more" id="load-sentinel">
-            <span class="load-text">Scroll for more</span>
-          </div>
-        )
-      }
-    </section>
+    {posts.length === 0 && <p class="empty">No posts yet.</p>}
   </main>
-
-  <noscript>
-    <style>
-      .post-wrapper.hidden {
-        display: block !important;
-      }
-      .load-more {
-        display: none !important;
-      }
-    </style>
-  </noscript>
-
-  <script>
-    // Lazy load-more
-    const sentinel = document.getElementById('load-sentinel');
-    if (sentinel) revealOnScroll(sentinel);
-
-    function revealOnScroll(sentinel: HTMLElement) {
-      const posts = document.querySelectorAll<HTMLElement>('.post-wrapper');
-      const BATCH = 10;
-      let shown = 0;
-
-      posts.forEach((p) => {
-        if (!p.classList.contains('hidden')) shown++;
-      });
-
-      if (shown >= posts.length) {
-        sentinel.classList.add('done');
-        return;
-      }
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (!entries[0].isIntersecting) return;
-
-          let revealed = 0;
-          for (let i = shown; i < posts.length && revealed < BATCH; i++) {
-            posts[i].classList.remove('hidden');
-            posts[i].classList.add('reveal');
-            revealed++;
-          }
-          shown += revealed;
-
-          if (shown >= posts.length) {
-            sentinel.classList.add('done');
-            observer.disconnect();
-          }
-        },
-        { rootMargin: '200px' }
-      );
-
-      observer.observe(sentinel);
-    }
-  </script>
 </BaseLayout>
 
 <style>
-  .main-content {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 3.5rem 1.5rem 4rem;
+  .home {
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
   }
 
-  /* ═══ Intro ═══ */
   .intro {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid var(--color-border-light);
-  }
-
-  .intro-name {
-    font-size: 2rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    color: var(--color-text);
-    margin: 0 0 0.625rem;
-  }
-
-  .intro-lead {
-    font-size: 1.0625rem;
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--color-text-secondary);
-    max-width: 52ch;
-    margin: 0;
-  }
-
-  /* ═══ Posts ═══ */
-  .posts {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .post-wrapper.hidden {
-    display: none;
-  }
-
-  .post-wrapper.reveal {
-    animation: fadeIn 0.3s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .load-more {
-    text-align: center;
-    padding: 2rem 0 1rem;
-  }
-
-  .load-text {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-  }
-
-  .load-more.done {
-    display: none;
+    margin: 0 0 2.75rem;
   }
 
   .empty {
-    text-align: center;
     color: var(--color-text-muted);
-    padding: 3rem 0;
   }
 
   @media (max-width: 640px) {
-    .main-content {
-      padding: 2.5rem 1.25rem 3rem;
+    .home {
+      padding-top: 2rem;
+      padding-bottom: 3rem;
+    }
+
+    .intro {
+      margin-bottom: 2.25rem;
     }
   }
 </style>

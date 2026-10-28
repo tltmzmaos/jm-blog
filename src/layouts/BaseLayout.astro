@@ -255,6 +255,8 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     --color-code-text: #ededed;
     --color-code-muted: #a3a3a3;
     --image-filter: none;
+    /* Width of the text column on every page. */
+    --column: 680px;
     /* System monospace, for code only: never for dates or labels. */
     --font-mono:
       ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas,
@@ -342,6 +344,21 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   ::selection {
     background: var(--color-selection-bg);
     color: var(--color-text);
+  }
+
+  /* The text column, with a 24px gutter (16px on phones). */
+  .container {
+    max-width: calc(var(--column) + 3rem);
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
   }
 
   /* Skip to content link */
