@@ -1,3 +1,5 @@
+export const SITE_TITLE = 'Jongmin Lee';
+
 export const SITE_DESCRIPTION =
   "Notes on software engineering, working with AI, and what I'm picking up along the way.";
 

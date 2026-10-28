@@ -1,5 +1,5 @@
 ---
-import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION } from '../utils/site';
+import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_TITLE } from '../utils/site';
 
 export interface Props {
   title: string;
@@ -102,6 +102,13 @@ const breadcrumbData =
 <!-- Language and region -->
 <meta name="language" content="en-US" />
 <meta name="geo.region" content="US" />
+
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={SITE_TITLE}
+  href={new URL('/rss.xml', siteUrl)}
+/>
 
 <!-- Canonical URL -->
 {!noindex && <link rel="canonical" href={canonicalUrl.toString()} />}
