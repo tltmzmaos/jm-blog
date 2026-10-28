@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,43 +29,21 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
 
       - name: TypeScript check
         run: npm run check
 
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
       - name: Setup Pages
-        id: pages
         uses: actions/configure-pages@v6
 
       - name: Build with Astro
         run: npm run build
-        env:
-          SITE: ${{ steps.pages.outputs.origin }}
-          BASE_URL: ${{ steps.pages.outputs.base_path }}/
-
-      - name: Generate robots.txt
-        run: |
-          cat > dist/robots.txt << EOF
-          User-agent: *
-          Allow: /
-          Sitemap: ${{ steps.pages.outputs.origin }}${{ steps.pages.outputs.base_path }}/sitemap-index.xml
-          EOF
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5
@@ -83,4 +61,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
-

@@ -13,7 +13,7 @@ export default defineConfig({
   markdown: {
     shikiConfig: {
       theme: 'github-dark',
-      wrap: true
+      wrap: true,
     },
     // Astro 7 defaults to the Satteri processor; remark-math / rehype-katex are
     // unified plugins, so the unified processor stays opt-in here.

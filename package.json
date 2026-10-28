@@ -11,8 +11,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "lint": "eslint src/",
-    "format": "prettier --write \"src/**/*.{astro,ts,js,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.{astro,ts,js,mjs}\"",
+    "format": "prettier --write \"src/**/*.{astro,ts,js,mjs}\" astro.config.mjs",
+    "format:check": "prettier --check \"src/**/*.{astro,ts,js,mjs}\" astro.config.mjs",
     "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
