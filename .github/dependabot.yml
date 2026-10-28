@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # Monthly and grouped: one PR for minor/patch bumps keeps a personal blog's
+  # inbox quiet, while majors still arrive one by one for a closer look.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']
