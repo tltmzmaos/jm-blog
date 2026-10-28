@@ -21,10 +21,10 @@
     "@astrojs/sitemap": "^3.6.0",
     "astro": "^7.2.2",
     "fuse.js": "^7.1.0",
-    "katex": "^0.16.27",
+    "katex": "^0.19.1",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "satori": "^0.29.0",
+    "satori": "^0.63.2",
     "sharp": "^0.35.3"
   },
   "devDependencies": {
@@ -35,5 +35,9 @@
     "prettier": "^3.8.1",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "katex": "$katex",
+    "fflate": "^0.7.5"
   }
 }

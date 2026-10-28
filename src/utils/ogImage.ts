@@ -48,6 +48,9 @@ export async function renderOgImage({
           justifyContent: 'space-between',
           width: '100%',
           height: '100%',
+          // Satori 0.63 adds padding to a percentage height unless told otherwise,
+          // which pushes the footer below the 630px canvas.
+          boxSizing: 'border-box',
           padding: '60px',
           backgroundColor: '#1e1e1e',
           color: '#d4d4d4',

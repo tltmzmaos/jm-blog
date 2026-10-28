@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from 'astro:transitions';
+import katex from 'katex';
 import SEO from '../components/SEO.astro';
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION } from '../utils/site';
 
@@ -30,6 +31,9 @@ const {
   slug,
   noindex = false,
 } = Astro.props;
+
+// The stylesheet must match the KaTeX that rendered the math at build time.
+const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex.min.css`;
 ---
 
 <!doctype html>
@@ -83,11 +87,7 @@ const {
     <!-- KaTeX CSS (only loaded on pages with math) -->
     {
       hasMath && (
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css"
-          crossorigin="anonymous"
-        />
+        <link rel="stylesheet" href={katexCss} crossorigin="anonymous" />
       )
     }
 
