@@ -1,4 +1,6 @@
 ---
+import path from 'node:path';
+import sharp from 'sharp';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
@@ -58,6 +60,12 @@ const slug =
 // arbitrary sizes, which some link previews reject or crop badly.
 const ogImage = `/og/${slug}.png`;
 const postUrl = new URL(`/posts/${slug}/`, Astro.site).toString();
+
+// Real pixel size so the browser reserves the right box before the image loads.
+// A missing local file fails the build on purpose; remote URLs aren't measured.
+const heroSize = heroImage?.startsWith('/')
+  ? await sharp(path.join(process.cwd(), 'public', heroImage)).metadata()
+  : undefined;
 
 // Detect math formulas ($ or $$ usage)
 const hasMath = hasMathContent(content);
@@ -154,8 +162,8 @@ const formatDate = (date: Date) => {
             loading="eager"
             decoding="async"
             fetchpriority="high"
-            width="720"
-            height="400"
+            width={heroSize?.width}
+            height={heroSize?.height}
           />
         </div>
       )
