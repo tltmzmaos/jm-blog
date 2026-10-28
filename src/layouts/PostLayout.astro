@@ -510,14 +510,9 @@ const formatDate = (date: Date) => {
   .series-nav {
     margin-top: 1.25rem;
     padding: 1rem 1.25rem;
-    background: #f5f5f5;
-    border: 1px solid #e5e5e5;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-  }
-
-  :global(.dark) .series-nav {
-    background: #252526;
-    border-color: #3c3c3c;
   }
 
   .series-header {
@@ -530,11 +525,7 @@ const formatDate = (date: Date) => {
   .series-label {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #1a1a1a;
-  }
-
-  :global(.dark) .series-label {
-    color: #d4d4d4;
+    color: var(--color-text);
   }
 
   .series-count {
@@ -565,7 +556,7 @@ const formatDate = (date: Date) => {
   }
 
   .series-list li a {
-    color: #555;
+    color: var(--color-text-subtle);
     text-decoration: none;
   }
 
@@ -574,23 +565,11 @@ const formatDate = (date: Date) => {
     text-decoration: underline;
   }
 
-  :global(.dark) .series-list li a {
-    color: #999;
-  }
-
-  :global(.dark) .series-list li a:hover {
-    color: var(--color-accent);
-  }
-
   .series-list li.current {
     font-weight: 600;
   }
 
   .series-current {
-    color: var(--color-accent);
-  }
-
-  :global(.dark) .series-current {
     color: var(--color-accent);
   }
 
@@ -609,11 +588,7 @@ const formatDate = (date: Date) => {
   .article-content {
     font-size: 1.0625rem;
     line-height: 1.8;
-    color: #333;
-  }
-
-  :global(.dark) .article-content {
-    color: #d4d4d4;
+    color: var(--color-text-body);
   }
 
   .article-content :global(h2),
@@ -625,33 +600,24 @@ const formatDate = (date: Date) => {
   .article-content :global(h2) {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--color-text);
     margin: 2.5rem 0 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e5e5e5;
-  }
-
-  :global(.dark) .article-content :global(h2) {
-    color: #d4d4d4;
-    border-bottom-color: #3c3c3c;
+    border-bottom: 1px solid var(--color-border);
   }
 
   .article-content :global(h3) {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--color-text);
     margin: 2rem 0 0.75rem;
-  }
-
-  :global(.dark) .article-content :global(h3) {
-    color: #d4d4d4;
   }
 
   .article-content :global(.heading-anchor) {
     margin-left: 0.375rem;
     font-size: 0.85em;
     font-weight: 400;
-    color: #ccc;
+    color: var(--color-text-faint);
     text-decoration: none;
     opacity: 0;
     transition: opacity 0.15s;
@@ -665,14 +631,6 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(.heading-anchor:hover) {
-    color: var(--color-accent);
-  }
-
-  :global(.dark) .article-content :global(.heading-anchor) {
-    color: #555;
-  }
-
-  :global(.dark) .article-content :global(.heading-anchor:hover) {
     color: var(--color-accent);
   }
 
@@ -691,34 +649,24 @@ const formatDate = (date: Date) => {
     text-decoration: underline;
   }
 
-  :global(.dark) .article-content :global(a) {
-    color: var(--color-accent);
-  }
-
   .article-content :global(code) {
     font-family:
       'SF Mono', 'Fira Code', 'JetBrains Mono', Menlo, Monaco, Consolas,
       monospace;
     font-size: 0.875em;
     padding: 0.2em 0.5em;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-    border: 1px solid #e0e4e8;
+    background: var(--color-code-inline-bg);
+    border: 1px solid var(--color-code-inline-border);
     border-radius: 6px;
-    color: #d63384;
+    color: var(--color-code-inline-text);
     font-weight: 500;
-  }
-
-  :global(.dark) .article-content :global(code) {
-    background: linear-gradient(135deg, #2a2d2e 0%, #252526 100%);
-    border-color: #3c3c3c;
-    color: #ce9178;
   }
 
   .article-content :global(pre) {
     position: relative;
     padding: 1rem;
-    background: #1e1e1e !important;
-    border: 1px solid #3c3c3c;
+    background: var(--color-code-bg) !important;
+    border: 1px solid var(--color-code-border);
     border-radius: 6px;
     overflow-x: auto;
     margin: 1.5rem 0;
@@ -729,7 +677,7 @@ const formatDate = (date: Date) => {
     background: transparent !important;
     border: none;
     font-size: 0.875rem;
-    color: #d4d4d4;
+    color: var(--color-code-text);
     font-weight: 400;
     line-height: 1.45;
   }
@@ -749,15 +697,15 @@ const formatDate = (date: Date) => {
     left: 0;
     right: 0;
     padding: 0.375rem 0.75rem;
-    background: #252526;
-    border-bottom: 1px solid #3c3c3c;
+    background: var(--color-code-header-bg);
+    border-bottom: 1px solid var(--color-code-border);
     border-radius: 6px 6px 0 0;
   }
 
   .article-content :global(.code-lang) {
     font-size: 0.6875rem;
     font-weight: 500;
-    color: #a0a0a0;
+    color: var(--color-code-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -766,9 +714,9 @@ const formatDate = (date: Date) => {
     padding: 0.125rem 0.5rem;
     font-size: 0.6875rem;
     font-weight: 400;
-    color: #a0a0a0;
+    color: var(--color-code-muted);
     background: transparent;
-    border: 1px solid #3c3c3c;
+    border: 1px solid var(--color-code-border);
     border-radius: 4px;
     cursor: pointer;
     opacity: 0;
@@ -786,13 +734,13 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(.copy-btn:hover) {
-    background: #3c3c3c;
-    color: #d4d4d4;
+    background: var(--color-code-border);
+    color: var(--color-code-text);
   }
 
   .article-content :global(.copy-btn.copied) {
-    color: #6a9955;
-    border-color: #6a9955;
+    color: var(--color-code-success);
+    border-color: var(--color-code-success);
   }
 
   .article-content :global(pre:has(.code-header)) {
@@ -803,14 +751,12 @@ const formatDate = (date: Date) => {
     margin: 1.5rem 0;
     padding: 0.5rem 1rem;
     border-left: 3px solid var(--color-accent);
-    background: #f9f9f9;
-    color: #666;
+    background: var(--color-surface);
+    color: var(--color-text-soft);
   }
 
   :global(.dark) .article-content :global(blockquote) {
-    background: #252526;
     color: var(--color-text-secondary);
-    border-left-color: var(--color-accent);
   }
 
   .article-content :global(ul),
@@ -842,7 +788,7 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(ol li::marker) {
-    color: #555;
+    color: var(--color-text-subtle);
     font-weight: 600;
   }
 
@@ -859,12 +805,8 @@ const formatDate = (date: Date) => {
 
   .article-content :global(hr) {
     border: none;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--color-border);
     margin: 2rem 0;
-  }
-
-  :global(.dark) .article-content :global(hr) {
-    border-top-color: #3c3c3c;
   }
 
   .article-content :global(table) {
@@ -878,7 +820,7 @@ const formatDate = (date: Date) => {
   .article-content :global(table) :global(td) {
     text-align: left;
     padding: 0.75rem 0.875rem;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--color-border);
     vertical-align: top;
   }
 
@@ -887,27 +829,11 @@ const formatDate = (date: Date) => {
     text-transform: uppercase;
     letter-spacing: 0.03em;
     color: var(--color-text-secondary);
-    background: #fafafa;
-  }
-
-  :global(.dark) .article-content :global(table) :global(th) {
-    background: #252526;
-  }
-
-  :global(.dark) .article-content :global(table) :global(td),
-  :global(.dark) .article-content :global(table) :global(th) {
-    border-bottom-color: #3c3c3c;
+    background: var(--color-surface);
   }
 
   .article-content :global(table) :global(tr:nth-child(even) td) {
-    background: #fafafa;
-  }
-
-  :global(.dark)
-    .article-content
-    :global(table)
-    :global(tr:nth-child(even) td) {
-    background: #2a2d2e;
+    background: var(--color-bg-tertiary);
   }
 
   .article-content :global(.table-wrap) {
@@ -926,11 +852,7 @@ const formatDate = (date: Date) => {
   .article-footer {
     margin-top: 3rem;
     padding-top: 2rem;
-    border-top: 1px solid #e5e5e5;
-  }
-
-  :global(.dark) .article-footer {
-    border-top-color: #3c3c3c;
+    border-top: 1px solid var(--color-border);
   }
 
   .related-posts {
@@ -1071,10 +993,6 @@ const formatDate = (date: Date) => {
     transition: width 0.1s ease-out;
   }
 
-  :global(.dark) .reading-progress {
-    background: var(--color-accent);
-  }
-
   .share-buttons {
     display: flex;
     align-items: center;
@@ -1097,9 +1015,9 @@ const formatDate = (date: Date) => {
     font: inherit;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: #666;
-    background: #f5f5f5;
-    border: 1px solid #e5e5e5;
+    color: var(--color-text-soft);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     text-decoration: none;
     cursor: pointer;
@@ -1113,25 +1031,17 @@ const formatDate = (date: Date) => {
   }
 
   :global(.dark) .share-btn {
-    color: #999;
-    background: #2a2d2e;
-    border-color: #3c3c3c;
+    background: var(--color-bg-tertiary);
   }
 
   :global(.dark) .share-btn:hover {
-    color: var(--color-accent);
     background: color-mix(in srgb, var(--color-accent) 14%, transparent);
-    border-color: var(--color-accent);
   }
 
   .author-bio {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px dashed #e5e5e5;
-  }
-
-  :global(.dark) .author-bio {
-    border-top-color: #3c3c3c;
+    border-top: 1px dashed var(--color-border);
   }
 
   .author-info {
@@ -1143,11 +1053,7 @@ const formatDate = (date: Date) => {
   .author-name {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #1a1a1a;
-  }
-
-  :global(.dark) .author-name {
-    color: #d4d4d4;
+    color: var(--color-text);
   }
 
   .author-desc {
@@ -1165,11 +1071,11 @@ const formatDate = (date: Date) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.9);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
     backdrop-filter: blur(8px);
-    border: 1px solid #e5e5e5;
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    color: #666;
+    color: var(--color-text-soft);
     cursor: pointer;
     opacity: 0;
     transform: translateY(10px);
@@ -1192,15 +1098,8 @@ const formatDate = (date: Date) => {
   }
 
   :global(.dark) .back-to-top {
-    background: rgba(37, 37, 38, 0.9);
-    border-color: #3c3c3c;
-    color: #999;
+    background: color-mix(in srgb, var(--color-bg-secondary) 90%, transparent);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-
-  :global(.dark) .back-to-top:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
   }
 
   @media (max-width: 640px) {

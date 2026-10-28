@@ -241,19 +241,39 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     box-sizing: border-box;
   }
 
+  /* Every color lives here. Components use these tokens, and dark mode
+     comes from the .dark overrides below, not from per-rule copies. */
   :root {
     --color-bg: #ffffff;
     --color-bg-secondary: #f5f5f5;
     --color-bg-tertiary: #fafafa;
+    --color-surface: #fafafa; /* table headers, blockquotes */
     --color-text: #1a1a1a;
+    --color-text-body: #333333; /* article prose */
     --color-text-secondary: #5c5148;
+    --color-text-subtle: #555555; /* secondary links: series list, TOC */
+    --color-text-soft: #666666; /* icon buttons, small labels, quotes */
     --color-text-muted: #736a61;
+    --color-text-faint: #cccccc; /* heading anchors, TOC markers */
     --color-border: #e5e5e5;
     --color-border-light: #f0f0f0;
     --color-accent: #a8583a;
     --color-accent-hover: #8c4a30;
+    --color-on-accent: #ffffff;
+    --color-selection-bg: var(--color-accent);
+    --color-scrollbar: #cccccc;
+    --color-scrollbar-hover: #999999;
+    /* Inline code */
+    --color-code-inline-text: #d63384;
+    --color-code-inline-bg: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    --color-code-inline-border: #e0e4e8;
+    /* Code blocks stay dark in both themes. */
     --color-code-bg: #1e1e1e;
+    --color-code-header-bg: #252526;
     --color-code-border: #3c3c3c;
+    --color-code-text: #d4d4d4;
+    --color-code-muted: #a0a0a0;
+    --color-code-success: #6a9955;
     --font-serif:
       'Fraunces', 'Iowan Old Style', 'Apple Garamond', 'Baskerville',
       'Times New Roman', serif;
@@ -266,15 +286,24 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     --color-bg: #1e1e1e;
     --color-bg-secondary: #252526;
     --color-bg-tertiary: #2a2d2e;
+    --color-surface: #252526;
     --color-text: #d4d4d4;
+    --color-text-body: #d4d4d4;
     --color-text-secondary: #aea69c;
+    --color-text-subtle: #999999;
+    --color-text-soft: #999999;
     --color-text-muted: #9b9289;
+    --color-text-faint: #555555;
     --color-border: #3c3c3c;
     --color-border-light: #333333;
     --color-accent: #d98a66;
     --color-accent-hover: #e5a485;
-    --color-code-bg: #1e1e1e;
-    --color-code-border: #3c3c3c;
+    --color-selection-bg: color-mix(in srgb, var(--color-accent) 45%, #000);
+    --color-scrollbar: #3c3c3c;
+    --color-scrollbar-hover: #4f4f4f;
+    --color-code-inline-text: #ce9178;
+    --color-code-inline-bg: linear-gradient(135deg, #2a2d2e 0%, #252526 100%);
+    --color-code-inline-border: #3c3c3c;
   }
 
   html {
@@ -326,13 +355,8 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
   /* Selection styles */
   ::selection {
-    background: var(--color-accent);
-    color: #fff;
-  }
-
-  .dark ::selection {
-    background: color-mix(in srgb, var(--color-accent) 45%, #000);
-    color: #ffffff;
+    background: var(--color-selection-bg);
+    color: var(--color-on-accent);
   }
 
   /* Skip to content link */
@@ -357,7 +381,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     padding: 0.75rem 1.5rem;
     font-size: 0.875rem;
     font-weight: 500;
-    color: #fff;
+    color: var(--color-on-accent);
     background: var(--color-accent);
     border-radius: 0 0 8px 8px;
     text-decoration: none;
@@ -386,32 +410,12 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: var(--color-scrollbar);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #999;
-  }
-
-  .dark ::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-  }
-
-  .dark ::-webkit-scrollbar-thumb:hover {
-    background: #4f4f4f;
-  }
-
-  /* Code blocks */
-  .dark pre[class*='language-'],
-  .dark .shiki {
-    background: #1e1e1e !important;
-    border: 1px solid #3c3c3c !important;
-  }
-
-  .dark code[class*='language-'],
-  .dark .shiki code {
-    color: #d4d4d4 !important;
+    background: var(--color-scrollbar-hover);
   }
 
   /* Reduced motion preference */
