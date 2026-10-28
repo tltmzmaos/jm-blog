@@ -1,11 +1,13 @@
 import satori from 'satori';
 import sharp from 'sharp';
+import { tagLabel } from './tags';
 
-// Satori can't read the self-hosted woff2 files, so the OG card uses TTFs.
+// Satori can't read the self-hosted woff2 files, so the OG card uses TTFs
+// (URLs from fonts.googleapis.com/css2?family=Inter:wght@400;600).
 const INTER_400 =
-  'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf';
-const INTER_700 =
-  'https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuBWYMZhrib2Bg-4.ttf';
+  'https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf';
+const INTER_600 =
+  'https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf';
 
 async function fetchFont(url: string): Promise<ArrayBuffer> {
   const res = await fetch(url);
@@ -21,7 +23,7 @@ let fontsPromise: Promise<[ArrayBuffer, ArrayBuffer]> | undefined;
 function loadFonts() {
   fontsPromise ??= Promise.all([
     fetchFont(INTER_400),
-    fetchFont(INTER_700),
+    fetchFont(INTER_600),
   ]).catch((error: unknown) => {
     fontsPromise = undefined;
     throw error;
@@ -36,8 +38,10 @@ export async function renderOgImage({
   title: string;
   tags?: string[];
 }): Promise<Response> {
-  const [regular, bold] = await loadFonts();
+  const [regular, semibold] = await loadFonts();
 
+  // Same look as the site: white page, near-black Inter title, and the
+  // tags and footer in the muted grey. No color accents, no chips.
   const svg = await satori(
     {
       type: 'div',
@@ -46,31 +50,32 @@ export async function renderOgImage({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          // Without this, newer satori sizes the root as content-box and the
+          // padding pushes the footer off the 630px canvas.
+          boxSizing: 'border-box',
           width: '100%',
           height: '100%',
-          // Satori 0.63 adds padding to a percentage height unless told otherwise,
-          // which pushes the footer below the 630px canvas.
-          boxSizing: 'border-box',
-          padding: '60px',
-          backgroundColor: '#181715',
-          color: '#e6e2dc',
+          padding: '72px',
+          backgroundColor: '#ffffff',
+          color: '#171717',
           fontFamily: 'Inter, sans-serif',
         },
         children: [
           {
             type: 'div',
             props: {
-              style: { display: 'flex', flexDirection: 'column', gap: '16px' },
+              style: { display: 'flex', flexDirection: 'column', gap: '24px' },
               children: [
                 {
                   type: 'div',
                   props: {
                     style: {
-                      fontSize: '42px',
-                      fontWeight: '700',
-                      lineHeight: '1.3',
-                      color: '#f5f1eb',
-                      maxWidth: '900px',
+                      fontSize: '56px',
+                      fontWeight: 600,
+                      lineHeight: 1.2,
+                      letterSpacing: '-1px',
+                      color: '#171717',
+                      maxWidth: '1000px',
                     },
                     children: title,
                   },
@@ -81,21 +86,13 @@ export async function renderOgImage({
                       props: {
                         style: {
                           display: 'flex',
-                          gap: '8px',
-                          marginTop: '8px',
+                          gap: '20px',
+                          fontSize: '26px',
+                          color: '#6b6b6b',
                         },
                         children: tags.slice(0, 3).map((tag: string) => ({
                           type: 'span',
-                          props: {
-                            style: {
-                              fontSize: '18px',
-                              padding: '4px 12px',
-                              backgroundColor: 'rgba(220, 141, 105, 0.18)',
-                              color: '#dc8d69',
-                              borderRadius: '6px',
-                            },
-                            children: tag,
-                          },
+                          props: { children: `#${tagLabel(tag)}` },
                         })),
                       },
                     }
@@ -110,24 +107,14 @@ export async function renderOgImage({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderTop: '1px solid #34312d',
-                paddingTop: '24px',
+                borderTop: '1px solid #e5e5e5',
+                paddingTop: '28px',
+                fontSize: '24px',
+                color: '#6b6b6b',
               },
               children: [
-                {
-                  type: 'span',
-                  props: {
-                    style: { fontSize: '22px', color: '#9d958b' },
-                    children: 'jongmin.me',
-                  },
-                },
-                {
-                  type: 'span',
-                  props: {
-                    style: { fontSize: '22px', color: '#9d958b' },
-                    children: 'Jongmin Lee',
-                  },
-                },
+                { type: 'span', props: { children: 'jongmin.me' } },
+                { type: 'span', props: { children: 'Jongmin Lee' } },
               ],
             },
           },
@@ -139,7 +126,7 @@ export async function renderOgImage({
       height: 630,
       fonts: [
         { name: 'Inter', data: regular, weight: 400, style: 'normal' },
-        { name: 'Inter', data: bold, weight: 700, style: 'normal' },
+        { name: 'Inter', data: semibold, weight: 600, style: 'normal' },
       ],
     }
   );
