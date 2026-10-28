@@ -16,7 +16,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Features
 
-- Dark mode with system preference detection
+- Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it
 - Search over post titles, descriptions and tags with Fuse.js
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
@@ -24,7 +24,8 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Copy-link button
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs
-- Self-hosted Inter and Fraunces fonts (Latin subset)
+- Self-hosted Inter font (Latin subset)
+- Native cross-document view transitions in CSS, no client-side router
 - Generated OG image per post, plus a default card (`/og.png`)
 - RSS feed (`/rss.xml`) and sitemap via @astrojs/sitemap
 - Series index page and a JSON post API (`/api/posts.json`)
@@ -38,6 +39,7 @@ src/
 │   ├── SearchBox.astro
 │   ├── ThemeToggle.astro
 │   ├── TableOfContents.astro
+│   ├── PostList.astro      # posts grouped by year
 │   ├── PostListItem.astro
 │   └── SEO.astro
 ├── content/
@@ -64,7 +66,6 @@ src/
 │   ├── rss.xml.ts
 │   └── robots.txt.ts
 ├── plugins/           # rehype plugins
-├── scripts/           # Client-side modules shared by pages
 └── utils/
 ```
 
