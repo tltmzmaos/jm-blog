@@ -95,7 +95,7 @@ const formatDate = (date: Date) => {
   <div class="reading-progress" aria-hidden="true"></div>
   <Header />
 
-  {headings.length > 0 && <TableOfContents headings={headings} />}
+  <TableOfContents headings={headings} />
 
   <main id="main-content">
     <article class="article">
@@ -205,6 +205,8 @@ const formatDate = (date: Date) => {
           </div>
         )
       }
+
+      <TableOfContents headings={headings} variant="inline" />
 
       <div class="article-content">
         <slot />
@@ -730,6 +732,8 @@ const formatDate = (date: Date) => {
   .article-content :global(h3),
   .article-content :global(h4) {
     position: relative;
+    /* Clears the sticky header when a link jumps to the heading. */
+    scroll-margin-top: 5rem;
   }
 
   .article-content :global(h2) {
