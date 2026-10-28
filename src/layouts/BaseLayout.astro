@@ -466,6 +466,27 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     }
   }
 
+  /* Marked words: ==text== in a post (plugins/remark-mark.mjs) and the
+     words a search matched. A highlighter pass over the words, taller than
+     the stroke behind a hovered link and running just past both ends.
+     Wrapped marks get one per line. */
+  mark {
+    margin: 0 -0.1em;
+    padding: 0 0.1em;
+    color: var(--color-text);
+    background: linear-gradient(var(--color-mark), var(--color-mark)) 0 0.32em /
+      100% 0.78em no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  @media (forced-colors: active) {
+    mark {
+      background: Mark;
+      color: MarkText;
+    }
+  }
+
   @media (max-width: 640px) {
     .page {
       padding-top: 2rem;

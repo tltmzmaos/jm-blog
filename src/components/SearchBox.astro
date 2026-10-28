@@ -355,6 +355,30 @@
     return div.innerHTML;
   }
 
+  // The typed words, longest first so "regression" wins over "re".
+  function searchTerms(query: string): string[] {
+    return [...new Set(query.toLowerCase().split(/\s+/))]
+      .filter((t) => t.length >= 2)
+      .sort((a, b) => b.length - a.length);
+  }
+
+  // Marks each word that starts with a typed word, through to the end of
+  // the word, as you'd run a highlighter over it ("network" marks all of
+  // "Networks"). Only literal matches: Fuse also finds near misses, and
+  // marking their scattered letters would read as noise.
+  function markTerms(text: string, terms: string[]): string {
+    if (!text || terms.length === 0) return escapeHtml(text);
+    const words = terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const pattern = new RegExp(`(\\b(?:${words.join('|')})\\w*)`, 'gi');
+    // With a capturing group, split puts the matches at the odd indexes.
+    return text
+      .split(pattern)
+      .map((part, i) =>
+        i % 2 === 1 ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part)
+      )
+      .join('');
+  }
+
   function initSearch() {
     const trigger = document.getElementById('search-trigger');
     const modal = document.getElementById('search-modal');
@@ -430,7 +454,7 @@
       selectedIndex = -1;
     };
 
-    const renderResults = (items: Post[]) => {
+    const renderResults = (items: Post[], terms: string[]) => {
       results = items;
       selectedIndex = items.length > 0 ? 0 : -1;
       if (!resultsContainer) return;
@@ -458,10 +482,10 @@
             index === 0 ? ' selected' : ''
           }" data-index="${index}">
             <span class="sr-head">
-              <span class="sr-title">${escapeHtml(post.title)}</span>
+              <span class="sr-title">${markTerms(post.title, terms)}</span>
               ${dateHtml}
             </span>
-            <span class="sr-desc">${escapeHtml(post.description)}</span>
+            <span class="sr-desc">${markTerms(post.description, terms)}</span>
             ${tagsHtml}
           </a>`;
         })
@@ -503,7 +527,7 @@
             matches.length === 1 ? '1 result' : `${matches.length} results`;
           searchCount.classList.add('visible');
         }
-        renderResults(found);
+        renderResults(found, searchTerms(query));
       } else {
         searchBody?.classList.add('no-results');
         resultsContainer?.classList.remove('has-results');
