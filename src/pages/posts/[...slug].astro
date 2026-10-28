@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { getRelatedPosts } from '../../utils/relatedPosts';
 import { getSeriesInfo } from '../../utils/seriesPosts';
+import { getAllSeries } from '../../utils/seriesIndex';
 import { shouldShowDrafts } from '../../utils/env';
 
 export async function getStaticPaths() {
@@ -52,7 +53,7 @@ const nextPost =
 const relatedPosts = getRelatedPosts(post, visiblePosts, 3);
 
 // Detect series membership
-const seriesInfo = getSeriesInfo(post, visiblePosts);
+const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
 ---
 
 <PostLayout
