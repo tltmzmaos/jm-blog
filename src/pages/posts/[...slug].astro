@@ -1,7 +1,6 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import PostLayout from '../../layouts/PostLayout.astro';
-import { getRelatedPosts } from '../../utils/relatedPosts';
 import { getSeriesInfo } from '../../utils/seriesPosts';
 import { getAllSeries } from '../../utils/seriesIndex';
 import { shouldShowDrafts } from '../../utils/env';
@@ -21,7 +20,7 @@ type Props = CollectionEntry<'blog'>;
 const post = Astro.props;
 const { Content, headings } = await render(post);
 
-// Build the visible-post universe once and reuse for nav / related / series
+// Build the visible-post universe once and reuse for nav and series
 const allPosts = await getCollection('blog');
 const visiblePosts = allPosts.filter(
   (p) => shouldShowDrafts() || !p.data.draft
@@ -49,9 +48,6 @@ const nextPost =
       }
     : undefined;
 
-// Find related posts (tag-based)
-const relatedPosts = getRelatedPosts(post, visiblePosts, 3);
-
 // Detect series membership
 const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
 ---
@@ -61,7 +57,6 @@ const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
   headings={headings}
   prevPost={prevPost}
   nextPost={nextPost}
-  relatedPosts={relatedPosts}
   seriesInfo={seriesInfo}
   content={post.body}
   slug={post.id}

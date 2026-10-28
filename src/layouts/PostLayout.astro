@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import { calculateReadingTime, ReadingTimeIcon } from '../utils/readingTime.js';
+import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
 import { tagLabel, tagSlug } from '../utils/tags';
@@ -22,7 +22,6 @@ export interface Props {
   headings?: Array<{ depth: number; slug: string; text: string }>;
   prevPost?: { slug: string; title: string };
   nextPost?: { slug: string; title: string };
-  relatedPosts?: Array<{ slug: string; title: string; description?: string }>;
   seriesInfo?: SeriesInfo | null;
   content?: string;
   slug?: string;
@@ -33,7 +32,6 @@ const {
   headings = [],
   prevPost,
   nextPost,
-  relatedPosts = [],
   seriesInfo,
   content,
   slug: postSlug,
@@ -92,49 +90,43 @@ const formatDate = (date: Date) => {
   hasMath={hasMath}
   slug={slug}
 >
-  <div class="reading-progress" aria-hidden="true"></div>
   <Header />
 
   <TableOfContents headings={headings} />
 
-  <main id="main-content">
+  <main id="main-content" class="container">
     <article class="article">
       <header class="article-header">
-        <div class="meta">
-          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-          <span class="separator">·</span>
-          <span class="reading-time">
-            <Fragment set:html={ReadingTimeIcon} />
-            {readingTime.text}
-          </span>
-        </div>
-
         <h1>{title}</h1>
 
         {description && <p class="description">{description}</p>}
 
+        <p class="meta">
+          <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+          <span class="separator" aria-hidden="true">·</span>
+          <span>{readingTime.text}</span>
+        </p>
+
         {
           tags.length > 0 && (
-            <div class="tags">
+            <ul class="tags" aria-label="Tags">
               {tags.map((tag) => (
-                <a href={`/tags/${tagSlug(tag)}/`} class="tag">
-                  {tagLabel(tag)}
-                </a>
+                <li>
+                  <a href={`/tags/${tagSlug(tag)}/`} class="tag">
+                    {tagLabel(tag)}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           )
         }
 
         {
           seriesInfo && (
-            <nav class="series-nav" aria-label="Series navigation">
-              <p class="series-header">
-                <a href={`/series/#${seriesInfo.id}`} class="series-name">
-                  {seriesInfo.name}
-                </a>
-                <span class="series-count">
-                  Part {seriesInfo.currentPart} of {seriesInfo.totalParts}
-                </span>
+            <nav class="series" aria-label="Series">
+              <p class="series-title">
+                Part {seriesInfo.currentPart} of {seriesInfo.totalParts} in{' '}
+                <a href={`/series/#${seriesInfo.id}`}>{seriesInfo.name}</a>
               </p>
 
               <div class="series-steps">
@@ -144,11 +136,7 @@ const formatDate = (date: Date) => {
                     class="series-step prev"
                     rel="prev"
                   >
-                    <span class="step-label">
-                      <span aria-hidden="true">←</span>
-                      <span class="sr-only">Previous:</span>
-                      Part {seriesInfo.prev.partNumber}
-                    </span>
+                    <span class="step-label">Previous part</span>
                     <span class="step-title">{seriesInfo.prev.title}</span>
                   </a>
                 )}
@@ -158,11 +146,7 @@ const formatDate = (date: Date) => {
                     class="series-step next"
                     rel="next"
                   >
-                    <span class="step-label">
-                      <span class="sr-only">Next:</span>
-                      Part {seriesInfo.next.partNumber}
-                      <span aria-hidden="true">→</span>
-                    </span>
+                    <span class="step-label">Next part</span>
                     <span class="step-title">{seriesInfo.next.title}</span>
                   </a>
                 )}
@@ -213,7 +197,7 @@ const formatDate = (date: Date) => {
       </div>
 
       <footer class="article-footer">
-        <div class="share-buttons">
+        <div class="share">
           <button
             class="share-btn"
             id="copy-link-btn"
@@ -221,8 +205,8 @@ const formatDate = (date: Date) => {
             data-url={postUrl}
           >
             <svg
-              width="16"
-              height="16"
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -240,107 +224,28 @@ const formatDate = (date: Date) => {
         </div>
 
         {
-          relatedPosts.length > 0 && (
-            <section class="related-posts">
-              <h2 class="section-title">Related posts</h2>
-              <ul>
-                {relatedPosts.map((post) => (
-                  <li>
-                    <a href={`/posts/${post.slug}/`}>
-                      <span class="related-title">{post.title}</span>
-                      {post.description && (
-                        <span class="related-desc">{post.description}</span>
-                      )}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )
-        }
-
-        {
           (prevPost || nextPost) && (
-            <nav class="post-nav" aria-label="Post navigation">
-              <h2 class="section-title">Continue reading</h2>
-              {prevPost ? (
+            <nav class="post-nav" aria-label="More posts">
+              {prevPost && (
                 <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
-                  <span class="nav-label">Previous</span>
+                  <span class="nav-label">Previous post</span>
                   <span class="nav-title">{prevPost.title}</span>
                 </a>
-              ) : (
-                <div />
               )}
-
               {nextPost && (
                 <a href={`/posts/${nextPost.slug}/`} class="nav-link next">
-                  <span class="nav-label">Next</span>
+                  <span class="nav-label">Next post</span>
                   <span class="nav-title">{nextPost.title}</span>
                 </a>
               )}
             </nav>
           )
         }
-
-        <div class="author-bio">
-          <div class="author-info">
-            <span class="author-name">{author}</span>
-            <span class="author-desc"
-              >Writing about what I learn, think, and build.</span
-            >
-          </div>
-        </div>
       </footer>
     </article>
   </main>
 
-  <button
-    class="back-to-top"
-    id="back-to-top"
-    aria-label="Back to top"
-    type="button"
-  >
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-    >
-      <path d="M18 15l-6-6-6 6"></path>
-    </svg>
-  </button>
-
   <script>
-    // Reading progress bar
-    const progressBar = document.querySelector(
-      '.reading-progress'
-    ) as HTMLElement;
-    const article = document.querySelector('.article-content');
-
-    if (progressBar && article) {
-      const updateProgress = () => {
-        const articleRect = article.getBoundingClientRect();
-        const articleTop = articleRect.top + window.scrollY;
-        const articleHeight = articleRect.height;
-        const windowHeight = window.innerHeight;
-        const scrollY = window.scrollY;
-
-        const start = articleTop;
-        const end = articleTop + articleHeight - windowHeight;
-        const progress = Math.min(
-          100,
-          Math.max(0, ((scrollY - start) / (end - start)) * 100)
-        );
-
-        progressBar.style.width = `${progress}%`;
-      };
-
-      window.addEventListener('scroll', updateProgress, { passive: true });
-      updateProgress();
-    }
-
     // Heading anchor links
     document
       .querySelectorAll(
@@ -401,18 +306,6 @@ const formatDate = (date: Date) => {
       pre.insertBefore(header, pre.firstChild);
     });
 
-    // Back to top button
-    const backToTop = document.getElementById('back-to-top');
-    if (backToTop) {
-      const toggleBackToTop = () => {
-        backToTop.classList.toggle('visible', window.scrollY > 400);
-      };
-      window.addEventListener('scroll', toggleBackToTop, { passive: true });
-      backToTop.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    }
-
     // Copy link button: copies the canonical post URL, so a heading hash or
     // query string in the address bar doesn't end up in the shared link.
     const copyLinkBtn = document.getElementById('copy-link-btn');
@@ -438,53 +331,39 @@ const formatDate = (date: Date) => {
 
 <style>
   .article {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 2.5rem 0 4rem;
   }
 
+  /* ═══ Header ═══ */
   .article-header {
-    margin-bottom: 2rem;
-  }
-
-  .meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1.25rem;
-  }
-
-  .separator {
-    color: var(--color-border);
-  }
-
-  .reading-time {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .reading-time :global(svg) {
-    width: 14px;
-    height: 14px;
+    margin-bottom: 2.5rem;
   }
 
   h1 {
     font-size: 2rem;
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: var(--color-text);
     line-height: 1.25;
-    margin: 0 0 1rem;
+    color: var(--color-text);
+    margin: 0 0 0.75rem;
   }
 
   .description {
     font-size: 1.0625rem;
-    color: var(--color-text-secondary);
     line-height: 1.6;
-    margin: 0 0 1.25rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 1rem;
+  }
+
+  .meta {
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .separator {
+    margin: 0 0.375rem;
   }
 
   .tags {
@@ -492,14 +371,16 @@ const formatDate = (date: Date) => {
     flex-wrap: wrap;
     column-gap: 0.875rem;
     row-gap: 0.25rem;
+    list-style: none;
+    margin: 0.375rem 0 0;
+    padding: 0;
   }
 
   .tag {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     color: var(--color-text-muted);
     text-decoration: none;
     white-space: nowrap;
-    line-height: 1.5;
     transition: color 0.15s ease;
   }
 
@@ -507,67 +388,59 @@ const formatDate = (date: Date) => {
   .tag::before {
     content: '#';
     content: '#' / '';
-    margin-right: -0.15em;
+    margin-right: 0.05em;
   }
 
   .tag:hover {
     color: var(--color-text);
   }
 
-  /* Series: a compact block that stays the same height however long the
-     series gets. The full list waits behind a native <details>. */
-  .series-nav {
-    margin-top: 1.75rem;
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
+  /* ═══ Series ═══ */
+  /* Stays the same height however long the series gets: the full list
+     waits behind a native <details>. */
+  .series {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
   }
 
-  .series-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+  .series-title {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
     margin: 0;
-    padding: 0.875rem 0 0.75rem;
   }
 
-  .series-name {
-    font-size: 0.875rem;
-    font-weight: 600;
+  .series-title a {
     color: var(--color-text);
-    text-decoration: none;
-    transition: color 0.15s ease;
+    font-weight: 500;
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-link-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
-  .series-name:hover {
-    color: var(--color-text);
-  }
-
-  .series-count {
-    font-size: 0.75rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text-muted);
-    white-space: nowrap;
+  .series-title a:hover {
+    text-decoration-color: currentColor;
   }
 
   .series-steps {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 2rem;
-    padding-bottom: 0.875rem;
+    gap: 1.5rem;
+    margin-top: 0.875rem;
   }
 
   .series-step {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.125rem;
     min-width: 0;
     text-decoration: none;
   }
 
   .series-step.next {
     grid-column: 2;
-    align-items: flex-end;
     text-align: right;
   }
 
@@ -577,22 +450,21 @@ const formatDate = (date: Date) => {
   }
 
   .step-title {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 500;
-    line-height: 1.35;
+    line-height: 1.4;
     color: var(--color-text);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    transition: color 0.15s ease;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
   .series-step:hover .step-title {
-    color: var(--color-text);
+    text-decoration-line: underline;
   }
 
   .series-all {
+    margin-top: 0.875rem;
+    padding-top: 0.75rem;
     border-top: 1px solid var(--color-border-light);
   }
 
@@ -601,12 +473,10 @@ const formatDate = (date: Date) => {
     align-items: center;
     gap: 0.5rem;
     width: fit-content;
-    padding: 0.75rem 0;
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
     list-style: none;
     cursor: pointer;
-    transition: color 0.15s ease;
   }
 
   .series-all summary::-webkit-details-marker {
@@ -634,8 +504,8 @@ const formatDate = (date: Date) => {
 
   .series-list {
     list-style: none;
-    margin: 0;
-    padding: 0 0 1rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
@@ -643,26 +513,28 @@ const formatDate = (date: Date) => {
 
   .series-list li {
     display: grid;
-    grid-template-columns: 2rem 1fr;
+    grid-template-columns: 1.75rem 1fr;
     align-items: baseline;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     line-height: 1.45;
   }
 
   .part-num {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-variant-numeric: tabular-nums;
     color: var(--color-text-muted);
   }
 
   .series-list a {
     color: var(--color-text-secondary);
-    text-decoration: none;
-    transition: color 0.15s ease;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-line: none;
   }
 
   .series-list a:hover {
     color: var(--color-text);
+    text-decoration-line: underline;
   }
 
   .series-current {
@@ -672,16 +544,16 @@ const formatDate = (date: Date) => {
 
   .hero-image {
     margin-bottom: 2rem;
-    border-radius: 8px;
-    overflow: hidden;
   }
 
   .hero-image img {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
+    border-radius: 4px;
   }
 
+  /* ═══ Article body ═══ */
   .article-content {
     font-size: 1.0625rem;
     line-height: 1.7;
@@ -692,8 +564,9 @@ const formatDate = (date: Date) => {
   .article-content :global(h3),
   .article-content :global(h4) {
     position: relative;
-    /* Clears the sticky header when a link jumps to the heading. */
-    scroll-margin-top: 5rem;
+    color: var(--color-text);
+    /* A little room above a heading that a link jumps to. */
+    scroll-margin-top: 1.5rem;
   }
 
   .article-content :global(h2) {
@@ -701,7 +574,6 @@ const formatDate = (date: Date) => {
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.35;
-    color: var(--color-text);
     margin: 3rem 0 0.875rem;
   }
 
@@ -709,7 +581,6 @@ const formatDate = (date: Date) => {
     font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.4;
-    color: var(--color-text);
     margin: 2.25rem 0 0.625rem;
   }
 
@@ -717,15 +588,13 @@ const formatDate = (date: Date) => {
     font-size: 1rem;
     font-weight: 600;
     line-height: 1.45;
-    color: var(--color-text);
     margin: 1.75rem 0 0.5rem;
   }
 
   .article-content :global(.heading-anchor) {
     margin-left: 0.375rem;
-    font-size: 0.85em;
     font-weight: 400;
-    color: var(--color-text-faint);
+    color: var(--color-text-muted);
     text-decoration: none;
     opacity: 0;
     transition: opacity 0.15s;
@@ -734,12 +603,8 @@ const formatDate = (date: Date) => {
   .article-content :global(h2:hover .heading-anchor),
   .article-content :global(h3:hover .heading-anchor),
   .article-content :global(h4:hover .heading-anchor),
-  .article-content :global(.heading-anchor:focus) {
+  .article-content :global(.heading-anchor:focus-visible) {
     opacity: 1;
-  }
-
-  .article-content :global(.heading-anchor:hover) {
-    color: var(--color-text);
   }
 
   @media (hover: none) {
@@ -749,7 +614,12 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(p) {
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.25rem;
+  }
+
+  .article-content :global(strong) {
+    font-weight: 600;
+    color: var(--color-text);
   }
 
   .article-content :global(a) {
@@ -861,21 +731,15 @@ const formatDate = (date: Date) => {
 
   .article-content :global(blockquote) {
     margin: 1.5rem 0;
-    padding: 0.5rem 1rem;
-    border-left: 3px solid var(--color-border);
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
-  }
-
-  :global(.dark) .article-content :global(blockquote) {
+    padding-left: 1rem;
+    border-left: 2px solid var(--color-text-faint);
     color: var(--color-text-secondary);
   }
 
   .article-content :global(ul),
   .article-content :global(ol) {
-    margin: 1rem 0 1.5rem;
+    margin: 0 0 1.25rem;
     padding-left: 1.5rem;
-    list-style-position: outside;
   }
 
   .article-content :global(ul) {
@@ -891,27 +755,23 @@ const formatDate = (date: Date) => {
   }
 
   .article-content :global(li) {
-    margin: 0.5rem 0;
+    margin: 0.375rem 0;
     padding-left: 0.125rem;
   }
 
-  .article-content :global(ul li::marker) {
-    color: currentColor;
+  .article-content :global(li > ul),
+  .article-content :global(li > ol) {
+    margin: 0.375rem 0 0;
   }
 
-  .article-content :global(ol li::marker) {
-    color: var(--color-text-secondary);
-    font-weight: 600;
-  }
-
-  :global(.dark) .article-content :global(ol li::marker) {
+  .article-content :global(li::marker) {
     color: var(--color-text-muted);
   }
 
   .article-content :global(img) {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 4px;
     margin: 1.5rem 0;
   }
 
@@ -930,7 +790,7 @@ const formatDate = (date: Date) => {
   .article-content :global(hr) {
     border: none;
     border-top: 1px solid var(--color-border);
-    margin: 2rem 0;
+    margin: 2.5rem 0;
   }
 
   /* rehype-table-wrap puts each table in .table-wrap: the table fills the
@@ -944,135 +804,96 @@ const formatDate = (date: Date) => {
     width: 100%;
     border-collapse: collapse;
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
   }
 
-  .article-content :global(table) :global(th),
-  .article-content :global(table) :global(td) {
+  .article-content :global(th),
+  .article-content :global(td) {
     text-align: left;
-    padding: 0.75rem 0.875rem;
-    border-bottom: 1px solid var(--color-border);
     vertical-align: top;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid var(--color-border);
   }
 
-  .article-content :global(table) :global(th) {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    background: var(--color-surface);
+  .article-content :global(th:first-child),
+  .article-content :global(td:first-child) {
+    padding-left: 0;
   }
 
-  .article-content :global(table) :global(tr:nth-child(even) td) {
-    background: var(--color-surface);
+  .article-content :global(th:last-child),
+  .article-content :global(td:last-child) {
+    padding-right: 0;
   }
 
-  .article-content :global(table) :global(code) {
+  .article-content :global(th) {
+    font-weight: 600;
+    color: var(--color-text);
+    border-bottom-color: var(--color-text-faint);
+  }
+
+  .article-content :global(table code) {
     font-size: 0.85em;
   }
 
+  /* ═══ Footer ═══ */
   .article-footer {
-    margin-top: 3rem;
-    padding-top: 2rem;
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
     border-top: 1px solid var(--color-border);
   }
 
-  .related-posts {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--color-border-light);
-  }
-
-  .section-title {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-text-muted);
-    margin: 0 0 1.25rem;
-  }
-
-  .related-posts ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .share {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
   }
 
-  .related-posts li {
-    border-bottom: 1px solid var(--color-border-light);
-  }
-
-  .related-posts li:last-child {
-    border-bottom: none;
-  }
-
-  .related-posts li a {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1rem 0;
-    text-decoration: none;
-    transition: opacity 0.15s ease;
-  }
-
-  .related-posts li a:hover {
-    opacity: 0.72;
-  }
-
-  .related-posts li a:hover .related-title {
-    color: var(--color-text);
-  }
-
-  .related-title {
-    font-size: 1.125rem;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    color: var(--color-text);
-    line-height: 1.3;
-    transition: color 0.15s ease;
-  }
-
-  .related-desc {
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    height: 32px;
+    padding: 0 0.75rem;
+    font: inherit;
     font-size: 0.875rem;
     color: var(--color-text-secondary);
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .share-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-faint);
+  }
+
+  .share-status {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
   }
 
   .post-nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--color-border-light);
-  }
-
-  .post-nav .section-title {
-    grid-column: 1 / -1;
-    margin-bottom: 0.5rem;
+    gap: 1.5rem;
+    margin-top: 2rem;
   }
 
   .nav-link {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
-    padding: 0;
-    background: transparent;
+    gap: 0.125rem;
+    min-width: 0;
     text-decoration: none;
-    transition: opacity 0.15s ease;
-  }
-
-  .nav-link:hover {
-    opacity: 0.72;
-  }
-
-  .nav-link:hover .nav-title {
-    color: var(--color-text);
   }
 
   .nav-link.next {
+    grid-column: 2;
     text-align: right;
   }
 
@@ -1082,165 +903,41 @@ const formatDate = (date: Date) => {
   }
 
   .nav-title {
-    font-size: 1.0625rem;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    color: var(--color-text);
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    transition: color 0.15s ease;
-  }
-
-  .reading-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: var(--color-text);
-    z-index: 200;
-    transition: width 0.1s ease-out;
-  }
-
-  .share-buttons {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .share-status {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-  }
-
-  .share-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.375rem;
-    height: 36px;
-    padding: 0 0.75rem;
-    font: inherit;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .share-btn:hover {
-    color: var(--color-text);
-    background: var(--color-surface);
-    border-color: var(--color-text-muted);
-  }
-
-  :global(.dark) .share-btn {
-    background: var(--color-surface);
-  }
-
-  :global(.dark) .share-btn:hover {
-    background: var(--color-surface);
-  }
-
-  .author-bio {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px dashed var(--color-border);
-  }
-
-  .author-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .author-name {
     font-size: 0.9375rem;
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1.4;
     color: var(--color-text);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
   }
 
-  .author-desc {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-  }
-
-  .back-to-top {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.2s;
-    pointer-events: none;
-    z-index: 50;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-
-  .back-to-top.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-
-  .back-to-top:hover {
-    color: var(--color-text);
-    border-color: var(--color-text-muted);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
-
-  :global(.dark) .back-to-top {
-    background: color-mix(in srgb, var(--color-surface) 90%, transparent);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  .nav-link:hover .nav-title {
+    text-decoration-line: underline;
   }
 
   @media (max-width: 640px) {
     .article {
-      padding: 1.5rem 1rem 3rem;
+      padding: 2rem 0 3rem;
     }
 
     h1 {
       font-size: 1.625rem;
     }
 
-    .post-nav {
-      grid-template-columns: 1fr;
+    .series {
+      padding: 0.875rem 1rem;
     }
 
-    .series-steps {
+    .series-steps,
+    .post-nav {
       grid-template-columns: 1fr;
       gap: 0.875rem;
     }
 
-    .series-step.next {
+    .series-step.next,
+    .nav-link.next {
       grid-column: 1;
-      align-items: flex-start;
       text-align: left;
-    }
-
-    .back-to-top {
-      bottom: 1.25rem;
-      right: 1.25rem;
     }
   }
 </style>
