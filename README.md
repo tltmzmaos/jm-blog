@@ -8,8 +8,8 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 - **Framework:** Astro 7.x (Static Site Generation)
 - **Styling:** Hand-written CSS with CSS custom properties (scoped `<style>` blocks per component)
-- **Content:** MDX, KaTeX (math), Mermaid (diagrams)
-- **Search:** Fuse.js (client-side fuzzy search)
+- **Content:** Markdown with KaTeX (math)
+- **Search:** Fuse.js (client-side fuzzy search, loaded on first use)
 - **OG Images:** Satori + Sharp (dynamic generation)
 - **Linting:** ESLint + Prettier
 - **Hosting:** GitHub Pages
@@ -17,16 +17,16 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 ## Features
 
 - Dark mode with system preference detection
-- Full-text search with Fuse.js
+- Search over post titles, descriptions and tags with Fuse.js
 - Tag-based post organization
-- Series navigation for multi-part posts
+- Series navigation, driven by `src/content/series/*.json`
 - Table of contents (auto-generated)
-- Social share buttons
+- Copy-link button
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs
-- Self-hosted Inter font (Latin subset)
-- Dynamic OG image generation per post
-- Sitemap via @astrojs/sitemap
+- Self-hosted Inter and Fraunces fonts (Latin subset)
+- Generated OG image per post, plus a default card (`/og.png`)
+- RSS feed (`/rss.xml`) and sitemap via @astrojs/sitemap
 - Series index page and a JSON post API (`/api/posts.json`)
 
 ## Project Structure
@@ -41,7 +41,8 @@ src/
 │   ├── PostListItem.astro
 │   └── SEO.astro
 ├── content/
-│   ├── blog/          # Blog posts (Markdown/MDX)
+│   ├── blog/          # Blog posts (Markdown)
+│   │   ├── concepts/
 │   │   ├── dev/
 │   │   ├── ml-stanford/
 │   │   └── omscs/
@@ -59,8 +60,11 @@ src/
 │   ├── tags/
 │   ├── api/posts.json.ts
 │   ├── og/[...slug].png.ts
+│   ├── og.png.ts
+│   ├── rss.xml.ts
 │   └── robots.txt.ts
-├── types/
+├── plugins/           # rehype plugins
+├── scripts/           # Client-side modules shared by pages
 └── utils/
 ```
 
