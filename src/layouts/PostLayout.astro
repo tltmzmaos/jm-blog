@@ -6,7 +6,6 @@ import Header from '../components/Header.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import RunningHeader from '../components/RunningHeader.astro';
 import SeriesStrip from '../components/SeriesStrip.astro';
-import EntryNumber from '../components/EntryNumber.astro';
 import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
@@ -30,8 +29,6 @@ export interface Props {
   seriesInfo?: SeriesInfo | null;
   content?: string;
   slug?: string;
-  /** Entry number; drafts (dev only) have none. */
-  entry?: number;
 }
 
 const {
@@ -42,7 +39,6 @@ const {
   seriesInfo,
   content,
   slug: postSlug,
-  entry,
 } = Astro.props;
 const {
   title,
@@ -120,16 +116,6 @@ const { sections, numbered } = postSections(headings);
 
         {/* One row of facts under the title, each in its own cell. */}
         <dl class="facts">
-          {
-            entry !== undefined && (
-              <div class="fact">
-                <dt>Entry</dt>
-                <dd class="fact-num">
-                  <EntryNumber n={entry} bare />
-                </dd>
-              </div>
-            )
-          }
           <div class="fact">
             <dt>Published</dt>
             <dd class="fact-num">
@@ -433,8 +419,8 @@ const { sections, numbered } = postSections(headings);
     margin: 0;
   }
 
-  /* One hairline-bordered row of small cells: the entry number, date and
-     reading time in Plex Mono, then series and tags. The lines between
+  /* One hairline-bordered row of small cells: the date and reading time
+     in Plex Mono, then series and tags. The lines between
      the cells are the row's background showing through a 1px gap, so
      they stay right when the cells wrap. */
   .facts {
@@ -482,11 +468,6 @@ const { sections, numbered } = postSections(headings);
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     white-space: nowrap;
-  }
-
-  .facts .fact-num :global(.entry-no) {
-    font-size: inherit;
-    color: inherit;
   }
 
   .fact-link {

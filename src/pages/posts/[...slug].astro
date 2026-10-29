@@ -53,12 +53,6 @@ const nextPost =
       }
     : undefined;
 
-// Drafts have no entry number; a published post always has one.
-const entry = entries.get(post.id);
-if (!post.data.draft && entry === undefined) {
-  throw new Error(`Published post "${post.id}" has no entry number.`);
-}
-
 // Detect series membership
 const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
 ---
@@ -71,7 +65,6 @@ const seriesInfo = getSeriesInfo(post.id, await getAllSeries());
   seriesInfo={seriesInfo}
   content={post.body}
   slug={post.id}
-  entry={entry}
 >
   <Content />
 </PostLayout>

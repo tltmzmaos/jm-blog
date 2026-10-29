@@ -239,19 +239,6 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
       U+2212, U+2215, U+FEFF, U+FFFD;
   }
 
-  /* "№", for entry numbers. Google's Latin subset leaves it out, so this
-     is the one glyph cut from the full Plex Mono (560 bytes). Its weight
-     must be the Latin file's exactly: only faces with the same descriptors
-     share out a family's characters by unicode-range. */
-  @font-face {
-    font-family: 'IBM Plex Mono';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('/fonts/plex-mono-numero.woff2') format('woff2');
-    unicode-range: U+2116;
-  }
-
   /* Stand-ins while Plex loads: a local Arial (or a font with Arial's
      widths) and Menlo (or Courier New), scaled to Plex's average letter
      width and given Plex's ascent and descent, so the swap doesn't move

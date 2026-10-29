@@ -1,5 +1,4 @@
 ---
-import EntryNumber from './EntryNumber.astro';
 import { postTitleTransitionName } from '../utils/viewTransition';
 
 export interface Props {
@@ -7,7 +6,7 @@ export interface Props {
   description: string;
   pubDate: Date;
   slug: string;
-  /** Entry number; drafts (dev only) have none. */
+  /** Publishing order; lists sort same-day posts by it. Not shown. */
   entry?: number;
   /** Show the year in the date; leave it out under a year heading. */
   withYear?: boolean;
@@ -23,7 +22,6 @@ const {
   description,
   pubDate,
   slug,
-  entry,
   withYear = false,
   compact = false,
   morph = true,
@@ -50,7 +48,6 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   </h3>
   <p class="meta">
     <time class="date" datetime={pubDate.toISOString()}>{formattedDate}</time>
-    {entry !== undefined && <EntryNumber n={entry} class="entry" />}
   </p>
   {!compact && <p class="description">{description}</p>}
 </article>
@@ -92,9 +89,7 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     font-weight: 400;
   }
 
-  /* Date and entry number in Plex Mono, right-aligned. The number comes
-     last: always five characters wide, it makes one straight column down
-     the right edge of every list on the site. */
+  /* Date in Plex Mono, right-aligned. */
   .meta {
     display: flex;
     align-items: baseline;
@@ -117,8 +112,8 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
     margin: 0;
   }
 
-  /* Phones: one column. The number and date go on a line of their own
-     under the title, so the title keeps the full width. */
+  /* Phones: one column. The date goes on a line of its own under the
+     title, so the title keeps the full width. */
   @media (max-width: 640px) {
     .post {
       grid-template-columns: minmax(0, 1fr);

@@ -16,9 +16,8 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Features
 
-- Home page: the name, one line about the notes, then every post newest first (entry number, title, date, description)
+- Home page: the name, one line about the notes, then every post newest first (title, date, description)
 - Every post by year at `/posts/` (the archive, linked from the home page)
-- Entry numbers: each published post is numbered by publishing order, oldest first (`№ 016`), in the lists, the post header and the OG card (src/utils/entryNumbers.ts). Drafts are not counted
 - A "JL" monogram in the header (src/components/Monogram.astro); the favicon, touch icon and OG card footer use the same mark
 - One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
 - Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
@@ -26,7 +25,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
 - `==text==` in a post marks the words with the highlighter (`<mark>`, src/plugins/remark-mark.mjs); code and math are left alone
-- Post header: title, the description as a dek, and one row of facts (entry number, date, reading time, series part, tags)
+- Post header: title, the description as a dek, and one row of facts (date, reading time, series part, tags)
 - Section numbers on the h2s of posts with three or more, drawn by a CSS counter (src/utils/sections.ts); headings that already start with a number keep it
 - A running header on posts: once the title scrolls away, a thin bar shows the title and the current section over a rail with one segment per section (src/scripts/reading.ts)
 - Table of contents (auto-generated), numbered like the sections; the highlighter behind the current entry glides from entry to entry

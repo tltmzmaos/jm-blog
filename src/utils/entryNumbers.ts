@@ -75,6 +75,3 @@ export function newestFirst(
     b.pubDate.valueOf() - a.pubDate.valueOf() || (b.entry ?? 0) - (a.entry ?? 0)
   );
 }
-
-// Also used by browser scripts, which can't import astro:content.
-export { formatEntryNumber } from './entryFormat';
