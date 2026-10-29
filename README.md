@@ -16,7 +16,6 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Features
 
-- A small topic timeline on the home page: every post as a mark at its date, one lane per shelf, from the first post to now (src/utils/timeline.ts); arrow keys move between marks
 - Home page by topic: the newest posts, then topic shelves (a series as a strip of its parts, or posts picked by tags); edit the shelves in `src/data/shelves.ts`
 - Every post by year at `/posts/`
 - Entry numbers: each published post is numbered by publishing order, oldest first (`№ 016`), in the lists, the post header and the OG card (src/utils/entryNumbers.ts). Drafts are not counted
