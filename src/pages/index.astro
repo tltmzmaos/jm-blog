@@ -31,10 +31,12 @@ const baseUrl = import.meta.env.BASE_URL;
   <Header />
 
   <main class="container home" id="main-content">
-    <div class="intro">
-      <h1 class="name">{SITE_TITLE}</h1>
-      <p class="lead">{SITE_DESCRIPTION}</p>
-    </div>
+    {
+      /* The page is the list. The name is the heading for screen readers
+         and search; on screen it is in the tab title and the footer, and
+         the description is the page's meta description. */
+    }
+    <h1 class="sr-only">{SITE_TITLE}</h1>
 
     {
       posts.length > 0 ? (
@@ -68,40 +70,21 @@ const baseUrl = import.meta.env.BASE_URL;
     padding-bottom: 4rem;
   }
 
-  /* The name and what the notes are about, kept short so the posts start
-     high on the first screen. */
-  .intro {
-    margin: 0 0 2.5rem;
-  }
-
-  .name {
-    font-size: 1.875rem;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    line-height: 1.2;
-    color: var(--color-text);
-    margin: 0;
-  }
-
-  .lead {
-    font-size: 1.0625rem;
-    text-wrap: balance;
-    line-height: 1.6;
-    color: var(--color-text-secondary);
-    margin: 0.375rem 0 0;
-  }
-
   /* Hairlines between posts, so each row reads as its own item. */
   .rows {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--color-border);
   }
 
   .rows > li {
     padding: 1.25rem 0;
     border-bottom: 1px solid var(--color-border);
+  }
+
+  /* No intro above the list now, so the first row starts at the top. */
+  .rows > li:first-child {
+    padding-top: 0;
   }
 
   .archive {
@@ -117,18 +100,6 @@ const baseUrl = import.meta.env.BASE_URL;
     .home {
       padding-top: 2rem;
       padding-bottom: 3rem;
-    }
-
-    .intro {
-      margin-bottom: 2rem;
-    }
-
-    .name {
-      font-size: 1.625rem;
-    }
-
-    .lead {
-      font-size: 1rem;
     }
 
     .rows > li {
