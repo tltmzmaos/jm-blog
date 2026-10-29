@@ -1,6 +1,7 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
 import SearchBox from './SearchBox.astro';
+import Monogram from './Monogram.astro';
 
 const baseUrl = import.meta.env.BASE_URL;
 const pathname = Astro.url.pathname;
@@ -27,7 +28,9 @@ const links = [
 
 <header class="header">
   <div class="header-inner">
-    <a href={baseUrl} class="site-name">Jongmin Lee</a>
+    <div class="site-name">
+      <Monogram href={baseUrl} />
+    </div>
 
     <nav class="nav" aria-label="Main">
       {
@@ -66,14 +69,13 @@ const links = [
     padding: 0.875rem 1.5rem;
   }
 
+  /* The mark's letters line up with the text column's edge; its click
+     area reaches past it into the gutter. */
   .site-name {
     grid-area: name;
     justify-self: start;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--color-text);
-    text-decoration: none;
+    display: flex;
+    margin-left: -0.375rem;
   }
 
   .nav {

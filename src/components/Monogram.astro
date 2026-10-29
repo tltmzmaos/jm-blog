@@ -1,0 +1,64 @@
+---
+export interface Props {
+  /** Where the mark links to; the home page by default. */
+  href?: string;
+  /** The link's accessible name, since the mark only shows initials. */
+  label?: string;
+}
+
+const { href = import.meta.env.BASE_URL, label = 'Jongmin Lee, home' } =
+  Astro.props;
+---
+
+{
+  /* "JL" in Plex Mono with a highlighter stroke behind the lower half of
+     the letters: the same mark as the favicon (public/favicon.svg). */
+}
+<a {href} class="monogram" aria-label={label}>
+  <span class="letters" aria-hidden="true">JL</span>
+</a>
+
+<style>
+  /* A 32px square to click; the letters sit in the middle of it. */
+  .monogram {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    min-height: 2rem;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 4px;
+  }
+
+  /* The stroke covers about the lower 55% of the capitals (Plex Mono's
+     baseline sits 1.025em down the text box, its capitals are 0.698em
+     tall) and runs a little past both letters. Pointing at the mark or
+     focusing it widens the stroke a touch. */
+  .letters {
+    padding: 0 0.3em;
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    background: linear-gradient(var(--color-mark), var(--color-mark)) center
+      0.62em / calc(100% - 0.3em) 0.5em no-repeat;
+  }
+
+  .monogram:is(:hover, :focus-visible) .letters {
+    background-size: 100% 0.5em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .letters {
+      transition: background-size 0.15s ease-out;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .letters {
+      background: none;
+    }
+  }
+</style>

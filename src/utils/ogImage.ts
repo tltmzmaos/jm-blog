@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import satori from 'satori';
 import sharp from 'sharp';
 import { formatEntryNumber } from './entryNumbers';
@@ -12,6 +14,11 @@ const PLEX_SANS_600 =
   'https://fonts.gstatic.com/s/ibmplexsans/v23/zYXGKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1swZSAXcomDVmadSDNF5zAA.ttf';
 const PLEX_MONO_400 =
   'https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n5ig.ttf';
+
+// The JL mark, the same file as the favicon, for the card's footer.
+const MARK = `data:image/svg+xml;base64,${readFileSync(
+  path.join(process.cwd(), 'public', 'favicon.svg')
+).toString('base64')}`;
 
 async function fetchFont(url: string): Promise<ArrayBuffer> {
   const res = await fetch(url);
@@ -137,7 +144,23 @@ export async function renderOgImage({
                 color: '#6b6b6b',
               },
               children: [
-                { type: 'span', props: { children: 'jongmin.me' } },
+                {
+                  type: 'div',
+                  props: {
+                    style: {
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                    },
+                    children: [
+                      {
+                        type: 'img',
+                        props: { src: MARK, width: 40, height: 40 },
+                      },
+                      { type: 'span', props: { children: 'jongmin.me' } },
+                    ],
+                  },
+                },
                 { type: 'span', props: { children: 'Jongmin Lee' } },
               ],
             },

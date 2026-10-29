@@ -1,22 +1,9 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- 배경 원형 -->
-  <circle cx="20" cy="20" r="18" fill="url(#gradient)" stroke="url(#borderGradient)" stroke-width="2"/>
-  
-  <!-- J 글자 -->
-  <path d="M16 12 L16 22 Q16 26 12 26 Q8 26 8 22" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  
-  <!-- L 글자 -->
-  <path d="M22 12 L22 26 L30 26" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  
-  <!-- 그라데이션 정의 -->
-  <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#e2e8f0;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#cbd5e1;stop-opacity:1" />
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 32 32">
+  <!-- The JL monogram: a highlighter-yellow square, the letters drawn as
+       strokes so they need no font. -->
+  <rect width="32" height="32" rx="7" fill="#ffe45c"/>
+  <g fill="none" stroke="#171717" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M6.5 8.5h7M12 8.5v10.5a3.5 3.5 0 0 1-7 0"/>
+    <path d="M18.5 8.5v14.5h7.5"/>
+  </g>
 </svg>
