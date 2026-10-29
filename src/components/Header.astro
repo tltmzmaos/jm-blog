@@ -5,13 +5,16 @@ import SearchBox from './SearchBox.astro';
 const baseUrl = import.meta.env.BASE_URL;
 const pathname = Astro.url.pathname;
 
-// The active link is the current section: a post counts as "Posts", since
-// the archive at /posts/ lists it, and a tag page counts as "Tags". The
-// home page is the name on the left, so no link is active there.
-const isActive = (href: string) => pathname.startsWith(href);
+// The active link is the current section. "Posts" is the home page, the
+// list of every post; a post and the archive at /posts/ count as Posts
+// too, and a tag page counts as "Tags".
+const isActive = (href: string) =>
+  href === baseUrl
+    ? pathname === baseUrl || pathname.startsWith(`${baseUrl}posts/`)
+    : pathname.startsWith(href);
 
 const links = [
-  { href: `${baseUrl}posts/`, label: 'Posts' },
+  { href: baseUrl, label: 'Posts' },
   { href: `${baseUrl}series/`, label: 'Series' },
   { href: `${baseUrl}tags/`, label: 'Tags' },
   { href: `${baseUrl}about/`, label: 'About' },

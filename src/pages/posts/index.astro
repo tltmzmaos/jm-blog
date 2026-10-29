@@ -22,15 +22,15 @@ const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
-  title="Posts — Jongmin Lee"
+  title="Archive — Jongmin Lee"
   description="Every post, newest first, grouped by year."
 >
   <Header />
 
   <main class="container page" id="main-content">
-    <h1 class="page-title">Posts</h1>
+    <h1 class="page-title">Archive</h1>
     <p class="page-lead">
-      All {posts.length} posts, newest first. Also by
+      All {posts.length} posts by year, newest first. Also by
       <a href={`${baseUrl}series/`} class="text-link">series</a> and
       <a href={`${baseUrl}tags/`} class="text-link">tag</a>.
     </p>
