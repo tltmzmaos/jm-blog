@@ -18,6 +18,7 @@ const numbered = sections.some((s) => s.n !== undefined);
   sections.length > 0 &&
     (variant === 'sidebar' ? (
       <nav class="toc-sidebar" aria-label="Table of contents">
+        <span class="toc-glider" aria-hidden="true" />
         <p class="toc-title">Contents</p>
         <ul class:list={['toc-list', { numbered }]}>
           {sections.map((section) => (
@@ -63,6 +64,8 @@ const numbered = sections.some((s) => s.n !== undefined);
   /* Fixed in the right margin on wide screens. The offset keeps a 40px gap
      between the text column and the list; below 1240px there isn't room,
      and the inline block takes over. */
+  /* The nav is also the box the highlighter (.toc-glider) is placed in,
+     so it scrolls with the list. */
   .toc-sidebar {
     position: fixed;
     top: 6.5rem;
@@ -88,6 +91,7 @@ const numbered = sections.some((s) => s.n !== undefined);
   }
 
   .toc-link {
+    position: relative;
     display: block;
     padding: 0.3125rem 0 0.3125rem 0.875rem;
     font-size: 0.875rem;
@@ -105,7 +109,6 @@ const numbered = sections.some((s) => s.n !== undefined);
      taken out of the line so the words stay one inline run, which the
      highlighter stroke needs. */
   .numbered .toc-link {
-    position: relative;
     padding-left: 2.5rem;
   }
 
@@ -118,29 +121,43 @@ const numbered = sections.some((s) => s.n !== undefined);
     color: var(--color-text-muted);
   }
 
-  /* The section being read (set by scripts/reading.ts) gets a highlighter
-     stroke behind its words, drawn in as the reader scrolls into it.
-     Wrapped titles get one per line. */
-  .toc-text {
-    background-image: linear-gradient(var(--color-mark), var(--color-mark));
-    background-repeat: no-repeat;
-    background-position: 0 var(--mark-top);
-    background-size: 0 var(--mark-height);
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-
   .toc-link.active {
     color: var(--color-text);
   }
 
-  .toc-link.active .toc-text {
-    background-size: 100% var(--mark-height);
+  /* The highlighter behind the section being read: one element that
+     scripts/reading.ts sizes and places over the entry's words, a stroke
+     per line (up to three, one background layer each), and that glides
+     from entry to entry as the reader moves on. It sits under the links. */
+  .toc-glider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    background-image:
+      linear-gradient(var(--color-mark), var(--color-mark)),
+      linear-gradient(var(--color-mark), var(--color-mark)),
+      linear-gradient(var(--color-mark), var(--color-mark));
+    background-repeat: no-repeat;
+    background-size: 0 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .toc-glider.is-on {
+    opacity: 1;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .toc-text {
-      transition: background-size 0.2s ease-out;
+    .toc-glider.is-gliding {
+      transition:
+        transform 0.3s cubic-bezier(0.3, 0, 0.2, 1),
+        width 0.3s cubic-bezier(0.3, 0, 0.2, 1),
+        height 0.3s cubic-bezier(0.3, 0, 0.2, 1),
+        background-position 0.3s cubic-bezier(0.3, 0, 0.2, 1),
+        background-size 0.3s cubic-bezier(0.3, 0, 0.2, 1),
+        opacity 0.2s ease;
     }
   }
 

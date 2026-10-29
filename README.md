@@ -29,7 +29,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Post header: title, the description as a dek, and one row of facts (entry number, date, reading time, series part, tags)
 - Section numbers on the h2s of posts with three or more, drawn by a CSS counter (src/utils/sections.ts); headings that already start with a number keep it
 - A running header on posts: once the title scrolls away, a thin bar shows the title and the current section over a rail with one segment per section (src/scripts/reading.ts)
-- Table of contents (auto-generated), numbered like the sections
+- Table of contents (auto-generated), numbered like the sections; the highlighter behind the current entry glides from entry to entry
 - Image zoom: a post image drawn smaller than its file opens in a native `<dialog>`, as large as the window allows, growing out of its place where view transitions exist (src/scripts/zoom.ts)
 - Copy-link button
 - Skip-to-content accessibility link

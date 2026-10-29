@@ -17,6 +17,69 @@ const segments = [
   ...document.querySelectorAll<HTMLElement>('[data-runhead] .rail-seg'),
 ];
 const tocLinks = [...document.querySelectorAll<HTMLElement>('.toc-link')];
+const toc = document.querySelector<HTMLElement>('.toc-sidebar');
+const glider = toc?.querySelector<HTMLElement>('.toc-glider');
+
+// Where a highlighter stroke sits on a line of text, in em: the same
+// --mark-top and --mark-height as every other stroke (BaseLayout).
+const MARK_TOP = 0.66;
+const MARK_HEIGHT = 0.44;
+const LAYERS = 3;
+
+/**
+ * Puts the contents highlighter over entry `i`: one stroke per line of
+ * its words, measured from the text itself. It glides there from the
+ * previous entry (CSS transitions; none with reduced motion), and appears
+ * in place the first time.
+ */
+const glide = (i: number) => {
+  if (!toc || !glider) return;
+  const text = tocLinks[i]?.querySelector<HTMLElement>('.toc-text');
+  // The sidebar is hidden below 1240px; a fixed box has no offsetParent,
+  // so ask for its boxes instead.
+  if (!text || toc.getClientRects().length === 0) {
+    glider.classList.remove('is-on');
+    return;
+  }
+  const range = document.createRange();
+  range.selectNodeContents(text);
+  const box = toc.getBoundingClientRect();
+  const fontSize = parseFloat(getComputedStyle(text).fontSize);
+  // One rect per line; merge any pieces of the same line.
+  const lines: { x: number; y: number; w: number }[] = [];
+  for (const r of range.getClientRects()) {
+    const y = r.top - box.top + toc.scrollTop + MARK_TOP * fontSize;
+    const x = r.left - box.left;
+    const line = lines.find((l) => Math.abs(l.y - y) < 2);
+    if (line) {
+      const right = Math.max(line.x + line.w, x + r.width);
+      line.x = Math.min(line.x, x);
+      line.w = right - line.x;
+    } else lines.push({ x, y, w: r.width });
+  }
+  if (lines.length === 0) return;
+  const h = MARK_HEIGHT * fontSize;
+  const left = Math.min(...lines.map((l) => l.x));
+  const top = lines[0].y;
+  const width = Math.max(...lines.map((l) => l.x + l.w)) - left;
+  const height = lines[lines.length - 1].y + h - top;
+  // Three layers always, so the transition can blend them: lines past
+  // the third share its stroke, missing ones are empty at the last line.
+  const layers = Array.from({ length: LAYERS }, (_, k) => {
+    const l = lines[Math.min(k, lines.length - 1)];
+    const w = k < lines.length ? l.w : 0;
+    return { pos: `${l.x - left}px ${l.y - top}px`, size: `${w}px ${h}px` };
+  });
+
+  const first = !glider.classList.contains('is-on');
+  glider.classList.toggle('is-gliding', !first);
+  glider.style.transform = `translate(${left}px, ${top}px)`;
+  glider.style.width = `${width}px`;
+  glider.style.height = `${height}px`;
+  glider.style.backgroundPosition = layers.map((l) => l.pos).join(', ');
+  glider.style.backgroundSize = layers.map((l) => l.size).join(', ');
+  glider.classList.add('is-on');
+};
 
 const headings = segments
   .map((seg) => document.getElementById(seg.dataset.slug ?? ''))
@@ -59,6 +122,7 @@ if (runhead && title && content && headings.length === segments.length) {
     const seg = segments[i];
     if (sectionN) sectionN.textContent = seg?.dataset.n ?? '';
     if (sectionText) sectionText.textContent = seg?.dataset.text ?? '';
+    glide(i);
     tocLinks.forEach((link, k) => {
       link.classList.toggle('active', k === i);
       if (k === i) {
@@ -118,7 +182,10 @@ if (runhead && title && content && headings.length === segments.length) {
   addEventListener('resize', () => {
     measure();
     onScroll();
+    glide(current);
   });
+  // Plex arriving after first paint rewraps the contents entries.
+  void document.fonts.ready.then(() => glide(current));
   // Images, math and late fonts change section lengths after first paint.
   new ResizeObserver(() => {
     measure();
