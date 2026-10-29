@@ -2,6 +2,7 @@
 import katex from 'katex';
 import SEO from '../components/SEO.astro';
 import Footer from '../components/Footer.astro';
+import Shortcuts from '../components/Shortcuts.astro';
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION } from '../utils/site';
 
 export interface Props {
@@ -166,6 +167,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     <a href="#main-content" class="skip-to-content">Skip to content</a>
     <slot />
     <Footer />
+    <Shortcuts />
 
     <!-- Cloudflare Web Analytics -->
     <script is:inline>

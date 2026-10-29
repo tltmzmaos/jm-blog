@@ -33,6 +33,12 @@ const baseUrl = import.meta.env.BASE_URL;
       <a href={GITHUB_URL} class="text-link">GitHub</a>
       <span aria-hidden="true">·</span>
       <a href={LINKEDIN_URL} class="text-link">LinkedIn</a>
+      <span class="keys-item">
+        <span aria-hidden="true">·</span>
+        <button type="button" class="keys-button" data-open-keys>
+          Shortcuts
+        </button>
+      </span>
     </p>
     <p class="colophon">
       <span>Set in IBM Plex. Built with Astro.</span>
@@ -86,6 +92,31 @@ const baseUrl = import.meta.env.BASE_URL;
     flex-wrap: wrap;
     column-gap: 0.375rem;
     margin: 0;
+  }
+
+  /* Opens the list of shortcuts (components/Shortcuts.astro). Looks like
+     the links beside it; only shown where there is likely a keyboard. */
+  .keys-item {
+    display: contents;
+  }
+
+  .keys-button {
+    padding: 0;
+    font: inherit;
+    color: var(--color-text);
+    background: none;
+    border: 0;
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-link-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .keys-item {
+      display: none;
+    }
   }
 
   @media (max-width: 640px) {
