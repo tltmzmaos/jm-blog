@@ -13,14 +13,14 @@ export const EMAIL = 'tltmzmaos@gmail.com';
  */
 export const CAREER: { years: string; label: string }[] = [
   { years: '2026 – now', label: 'Applied AI' },
-  { years: '2025 – 2026', label: 'Lab automation (life sciences)' },
-  { years: '2021 – 2025', label: 'Automotive services' },
+  { years: '2025 – 2026', label: 'Life sciences' },
+  { years: '2021 – 2025', label: 'Automotive' },
 ];
 
 /** Schools, as the About page lists them. */
 export const EDUCATION: string[] = [
   'Georgia Tech — M.S. in Computer Science (OMSCS), in progress',
-  'UC Irvine — Computer Science',
+  'UC Irvine — B.S. in Computer Science',
 ];
 
 // Rendered by src/pages/og.png.ts.
