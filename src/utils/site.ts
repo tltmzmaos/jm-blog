@@ -7,9 +7,6 @@ export const GITHUB_URL = 'https://github.com/tltmzmaos';
 export const LINKEDIN_URL = 'https://linkedin.com/in/jml1228';
 export const EMAIL = 'tltmzmaos@gmail.com';
 
-/** The site's public repository; posts link to their Markdown source. */
-export const REPO_URL = 'https://github.com/tltmzmaos/jm-blog';
-
 /**
  * Where I've worked, newest first, as the About page lists it. Each entry
  * is the one place its years and label are written.

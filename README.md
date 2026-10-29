@@ -31,7 +31,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - A running header on posts: once the title scrolls away, a thin bar shows the title and the current section over a rail with one segment per section (src/scripts/reading.ts)
 - Table of contents (auto-generated), numbered like the sections; the highlighter behind the current entry glides from entry to entry
 - Image zoom: a post image drawn smaller than its file opens in a native `<dialog>`, as large as the window allows, growing out of its place where view transitions exist (src/scripts/zoom.ts)
-- Copy-link button, and a link to the post's Markdown source on GitHub; a post updated after the day it was published shows the update date in its header
+- Copy-link button
 - Skip-to-content accessibility link
 - SEO with JSON-LD structured data and breadcrumbs
 - Self-hosted IBM Plex Sans and Plex Mono (Latin subset), with size-matched local fallbacks so the swap does not move text
