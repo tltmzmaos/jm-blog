@@ -2,19 +2,16 @@
 import type { SeriesPart } from '../utils/seriesPosts';
 
 export interface Props {
-  /** Series name, for the list's accessible name. */
-  name: string;
   parts: SeriesPart[];
   /** Part number of the post being read. Without it every part is drawn
    *  as written, which is how the index pages show a series. */
   current?: number;
 }
 
-const { name, parts, current } = Astro.props;
-const baseUrl = import.meta.env.BASE_URL;
+const { parts, current } = Astro.props;
 
-// Past this many parts the segments get too thin to aim at; the text
-// around the strip ("Part 3 of 30", the list of parts) is enough then.
+// Past this many parts the segments get too thin to read; the text around
+// the strip ("Part 3 of 30", the list of parts) is enough then.
 const MAX_SEGMENTS = 24;
 const show = parts.length > 1 && parts.length <= MAX_SEGMENTS;
 
@@ -27,37 +24,31 @@ const state = (n: number) =>
 ---
 
 {
+  /* A picture of where the reader is in the series, not a way to move
+     around it: the part titles next to it are the links, and the text
+     ("Part 3 of 8") already says what the strip shows, so it is hidden
+     from assistive tech. */
   show && (
-    <ol
+    <div
       class:list={['strip', { overview: current === undefined }]}
-      aria-label={`Parts of ${name}`}
+      aria-hidden="true"
     >
       {parts.map((part) => (
-        <li class:list={['segment', state(part.partNumber)]}>
-          <a
-            href={`${baseUrl}posts/${part.slug}/`}
-            aria-label={`Part ${part.partNumber}: ${part.title}`}
-            title={`Part ${part.partNumber}: ${part.title}`}
-            aria-current={part.partNumber === current ? 'page' : undefined}
-          />
-        </li>
+        <span class:list={['segment', state(part.partNumber)]} />
       ))}
-    </ol>
+    </div>
   )
 }
 
 <style>
   /* One short segment per part, like tally marks. Parts already behind the
      reader are filled with the text color, the one being read with the
-     highlighter, and the ones still ahead with the border color. Each
-     segment is a link to its part; the hit area is the full 24px row, the
-     drawn bar a thin line in the middle of it. */
+     highlighter, and the ones still ahead with the border color. */
   .strip {
     display: flex;
+    align-items: center;
     gap: 0.25rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    height: 0.625rem;
   }
 
   /* A width rather than a flex-basis, so the strip also keeps its size
@@ -66,59 +57,25 @@ const state = (n: number) =>
     flex: 0 1 auto;
     width: 2rem;
     min-width: 0.5rem;
-  }
-
-  .segment a {
-    position: relative;
-    display: block;
-    height: 1.5rem;
-    border-radius: 2px;
-  }
-
-  .segment a::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    margin: auto 0;
     height: 0.3125rem;
+    border-radius: 1px;
     background: var(--color-text);
   }
 
-  .after a::before {
+  .after {
     background: var(--color-border);
   }
 
   /* The current part stands a little taller than the rest, so it is found
      by its shape as well as by its color. */
-  .current a::before {
+  .current {
     height: 0.625rem;
     background: var(--color-mark);
   }
 
   /* On the index pages nobody is reading a part yet: every part is drawn
-     as written, in a quieter grey, and darkens when pointed at. */
-  .overview .segment a::before {
+     as written, in a quieter grey. */
+  .overview .segment {
     background: var(--color-text-muted);
-  }
-
-  .overview .segment a:hover::before {
-    background: var(--color-text);
-  }
-
-  .before a:hover::before,
-  .after a:hover::before {
-    height: 0.5rem;
-  }
-
-  .after a:hover::before {
-    background: var(--color-text-faint);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .segment a::before {
-      transition:
-        height 0.15s ease,
-        background-color 0.15s ease;
-    }
   }
 </style>

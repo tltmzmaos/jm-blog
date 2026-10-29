@@ -53,7 +53,7 @@ src/
 │   ├── TableOfContents.astro
 │   ├── PostList.astro      # posts grouped by year
 │   ├── PostListItem.astro
-│   ├── SeriesStrip.astro   # one segment per part of a series
+│   ├── SeriesStrip.astro   # one segment per part of a series (a picture, not links)
 │   ├── Footer.astro        # © line and profile/feed icons
 │   └── SEO.astro
 ├── content/
