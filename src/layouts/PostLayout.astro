@@ -314,21 +314,13 @@ const { sections, numbered } = postSections(headings);
           !seriesInfo && (prevPost || nextPost) && (
             <nav class="post-nav" aria-label="More posts">
               {prevPost && (
-                <a
-                  href={`/posts/${prevPost.slug}/`}
-                  class="nav-link prev"
-                  rel="prev"
-                >
+                <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
                   <span class="nav-label">Previous post</span>
                   <span class="nav-title">{prevPost.title}</span>
                 </a>
               )}
               {nextPost && (
-                <a
-                  href={`/posts/${nextPost.slug}/`}
-                  class="nav-link next"
-                  rel="next"
-                >
+                <a href={`/posts/${nextPost.slug}/`} class="nav-link next">
                   <span class="nav-label">Next post</span>
                   <span class="nav-title">{nextPost.title}</span>
                 </a>

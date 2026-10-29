@@ -22,7 +22,6 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Entry numbers: each published post is numbered by publishing order, oldest first (`№ 016`), in the lists, the post header and the OG card (src/utils/entryNumbers.ts). Drafts are not counted
 - One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
 - Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
-- Keyboard shortcuts: `/` search, `t` theme, `[` and `]` previous and next post, `?` the list (src/components/Shortcuts.astro); never while typing in a field
 - Search over post titles, descriptions and tags with Fuse.js; matched words are marked
 - Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
