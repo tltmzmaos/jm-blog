@@ -19,6 +19,7 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 - Home page: the name, one line about the notes, then every post newest first (title, date, description)
 - Every post by year at `/posts/` (the archive, linked from the home page)
 - A "JL" monogram in the header (src/components/Monogram.astro); the favicon, touch icon and OG card footer use the same mark
+- Footer: © line on the left, GitHub / LinkedIn / Email / RSS icons on the right; contact links live only here
 - One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
 - Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
 - Search over post titles, descriptions and tags with Fuse.js; matched words are marked
@@ -53,7 +54,7 @@ src/
 │   ├── PostList.astro      # posts grouped by year
 │   ├── PostListItem.astro
 │   ├── SeriesStrip.astro   # one segment per part of a series
-│   ├── Footer.astro        # colophon
+│   ├── Footer.astro        # © line and profile/feed icons
 │   └── SEO.astro
 ├── content/
 │   ├── blog/          # Blog posts (Markdown)
