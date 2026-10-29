@@ -314,6 +314,7 @@ const { sections, numbered } = postSections(headings);
 
   <script>
     import '../scripts/reading';
+    import '../scripts/zoom';
   </script>
 
   <script>
@@ -972,6 +973,109 @@ const { sections, numbered } = postSections(headings);
   .article-content :global(img:hover),
   .hero-image img:hover {
     filter: none;
+  }
+
+  /* ═══ Image zoom (scripts/zoom.ts) ═══ */
+  /* Only images drawn smaller than their file get the zoom cursor. */
+  .article-content :global(img.is-zoomable) {
+    cursor: zoom-in;
+  }
+
+  .article-content :global(img.is-zoomable:focus-visible) {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+
+  /* The dialog covers the window in the page color, so the image sits on
+     the page rather than in a box; a click anywhere closes it. */
+  :global(.zoom) {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 2rem;
+    border: 0;
+    color: var(--color-text);
+    background: var(--color-bg);
+    cursor: zoom-out;
+  }
+
+  :global(.zoom[open]) {
+    display: grid;
+    place-items: center;
+  }
+
+  :global(.zoom::backdrop) {
+    background: transparent;
+  }
+
+  :global(html:has(.zoom[open])) {
+    overflow: hidden;
+  }
+
+  @media (max-width: 639px) {
+    :global(.zoom) {
+      padding: 1rem;
+    }
+  }
+
+  :global(.zoom-figure) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    margin: 0;
+  }
+
+  /* A hairline around the image: the slides are white, like the page. */
+  :global(.zoom-img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px var(--color-border);
+  }
+
+  :global(.zoom-caption) {
+    max-width: min(64ch, 100%);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--color-text-secondary);
+  }
+
+  :global(.zoom-close) {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    height: 2rem;
+    padding: 0 0.75rem;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  :global(.zoom-close:hover) {
+    color: var(--color-text);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(::view-transition-group(zoom-image)) {
+      animation-duration: 0.3s;
+      animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    }
+  }
+
+  @media print {
+    :global(.zoom) {
+      display: none !important;
+    }
   }
 
   .article-content :global(hr) {

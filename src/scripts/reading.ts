@@ -125,3 +125,5 @@ if (runhead && title && content && headings.length === segments.length) {
     onScroll();
   }).observe(content);
 }
+
+export {};
