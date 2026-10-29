@@ -526,6 +526,17 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     margin: 0.5rem 0 0;
   }
 
+  /* Line breaks: a title that wraps is balanced over its lines, and
+     running text avoids leaving one short word alone on its last line.
+     Browsers without text-wrap break lines as before. */
+  :is(h1, h2, h3) {
+    text-wrap: balance;
+  }
+
+  :is(.article-content, .bio) :is(p, li, blockquote) {
+    text-wrap: pretty;
+  }
+
   /* A link inside running text: text color and a light underline at rest.
      On hover or keyboard focus a highlighter stroke sweeps in behind the
      lower part of the words, left to right. The stroke is a background, so
