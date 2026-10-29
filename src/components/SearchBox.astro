@@ -218,6 +218,18 @@
     color: var(--color-text);
   }
 
+  .search-results :global(.sr-meta) {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.75rem;
+  }
+
+  .search-results :global(.sr-no) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
   .search-results :global(.sr-date) {
     flex-shrink: 0;
     font-family: var(--font-mono);
@@ -308,6 +320,7 @@
 <script>
   import type Fuse from 'fuse.js';
   import { tagLabel } from '../utils/tags';
+  import { formatEntryNumber } from '../utils/entryFormat';
 
   interface Post {
     title: string;
@@ -315,6 +328,7 @@
     slug: string;
     tags: string[];
     pubDate: string;
+    entry?: number;
   }
 
   // Filled on the first search of this page load.
@@ -475,8 +489,13 @@
           const dateStr = post.pubDate
             ? dateFmt.format(new Date(post.pubDate))
             : '';
+          // Date and entry number, as in the post lists.
+          const noHtml =
+            post.entry !== undefined
+              ? `<span class="sr-no" aria-hidden="true">№&nbsp;${formatEntryNumber(post.entry)}</span>`
+              : '';
           const dateHtml = dateStr
-            ? `<span class="sr-date">${escapeHtml(dateStr)}</span>`
+            ? `<span class="sr-meta"><span class="sr-date">${escapeHtml(dateStr)}</span>${noHtml}</span>`
             : '';
           return `<a href="/posts/${post.slug}/" class="search-result${
             index === 0 ? ' selected' : ''

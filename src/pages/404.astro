@@ -13,7 +13,9 @@ const baseUrl = import.meta.env.BASE_URL;
   <Header />
   <main class="container page lost" id="main-content">
     <!-- A page number, set like the years on the archive page. -->
-    <p class="folio" aria-hidden="true">p. 404</p>
+    <p class="folio" aria-hidden="true">
+      <span class="folio-p">p.</span>404
+    </p>
     <h1 class="page-title">This page was torn out.</h1>
     <p class="page-lead">
       Nothing is written at <code class="path" id="lost-path">this address</code
@@ -120,6 +122,13 @@ const baseUrl = import.meta.env.BASE_URL;
     letter-spacing: -0.02em;
     line-height: 1;
     color: var(--color-text-muted);
+  }
+
+  /* In Plex Mono a space is as wide as a digit; a short gap reads better
+     after the abbreviation. */
+  .folio-p {
+    margin-right: 0.2em;
+    letter-spacing: -0.06em;
   }
 
   .path {

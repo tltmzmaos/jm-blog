@@ -76,7 +76,5 @@ export function newestFirst(
   );
 }
 
-/** Three digits, as printed after the "№": 7 -> "007". */
-export function formatEntryNumber(n: number): string {
-  return String(n).padStart(3, '0');
-}
+// Also used by browser scripts, which can't import astro:content.
+export { formatEntryNumber } from './entryFormat';

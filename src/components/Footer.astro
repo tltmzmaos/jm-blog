@@ -15,7 +15,7 @@ const lastPost = (await getCollection('blog'))
 const formatDate = (date: Date) =>
   new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     timeZone: 'UTC',
   }).format(date);

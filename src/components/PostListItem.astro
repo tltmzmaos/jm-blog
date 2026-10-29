@@ -37,9 +37,6 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
   year: withYear ? 'numeric' : undefined,
   timeZone: 'UTC',
 }).format(pubDate);
-// The date's longest form in characters of Plex Mono, so the entry numbers
-// before it line up down a list whatever the day of the month.
-const dateWidth = compact ? (withYear ? 8 : 3) : withYear ? 12 : 6;
 ---
 
 <article class:list={['post', { compact }]}>
@@ -52,12 +49,8 @@ const dateWidth = compact ? (withYear ? 8 : 3) : withYear ? 12 : 6;
     <a href={`${baseUrl}posts/${slug}/`}>{title}</a>
   </h3>
   <p class="meta">
-    {entry !== undefined && <EntryNumber n={entry} />}
-    <time
-      class="date"
-      datetime={pubDate.toISOString()}
-      style={`--date-width: ${dateWidth}ch`}>{formattedDate}</time
-    >
+    <time class="date" datetime={pubDate.toISOString()}>{formattedDate}</time>
+    {entry !== undefined && <EntryNumber n={entry} class="entry" />}
   </p>
   {!compact && <p class="description">{description}</p>}
 </article>
@@ -99,19 +92,18 @@ const dateWidth = compact ? (withYear ? 8 : 3) : withYear ? 12 : 6;
     font-weight: 400;
   }
 
-  /* Entry number and date, set in Plex Mono and right-aligned, so both
-     line up down the list. */
+  /* Date and entry number in Plex Mono, right-aligned. The number comes
+     last: always five characters wide, it makes one straight column down
+     the right edge of every list on the site. */
   .meta {
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
-    gap: 1.25rem;
+    gap: 1rem;
     margin: 0;
   }
 
   .date {
-    min-width: var(--date-width);
-    text-align: right;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     color: var(--color-text-muted);
@@ -136,11 +128,6 @@ const dateWidth = compact ? (withYear ? 8 : 3) : withYear ? 12 : 6;
     .meta {
       justify-content: flex-start;
       gap: 0.875rem;
-    }
-
-    .date {
-      min-width: 0;
-      text-align: left;
     }
 
     .description {
