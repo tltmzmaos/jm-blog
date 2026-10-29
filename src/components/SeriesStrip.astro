@@ -3,9 +3,8 @@ import type { SeriesPart } from '../utils/seriesPosts';
 
 export interface Props {
   parts: SeriesPart[];
-  /** Part number of the post being read. Without it every part is drawn
-   *  as written, which is how the index pages show a series. */
-  current?: number;
+  /** Part number of the post being read. */
+  current: number;
 }
 
 const { parts, current } = Astro.props;
@@ -16,11 +15,7 @@ const MAX_SEGMENTS = 24;
 const show = parts.length > 1 && parts.length <= MAX_SEGMENTS;
 
 const state = (n: number) =>
-  current === undefined || n < current
-    ? 'before'
-    : n === current
-      ? 'current'
-      : 'after';
+  n < current ? 'before' : n === current ? 'current' : 'after';
 ---
 
 {
@@ -29,10 +24,7 @@ const state = (n: number) =>
      ("Part 3 of 8") already says what the strip shows, so it is hidden
      from assistive tech. */
   show && (
-    <div
-      class:list={['strip', { overview: current === undefined }]}
-      aria-hidden="true"
-    >
+    <div class="strip" aria-hidden="true">
       {parts.map((part) => (
         <span class:list={['segment', state(part.partNumber)]} />
       ))}
@@ -71,11 +63,5 @@ const state = (n: number) =>
   .current {
     height: 0.625rem;
     background: var(--color-mark);
-  }
-
-  /* On the index pages nobody is reading a part yet: every part is drawn
-     as written, in a quieter grey. */
-  .overview .segment {
-    background: var(--color-text-muted);
   }
 </style>
