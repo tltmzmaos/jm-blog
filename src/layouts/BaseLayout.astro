@@ -256,9 +256,8 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
      widths) and Menlo (or Courier New), scaled to Plex's average letter
      width and given Plex's ascent and descent, so the swap doesn't move
      the text. Measured from the font files: Plex Sans averages 0.454 em at
-     400, 0.464 at 500 and 0.470 at 600 (0.452 at 600 and 90% width),
-     against 0.447 for Arial and 0.484 for Arial Bold; ascent 1.025 em,
-     descent 0.275 em, no line gap. Plex Mono and Menlo are both 0.6 em. The
+     400, 0.464 at 500 and 0.470 at 600, against 0.447 for Arial and 0.484
+     for Arial Bold; ascent 1.025 em, descent 0.275 em, no line gap. Plex Mono and Menlo are both 0.6 em. The
      overrides are divided by size-adjust, which scales them too. */
   @font-face {
     font-family: 'Plex Sans Fallback';
@@ -293,20 +292,6 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     size-adjust: 97.1%;
     ascent-override: 105.5%;
     descent-override: 28.3%;
-    line-gap-override: 0%;
-  }
-
-  /* The name on the home page is set at 90% width. */
-  @font-face {
-    font-family: 'Plex Sans Fallback';
-    font-weight: 551 900;
-    font-stretch: 85% 95%;
-    src:
-      local('Arial Bold'), local('Arial-BoldMT'), local('Helvetica Bold'),
-      local('Helvetica-Bold'), local('Liberation Sans Bold');
-    size-adjust: 93.4%;
-    ascent-override: 109.7%;
-    descent-override: 29.4%;
     line-gap-override: 0%;
   }
 
