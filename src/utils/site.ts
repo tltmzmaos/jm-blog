@@ -17,6 +17,18 @@ export const CAREER: { years: string; label: string }[] = [
   { years: '2021 – 2025', label: 'Automotive' },
 ];
 
+/**
+ * The topics the About page points to, each by the tag whose page lists
+ * its posts. Only topics with posts are shown, so a new one appears once
+ * something is written under it.
+ */
+export const WRITING_TOPICS: { label: string; tag: string }[] = [
+  { label: 'Working with AI', tag: 'AI' },
+  { label: 'Machine learning', tag: 'Machine Learning' },
+  { label: 'Software engineering', tag: 'Software Engineering' },
+  { label: 'Course notes', tag: 'OMSCS' },
+];
+
 /** Schools, as the About page lists them. */
 export const EDUCATION: string[] = [
   'Georgia Tech — M.S. in Computer Science (OMSCS), in progress',
