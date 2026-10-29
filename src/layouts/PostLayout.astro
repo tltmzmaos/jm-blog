@@ -13,6 +13,7 @@ import { hasMathContent } from '../utils/hasMath';
 import { tagLabel, tagSlug } from '../utils/tags';
 import { postTitleTransitionName } from '../utils/viewTransition';
 import { postSections } from '../utils/sections';
+import { REPO_URL } from '../utils/site';
 
 export interface Props {
   frontmatter: {
@@ -84,6 +85,14 @@ const formatDate = (date: Date) =>
     timeZone: 'UTC',
   }).format(date);
 
+// Shown only when the post changed on a later day than it was published.
+const day = (d: Date) => d.toISOString().slice(0, 10);
+const updated =
+  updatedDate && day(updatedDate) > day(pubDate) ? updatedDate : undefined;
+
+// The post's Markdown on GitHub (src/content/blog/<id>.md).
+const sourceUrl = `${REPO_URL}/blob/main/src/content/blog/${slug}.md`;
+
 // The h2s, numbered when there are enough of them (utils/sections.ts).
 const { sections, numbered } = postSections(headings);
 ---
@@ -135,6 +144,16 @@ const { sections, numbered } = postSections(headings);
             <dd class="fact-num">
               <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time
               >
+              {
+                updated && (
+                  <span class="fact-updated">
+                    updated{' '}
+                    <time datetime={updated.toISOString()}>
+                      {formatDate(updated)}
+                    </time>
+                  </span>
+                )
+              }
             </dd>
           </div>
           <div class="fact">
@@ -226,6 +245,7 @@ const { sections, numbered } = postSections(headings);
             Copy link
           </button>
           <span class="share-status" id="copy-link-status" role="status"></span>
+          <a href={sourceUrl} class="source-link">View source</a>
         </div>
 
         {
@@ -501,9 +521,14 @@ const { sections, numbered } = postSections(headings);
     text-decoration-color: currentColor;
   }
 
-  .fact-part {
+  .fact-part,
+  .fact-updated {
     display: block;
     color: var(--color-text-muted);
+  }
+
+  .fact-updated {
+    font-size: 0.75rem;
   }
 
   .tags {
@@ -1166,6 +1191,22 @@ const { sections, numbered } = postSections(headings);
   .share-status {
     font-size: 0.875rem;
     color: var(--color-text-muted);
+  }
+
+  /* The post as written, on GitHub: a quiet link at the end of the row. */
+  .source-link {
+    margin-left: auto;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-link-underline);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .source-link:hover {
+    color: var(--color-text);
+    text-decoration-color: currentColor;
   }
 
   .post-nav {
