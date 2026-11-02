@@ -35,35 +35,31 @@ const formatShortDate = (date: Date) =>
     <h1 class="page-title">Series</h1>
     <p class="page-lead">Notes I wrote while working through a course.</p>
 
-    {
-      seriesList.map((s) => (
-        <section class="series" id={s.dir} aria-labelledby={`${s.dir}-title`}>
-          <h2 class="series-title" id={`${s.dir}-title`}>
-            {s.title}
-          </h2>
-          <p class="series-meta">{seriesMeta(s)}</p>
-          <p class="series-desc">{s.description}</p>
+    {seriesList.map((s) => <section
+      class="series"
+      id={s.dir}
+      aria-labelledby={`${s.dir}-title`}
+    >
+      <h2 class="series-title" id={`${s.dir}-title`}>
+        {s.title}
+      </h2>
+      <p class="series-meta">{seriesMeta(s)}</p>
+      <p class="series-desc">{s.description}</p>
 
-          <ol class="parts" role="list">
-            {s.posts.map((post, i) => (
-              <li class="part">
-                <span class="part-num">
-                  {s.sortBy === 'part' && post.partNumber
-                    ? post.partNumber
-                    : i + 1}
-                </span>
-                <a href={`${baseUrl}posts/${post.slug}/`} class="part-link">
-                  {displayPartTitle(post.title, s)}
-                </a>
-                <time class="part-date" datetime={post.pubDate.toISOString()}>
-                  {formatShortDate(post.pubDate)}
-                </time>
-              </li>
-            ))}
-          </ol>
-        </section>
-      ))
-    }
+      <ol class="parts" role="list">
+        {s.posts.map((post, i) => <li class="part">
+          <span class="part-num">
+            {s.sortBy === 'part' && post.partNumber ? post.partNumber : i + 1}
+          </span>
+          <a href={`${baseUrl}posts/${post.slug}/`} class="part-link">
+            {displayPartTitle(post.title, s)}
+          </a>
+          <time class="part-date" datetime={post.pubDate.toISOString()}>
+            {formatShortDate(post.pubDate)}
+          </time>
+        </li>)}
+      </ol>
+    </section>)}
   </main>
 </BaseLayout>
 

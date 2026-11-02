@@ -31,17 +31,13 @@ const links = [
     </div>
 
     <nav class="nav" aria-label="Main">
-      {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class:list={['nav-link', { active: link.active }]}
-            aria-current={link.current ? 'page' : undefined}
-          >
-            {link.label}
-          </a>
-        ))
-      }
+      {links.map((link) => <a
+        href={link.href}
+        class:list={['nav-link', { active: link.active }]}
+        aria-current={link.current ? 'page' : undefined}
+      >
+        {link.label}
+      </a>)}
     </nav>
 
     <div class="actions">

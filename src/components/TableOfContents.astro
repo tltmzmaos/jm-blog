@@ -13,41 +13,35 @@ export interface Props {
 const { sections, variant = 'sidebar' } = Astro.props;
 ---
 
-{
-  sections.length > 0 &&
-    (variant === 'sidebar' ? (
-      <nav class="toc-sidebar" aria-label="Table of contents">
-        <span class="toc-glider" aria-hidden="true" />
-        <p class="toc-title">Contents</p>
-        <ul class="toc-list">
-          {sections.map((section) => (
-            <li>
-              <a
-                href={`#${section.slug}`}
-                class="toc-link"
-                data-slug={section.slug}
-              >
-                <span class="toc-text">{section.text}</span>
-              </a>
-            </li>
-          ))}
+{sections.length > 0 &&
+  (variant === 'sidebar' ? (
+    <nav class="toc-sidebar" aria-label="Table of contents">
+      <span class="toc-glider" aria-hidden="true" />
+      <p class="toc-title">Contents</p>
+      <ul class="toc-list">
+        {sections.map((section) => <li>
+          <a
+            href={`#${section.slug}`}
+            class="toc-link"
+            data-slug={section.slug}
+          >
+            <span class="toc-text">{section.text}</span>
+          </a>
+        </li>)}
+      </ul>
+    </nav>
+  ) : (
+    <nav class="toc-inline" aria-label="Table of contents">
+      <details>
+        <summary>Contents</summary>
+        <ul class="toc-inline-list">
+          {sections.map((section) => <li>
+            <a href={`#${section.slug}`}>{section.text}</a>
+          </li>)}
         </ul>
-      </nav>
-    ) : (
-      <nav class="toc-inline" aria-label="Table of contents">
-        <details>
-          <summary>Contents</summary>
-          <ul class="toc-inline-list">
-            {sections.map((section) => (
-              <li>
-                <a href={`#${section.slug}`}>{section.text}</a>
-              </li>
-            ))}
-          </ul>
-        </details>
-      </nav>
-    ))
-}
+      </details>
+    </nav>
+  ))}
 
 <style>
   /* Fixed in the right margin on wide screens. The offset keeps a 40px gap

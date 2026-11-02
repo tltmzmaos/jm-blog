@@ -9,34 +9,26 @@ export interface Props {
 const { title, sections } = Astro.props;
 ---
 
-{
-  /* A thin bar that slides in at the top once the post's title has
+{/* A thin bar that slides in at the top once the post's title has
     scrolled away: the title on the left, the section being read on the
     right, and under them a rail with one segment per section, as long as
     the section is. scripts/reading.ts runs it; without that script it
     stays hidden. Screen readers skip it: everything in it is on the page
-    already. */
-}
+    already. */}
 <div class="runhead" data-runhead hidden aria-hidden="true">
   <div class="runhead-bar">
     <span class="runhead-title">{title}</span>
     <span class="runhead-section"><span class="runhead-text"></span></span>
   </div>
-  {
-    sections.length > 0 && (
-      <div class="runhead-rail">
-        {sections.map((section) => (
-          <span
-            class="rail-seg"
-            data-slug={section.slug}
-            data-text={section.text}
-          >
-            <span class="rail-fill" />
-          </span>
-        ))}
-      </div>
-    )
-  }
+  {sections.length > 0 && <div class="runhead-rail">
+    {sections.map((section) => <span
+      class="rail-seg"
+      data-slug={section.slug}
+      data-text={section.text}
+    >
+      <span class="rail-fill" />
+    </span>)}
+  </div>}
 </div>
 
 <style>

@@ -29,31 +29,23 @@ assertUniqueTransitionNames(posts.map((p) => p.slug));
   <Header />
 
   <main class="container home" id="main-content">
-    {
-      /* The page is the list. The name is the heading for screen readers
+    {/* The page is the list. The name is the heading for screen readers
          and search; on screen it is in the tab title and the footer, and
-         the description is the page's meta description. */
-    }
+         the description is the page's meta description. */}
     <h1 class="sr-only">{SITE_TITLE}</h1>
 
-    {
-      posts.length > 0 ? (
-        <section aria-labelledby="posts-title">
-          <h2 class="sr-only" id="posts-title">
-            Posts
-          </h2>
-          <ul class="rows" role="list">
-            {posts.map((post) => (
-              <li>
-                <PostListItem {...post} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : (
-        <p class="empty">No posts yet.</p>
-      )
-    }
+    {posts.length > 0 ? (
+      <section aria-labelledby="posts-title">
+        <h2 class="sr-only" id="posts-title">Posts</h2>
+        <ul class="rows" role="list">
+          {posts.map((post) => <li>
+            <PostListItem {...post} />
+          </li>)}
+        </ul>
+      </section>
+    ) : (
+      <p class="empty">No posts yet.</p>
+    )}
   </main>
 </BaseLayout>
 

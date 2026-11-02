@@ -117,7 +117,8 @@ const sections = postSections(headings);
           <div class="fact">
             <dt>Published</dt>
             <dd class="fact-num">
-              <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time
+              <time datetime={pubDate.toISOString()}
+                >{formatDate(pubDate)}</time
               >
             </dd>
           </div>
@@ -125,39 +126,31 @@ const sections = postSections(headings);
             <dt>Reading</dt>
             <dd class="fact-num">{readingTime.minutes} min</dd>
           </div>
-          {
-            seriesInfo && (
-              <div class="fact fact-wide">
-                <dt>Series</dt>
-                <dd>
-                  <a href={`/series/#${seriesInfo.id}`} class="fact-link">
-                    {seriesInfo.name}
-                  </a>
-                  <span class="fact-part">
-                    part {seriesInfo.currentPart} of {seriesInfo.totalParts}
-                  </span>
-                </dd>
-              </div>
-            )
-          }
+          {seriesInfo && <div class="fact fact-wide">
+            <dt>Series</dt>
+            <dd>
+              <a href={`/series/#${seriesInfo.id}`} class="fact-link">
+                {seriesInfo.name}
+              </a>
+              <span class="fact-part">
+                part {seriesInfo.currentPart} of {seriesInfo.totalParts}
+              </span>
+            </dd>
+          </div>}
         </dl>
       </header>
 
-      {
-        heroImage && (
-          <div class="hero-image">
-            <img
-              src={heroImage}
-              alt={title}
-              loading="eager"
-              decoding="async"
-              fetchpriority="high"
-              width={heroSize?.width}
-              height={heroSize?.height}
-            />
-          </div>
-        )
-      }
+      {heroImage && <div class="hero-image">
+        <img
+          src={heroImage}
+          alt={title}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          width={heroSize?.width}
+          height={heroSize?.height}
+        />
+      </div>}
 
       <TableOfContents sections={sections} variant="inline" />
 
@@ -181,96 +174,89 @@ const sections = postSections(headings);
               stroke="currentColor"
               stroke-width="2"
               aria-hidden="true"
-              ><path
-                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
-              ></path><path
-                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
-              ></path></svg
             >
+              <path
+                d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+              ></path>
+              <path
+                d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              ></path>
+            </svg>
             Copy link
           </button>
           <span class="share-status" id="copy-link-status" role="status"></span>
         </div>
 
-        {
-          seriesInfo && (
-            <nav class="series" aria-label="Series">
-              <p class="series-title">
-                Part {seriesInfo.currentPart} of {seriesInfo.totalParts} in{' '}
-                <a href={`/series/#${seriesInfo.id}`} class="text-link">
-                  {seriesInfo.name}
-                </a>
-              </p>
+        {seriesInfo && <nav class="series" aria-label="Series">
+          <p class="series-title">
+            Part {seriesInfo.currentPart} of {seriesInfo.totalParts} in{' '}
+            <a href={`/series/#${seriesInfo.id}`} class="text-link">
+              {seriesInfo.name}
+            </a>
+          </p>
 
-              <div class="series-strip">
-                <SeriesStrip
-                  parts={seriesInfo.parts}
-                  current={seriesInfo.currentPart}
-                />
-              </div>
+          <div class="series-strip">
+            <SeriesStrip
+              parts={seriesInfo.parts}
+              current={seriesInfo.currentPart}
+            />
+          </div>
 
-              <div class="series-steps">
-                {seriesInfo.prev && (
-                  <a
-                    href={`/posts/${seriesInfo.prev.slug}/`}
-                    class="series-step prev"
-                    rel="prev"
-                  >
-                    <span class="step-label">Previous part</span>
-                    <span class="step-title">{seriesInfo.prev.title}</span>
-                  </a>
+          <div class="series-steps">
+            {seriesInfo.prev && <a
+              href={`/posts/${seriesInfo.prev.slug}/`}
+              class="series-step prev"
+              rel="prev"
+            >
+              <span class="step-label">Previous part</span>
+              <span class="step-title">{seriesInfo.prev.title}</span>
+            </a>}
+            {seriesInfo.next && <a
+              href={`/posts/${seriesInfo.next.slug}/`}
+              class="series-step next"
+              rel="next"
+            >
+              <span class="step-label">Next part</span>
+              <span class="step-title">{seriesInfo.next.title}</span>
+            </a>}
+          </div>
+
+          <details class="series-all">
+            <summary>All parts</summary>
+            <ol class="series-list" role="list">
+              {seriesInfo.parts.map((part) => <li>
+                <span class="part-num">{part.partNumber}</span>
+                {part.partNumber === seriesInfo.currentPart ? (
+                  <span class="series-current" aria-current="page">
+                    {part.title}
+                  </span>
+                ) : (
+                  <a href={`/posts/${part.slug}/`}>{part.title}</a>
                 )}
-                {seriesInfo.next && (
-                  <a
-                    href={`/posts/${seriesInfo.next.slug}/`}
-                    class="series-step next"
-                    rel="next"
-                  >
-                    <span class="step-label">Next part</span>
-                    <span class="step-title">{seriesInfo.next.title}</span>
-                  </a>
-                )}
-              </div>
+              </li>)}
+            </ol>
+          </details>
+        </nav>}
 
-              <details class="series-all">
-                <summary>All parts</summary>
-                <ol class="series-list" role="list">
-                  {seriesInfo.parts.map((part) => (
-                    <li>
-                      <span class="part-num">{part.partNumber}</span>
-                      {part.partNumber === seriesInfo.currentPart ? (
-                        <span class="series-current" aria-current="page">
-                          {part.title}
-                        </span>
-                      ) : (
-                        <a href={`/posts/${part.slug}/`}>{part.title}</a>
-                      )}
-                    </li>
-                  ))}
-                </ol>
-              </details>
-            </nav>
-          )
-        }
-
-        {
-          !seriesInfo && (prevPost || nextPost) && (
-            <nav class="post-nav" aria-label="More posts">
-              {prevPost && (
-                <a href={`/posts/${prevPost.slug}/`} class="nav-link prev">
-                  <span class="nav-label">Previous post</span>
-                  <span class="nav-title">{prevPost.title}</span>
-                </a>
-              )}
-              {nextPost && (
-                <a href={`/posts/${nextPost.slug}/`} class="nav-link next">
-                  <span class="nav-label">Next post</span>
-                  <span class="nav-title">{nextPost.title}</span>
-                </a>
-              )}
-            </nav>
-          )
-        }
+        {!seriesInfo && (prevPost || nextPost) && <nav
+          class="post-nav"
+          aria-label="More posts"
+        >
+          {prevPost && <a
+            href={`/posts/${prevPost.slug}/`}
+            class="nav-link prev"
+          >
+            <span class="nav-label">Previous post</span>
+            <span class="nav-title">{prevPost.title}</span>
+          </a>}
+          {nextPost && <a
+            href={`/posts/${nextPost.slug}/`}
+            class="nav-link next"
+          >
+            <span class="nav-label">Next post</span>
+            <span class="nav-title">{nextPost.title}</span>
+          </a>}
+        </nav>}
       </footer>
     </article>
   </main>

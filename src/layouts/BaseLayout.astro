@@ -97,11 +97,9 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
     />
 
     <!-- KaTeX CSS (only loaded on pages with math) -->
-    {
-      hasMath && (
-        <link rel="stylesheet" href={katexCss} crossorigin="anonymous" />
-      )
-    }
+    {hasMath && (
+      <link rel="stylesheet" href={katexCss} crossorigin="anonymous" />
+    )}
 
     <title>{title}</title>
 
@@ -114,7 +112,6 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
         prefetch: [{ where: { href_matches: '/*' }, eagerness: 'moderate' }],
       })}
     />
-
     <!-- Prevent dark mode flash -->
     <script is:inline>
       (function () {

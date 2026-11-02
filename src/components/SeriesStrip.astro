@@ -23,13 +23,11 @@ const state = (n: number) =>
      around it: the part titles next to it are the links, and the text
      ("Part 3 of 8") already says what the strip shows, so it is hidden
      from assistive tech. */
-  show && (
-    <div class="strip" aria-hidden="true">
-      {parts.map((part) => (
-        <span class:list={['segment', state(part.partNumber)]} />
-      ))}
-    </div>
-  )
+  show && <div class="strip" aria-hidden="true">
+    {parts.map((part) => (
+      <span class:list={['segment', state(part.partNumber)]} />
+    ))}
+  </div>
 }
 
 <style>
