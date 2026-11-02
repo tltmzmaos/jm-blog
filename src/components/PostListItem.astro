@@ -8,48 +8,30 @@ export interface Props {
   slug: string;
   /** Publishing order; lists sort same-day posts by it. Not shown. */
   entry?: number;
-  /** Show the year in the date; leave it out under a year heading. */
-  withYear?: boolean;
-  /** Title and date only. */
-  compact?: boolean;
-  /** Carry the title's view-transition-name. Only one title per post on
-   *  a page may, so a post shown twice gets it on its first row only. */
-  morph?: boolean;
 }
 
-const {
-  title,
-  description,
-  pubDate,
-  slug,
-  withYear = false,
-  compact = false,
-  morph = true,
-} = Astro.props;
+const { title, description, pubDate, slug } = Astro.props;
 
 const baseUrl = import.meta.env.BASE_URL;
-// A compact row in a list of titles needs only the month.
 const formattedDate = new Intl.DateTimeFormat('en-US', {
   month: 'short',
-  day: compact ? undefined : 'numeric',
-  year: withYear ? 'numeric' : undefined,
+  day: 'numeric',
+  year: 'numeric',
   timeZone: 'UTC',
 }).format(pubDate);
 ---
 
-<article class:list={['post', { compact }]}>
+<article class="post">
   <h3
-    class:list={['title', { 'post-title-vt': morph }]}
-    style={morph
-      ? `--post-title-vt: ${postTitleTransitionName(slug)}`
-      : undefined}
+    class="title post-title-vt"
+    style={`--post-title-vt: ${postTitleTransitionName(slug)}`}
   >
     <a href={`${baseUrl}posts/${slug}/`}>{title}</a>
   </h3>
   <p class="meta">
     <time class="date" datetime={pubDate.toISOString()}>{formattedDate}</time>
   </p>
-  {!compact && <p class="description">{description}</p>}
+  <p class="description">{description}</p>
 </article>
 
 <style>
@@ -81,12 +63,6 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 
   .title a:hover {
     text-decoration-line: underline;
-  }
-
-  /* A compact row is one line in a list of titles, so it reads lighter. */
-  .compact .title {
-    font-size: 1rem;
-    font-weight: 400;
   }
 
   /* Date in Plex Mono, right-aligned. */

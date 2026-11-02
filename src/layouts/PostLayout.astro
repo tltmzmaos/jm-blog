@@ -9,7 +9,6 @@ import SeriesStrip from '../components/SeriesStrip.astro';
 import { calculateReadingTime } from '../utils/readingTime.js';
 import type { SeriesInfo } from '../utils/seriesPosts';
 import { hasMathContent } from '../utils/hasMath';
-import { tagLabel, tagSlug } from '../utils/tags';
 import { postTitleTransitionName } from '../utils/viewTransition';
 import { postSections } from '../utils/sections';
 
@@ -137,26 +136,6 @@ const sections = postSections(headings);
                   <span class="fact-part">
                     part {seriesInfo.currentPart} of {seriesInfo.totalParts}
                   </span>
-                </dd>
-              </div>
-            )
-          }
-          {
-            tags.length > 0 && (
-              <div class="fact fact-wide fact-tags">
-                <dt>Tags</dt>
-                <dd>
-                  <ul class="tags">
-                    {tags.map((tag) => (
-                      <li>
-                        <a
-                          href={`/tags/${tagSlug(tag)}/`}
-                          class="tag"
-                          set:text={tagLabel(tag)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
                 </dd>
               </div>
             )
@@ -443,11 +422,6 @@ const sections = postSections(headings);
     flex: 0 1 auto;
   }
 
-  .fact-tags {
-    flex: 1 1 12rem;
-    padding-right: 0;
-  }
-
   .facts dt {
     font-size: 0.75rem;
     line-height: 1.5;
@@ -482,34 +456,6 @@ const sections = postSections(headings);
   .fact-part {
     display: block;
     color: var(--color-text-muted);
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 0.75rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .tag {
-    color: var(--color-text-secondary);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color 0.15s ease;
-  }
-
-  /* The "#" is drawn, with empty alt text so screen readers skip it. The
-     link holds only the label (set:text), so no space follows the "#". */
-  .tag::before {
-    content: '#';
-    content: '#' / '';
-    color: var(--color-text-muted);
-  }
-
-  .tag:hover {
-    color: var(--color-text);
   }
 
   /* ═══ Series ═══ */
@@ -1112,8 +1058,6 @@ const sections = postSections(headings);
     margin-top: 2rem;
   }
 
-      border-left: 0;
-      border-top: 1px solid var(--color-border);
   .nav-link {
     display: flex;
     flex-direction: column;
@@ -1168,6 +1112,8 @@ const sections = postSections(headings);
     .fact + .fact.fact-wide {
       grid-column: 1 / -1;
       padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--color-border);
     }
 
     .series-steps,

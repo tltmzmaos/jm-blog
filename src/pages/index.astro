@@ -23,8 +23,6 @@ const posts = (await getCollection('blog'))
 
 // Each title morphs into its post's heading by a name made from its slug.
 assertUniqueTransitionNames(posts.map((p) => p.slug));
-
-const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
@@ -47,15 +45,10 @@ const baseUrl = import.meta.env.BASE_URL;
           <ul class="rows" role="list">
             {posts.map((post) => (
               <li>
-                <PostListItem {...post} withYear />
+                <PostListItem {...post} />
               </li>
             ))}
           </ul>
-          <p class="archive">
-            <a href={`${baseUrl}posts/`} class="text-link">
-              Archive by year <span aria-hidden="true">→</span>
-            </a>
-          </p>
         </section>
       ) : (
         <p class="empty">No posts yet.</p>
@@ -85,11 +78,6 @@ const baseUrl = import.meta.env.BASE_URL;
   /* No intro above the list now, so the first row starts at the top. */
   .rows > li:first-child {
     padding-top: 0;
-  }
-
-  .archive {
-    margin: 2.5rem 0 0;
-    font-size: 0.9375rem;
   }
 
   .empty {
