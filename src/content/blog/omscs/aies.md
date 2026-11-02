@@ -116,7 +116,7 @@ A few things the course made me more careful about in my own work:
 - **Aggregate metrics hide subgroup failures.** An accuracy number with no group breakdown is not evidence that a system is safe.
 - **Inference is where the ethical exposure is, not storage.** My Google profile assignment showed this from the user side. The data I handed over was mundane; the labels derived from it were not.
 - **Fairness auditing requires collecting the attribute you are auditing on**, which sits in direct tension with data minimization. There is no clean resolution, only a documented decision.
-- **Every human decision in the pipeline is a place bias enters** — dataset selection, threshold setting, and what you choose to surface to the user, not just the training data.
+- **Every human decision in the pipeline is a place bias enters:** dataset selection, threshold setting, and what you choose to surface to the user, not just the training data.
 
 I build AI-powered applications, and this course changed the questions I ask about them. Not "is the model accurate enough" but "accurate for whom, and who absorbs the errors." That is not a question a metric answers on its own.
 
@@ -133,7 +133,7 @@ CS 6603 is not a hard course technically, and if you come in looking for algorit
 **Further Reading:**
 
 - [Gender Shades: Intersectional Accuracy Disparities in Commercial Gender Classification](https://proceedings.mlr.press/v81/buolamwini18a.html)
-- [Machine Bias — ProPublica's COMPAS investigation](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
-- [Attacking Discrimination with Smarter Machine Learning — Google's interactive loan threshold simulation](https://research.google.com/bigpicture/attacking-discrimination-in-ml/)
+- [Machine Bias: ProPublica's COMPAS investigation](https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing)
+- [Attacking Discrimination with Smarter Machine Learning: Google's interactive loan threshold simulation](https://research.google.com/bigpicture/attacking-discrimination-in-ml/)
 - [AI Fairness 360 (AIF360)](https://github.com/Trusted-AI/AIF360)
 - [What-If Tool](https://pair-code.github.io/what-if-tool/)

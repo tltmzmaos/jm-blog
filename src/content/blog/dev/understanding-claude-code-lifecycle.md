@@ -1,6 +1,6 @@
 ---
 title: "Understanding How Claude Code Works Under the Hood"
-description: "A walkthrough of Claude Code's execution lifecycle — from the moment you type a prompt to the final response"
+description: "A walkthrough of Claude Code's execution lifecycle, from the moment you type a prompt to the final response"
 pubDate: 2026-02-14
 author: "Jongmin Lee"
 tags: ["Software Engineering", "AI", "Claude Code"]
@@ -12,17 +12,17 @@ featured: true
 
 After actively using Claude Code at work for a while, I realized I was treating it like a black box. I'd type a prompt, it would do things, and I'd get a result. That worked fine most of the time, but when the output wasn't what I expected, I had no mental model for understanding *why*.
 
-So I spent some time digging into how Claude Code actually works — what happens between the moment I hit Enter and the moment I see a response. This post is my attempt to organize that understanding.
+So I spent some time digging into how Claude Code actually works: what happens between the moment I hit Enter and the moment I see a response. This post is my attempt to organize that understanding.
 
 ## The Big Picture
 
 At its core, Claude Code runs in a loop:
 
-1. **Gather context** — read files, search the codebase, look up information
-2. **Take action** — make edits, run commands, call external tools
-3. **Verify results** — check outputs, run tests, adjust approach
+1. **Gather context:** read files, search the codebase, look up information
+2. **Take action:** make edits, run commands, call external tools
+3. **Verify results:** check outputs, run tests, adjust approach
 
-This loop repeats until Claude decides it has enough to give a final response. A single prompt can trigger dozens of tool calls — reading files, making edits, running tests — all within one cycle.
+This loop repeats until Claude decides it has enough to give a final response. A single prompt can trigger dozens of tool calls (reading files, making edits, running tests), all within one cycle.
 
 ## Session Initialization
 
@@ -36,7 +36,7 @@ Before any of the above happens, the session needs to be set up. When you start 
 | Settings | `settings.json` (user / project / local) | Permissions, hooks, env vars |
 | MCP Servers | `.mcp.json`, `~/.claude.json` | External tool connections |
 
-All of this becomes part of the system prompt — the context that Claude always has access to throughout the session. This is why CLAUDE.md is powerful: it's not a one-time instruction, it's persistent context that shapes every response.
+All of this becomes part of the system prompt, the context that Claude always has access to throughout the session. This is why CLAUDE.md is powerful: it's not a one-time instruction, it's persistent context that shapes every response.
 
 A `SessionStart` hook fires at this point, if configured. This can inject additional context or run setup scripts.
 
@@ -50,7 +50,7 @@ The `UserPromptSubmit` hook fires first. This can modify or add context to your 
 
 **Step 2: Claude Decides What To Do**
 
-Claude analyzes the prompt and decides whether it can respond directly or needs to use tools first. If tools are needed, it selects which ones — and it can select multiple tools in parallel if they're independent.
+Claude analyzes the prompt and decides whether it can respond directly or needs to use tools first. If tools are needed, it selects which ones, and it can select multiple tools in parallel if they're independent.
 
 **Step 3: Permission Check**
 
@@ -60,11 +60,11 @@ Before any tool executes, Claude Code checks the permission rules in `settings.j
 - **ask**: Prompts the user for approval
 - **deny**: Blocked entirely
 
-This is where rules like `Bash(npm run *)` come in — you can pre-approve specific patterns so Claude doesn't ask every time.
+This is where rules like `Bash(npm run *)` come in: you can pre-approve specific patterns so Claude doesn't ask every time.
 
 **Step 4: Hook Execution**
 
-If a `PreToolUse` hook is configured, it fires before the tool runs. This is where you can add guardrails — for example, blocking edits to certain files, or running a linter check before any write operation.
+If a `PreToolUse` hook is configured, it fires before the tool runs. This is where you can add guardrails, for example blocking edits to certain files, or running a linter check before any write operation.
 
 If the hook returns exit code 2, the tool call is blocked and Claude is informed why.
 
@@ -84,7 +84,7 @@ If more work is needed, the loop goes back to Step 2. If not, Claude generates t
 
 ## Subagents
 
-Sometimes Claude delegates work to a subagent — a separate Claude instance with its own context window. This happens when:
+Sometimes Claude delegates work to a subagent, a separate Claude instance with its own context window. This happens when:
 
 - The task is exploratory and might consume a lot of context (e.g., searching through a large codebase)
 - A specialized, restricted tool set is appropriate (e.g., read-only analysis)
@@ -105,7 +105,7 @@ You can also define custom subagents in `.claude/agents/` with specific instruct
 
 ## Context Window Management
 
-Claude Code has a finite context window — the amount of information it can hold in a single session. As the conversation grows, it eventually approaches the limit.
+Claude Code has a finite context window, the amount of information it can hold in a single session. As the conversation grows, it eventually approaches the limit.
 
 When context usage hits roughly 95%, auto-compaction kicks in. Claude summarizes the earlier parts of the conversation to free up space, preserving the most relevant information. A `PreCompact` hook fires before this happens.
 
@@ -119,14 +119,14 @@ Here's a summary of when each configuration file and concept comes into play acr
 
 | Configuration | When It's Used | Role in Lifecycle |
 |---------------|---------------|-------------------|
-| `CLAUDE.md` | Session init, persists after compaction | Always-on project context — shapes every response |
+| `CLAUDE.md` | Session init, persists after compaction | Always-on project context that shapes every response |
 | `.claude/rules/` | Session init, loaded with CLAUDE.md | Modular instructions by topic or file path |
 | Auto Memory | Session init (first 200 lines) | Claude's own notes from previous sessions |
 | `settings.json` | Session init + every tool call | Permissions, hooks, env vars, model selection |
 | `.mcp.json` | Session init | External tool connections (GitHub, Slack, DBs, etc.) |
 | `.claude/agents/` | During agentic loop, when Claude delegates | Custom subagent definitions with restricted tools/instructions |
 | `.claude/skills/` | On invocation (slash command or auto-trigger) | Reusable prompt templates for repeatable workflows |
-| Hooks | Throughout — tied to specific lifecycle events | Automation at each stage (format, validate, block, notify) |
+| Hooks | Throughout, tied to specific lifecycle events | Automation at each stage (format, validate, block, notify) |
 
 Skills and agents are worth noting separately: they don't load at session init. Skills load their descriptions at startup so Claude knows they exist, but the full content only loads when a skill is actually invoked. Custom agents are instantiated only when Claude decides to delegate a task.
 
@@ -194,21 +194,21 @@ The available hook events map directly to the lifecycle stages:
 MCP connects Claude Code to external tools. Some commonly used servers:
 
 ```bash
-## GitHub — PR reviews, issue management
+## GitHub: PR reviews, issue management
 claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 
-## Sentry — error monitoring and debugging
+## Sentry: error monitoring and debugging
 claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
 
-## PostgreSQL — query databases directly
+## PostgreSQL: query databases directly
 claude mcp add --transport stdio db -- npx -y @bytebase/dbhub \
   --dsn "postgresql://user:pass@host:5432/dbname"
 
-## Notion — access documentation
+## Notion: access documentation
 claude mcp add --transport http notion https://mcp.notion.com/mcp
 ```
 
-Once connected, you can ask things like "What are the most common errors in Sentry this week?" or "Create a GitHub issue for the bug we just found" — Claude uses the MCP tools to interact with these services directly.
+Once connected, you can ask things like "What are the most common errors in Sentry this week?" or "Create a GitHub issue for the bug we just found." Claude uses the MCP tools to interact with these services directly.
 
 ### Commands
 
@@ -222,7 +222,7 @@ Run the build and report any errors:
 3. If clean, confirm the build succeeded
 ```
 
-Commands are lightweight — just text that gets injected into the conversation. They don't have frontmatter or special configuration. Think of them as saved prompts you'd otherwise type manually.
+Commands are lightweight: just text that gets injected into the conversation. They don't have frontmatter or special configuration. Think of them as saved prompts you'd otherwise type manually.
 
 **Commands vs Skills:** Commands inject a prompt. Skills define a workflow with metadata (name, description, model invocation rules). Use commands for simple "do this" actions. Use skills when you need structured behavior, dynamic context injection, or want Claude to recognize when to apply it automatically.
 
@@ -245,7 +245,7 @@ Deploy $ARGUMENTS to production:
 4. Verify the deployment succeeded
 ```
 
-`disable-model-invocation: true` means only you can trigger this with `/deploy` — Claude won't run it on its own. Skills can also inject dynamic context using shell commands:
+`disable-model-invocation: true` means only you can trigger this with `/deploy`. Claude won't run it on its own. Skills can also inject dynamic context using shell commands:
 
 ```yaml
 ---
@@ -287,11 +287,11 @@ Provide feedback organized by priority:
 - Suggestions (consider)
 ```
 
-The `tools` field restricts this agent to read-only operations (no Edit or Write). The `description` tells Claude when to delegate — including "use proactively" encourages automatic delegation after code changes.
+The `tools` field restricts this agent to read-only operations (no Edit or Write). The `description` tells Claude when to delegate. Including "use proactively" encourages automatic delegation after code changes.
 
 ## Beyond the CLI: Agent SDK
 
-Everything above applies to Claude Code as a CLI tool. But if you need to build a standalone AI application — multi-agent pipelines, production services, or custom UIs — the Agent SDK is the next step.
+Everything above applies to Claude Code as a CLI tool. But if you need to build a standalone AI application (multi-agent pipelines, production services, or custom UIs), the Agent SDK is the next step.
 
 | Aspect | Claude Code CLI | Agent SDK |
 | ------ | --------------- | --------- |
@@ -301,7 +301,7 @@ Everything above applies to Claude Code as a CLI tool. But if you need to build 
 | Agents | Built-in subagents + custom `.claude/agents/` | Fully programmable agent orchestration |
 | When to use | Day-to-day coding, project management | When you need custom agent logic beyond the CLI |
 
-For most development workflows, the CLI is sufficient. The SDK becomes relevant when you want to embed Claude's agentic capabilities into your own application — for example, an automated code review service, a CI/CD pipeline that reasons about failures, or a multi-agent system where different agents handle different concerns.
+For most development workflows, the CLI is sufficient. The SDK becomes relevant when you want to embed Claude's agentic capabilities into your own application, for example an automated code review service, a CI/CD pipeline that reasons about failures, or a multi-agent system where different agents handle different concerns.
 
 ## What This Means in Practice
 

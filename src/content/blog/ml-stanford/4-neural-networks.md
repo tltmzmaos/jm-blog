@@ -117,9 +117,9 @@ $a_j^{[l]}=g(\overrightarrow{w}_j^{[l]}\cdot\overrightarrow{a}^{[l-1]}+b_j^{[l]}
 
 ## Is there a path to AGI?
 
-- ANI - artificial narrow intelligence
+- ANI: artificial narrow intelligence
     - smart speaker, self-driving car, web search…
-- AGI - artificial general intelligence
+- AGI: artificial general intelligence
     - do anything a human can do
 
 ## How neural networks are implemented efficiently

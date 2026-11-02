@@ -58,9 +58,9 @@ Find something interesting in unlabeled data
 
 > Data only comes with inputs x, but not output labels y: Algorithm has to find structure in the data
 > 
-- clustering - group similar data points together
-- Anomaly detection - find unusual data points
-- Dimensionality reduction - compress data using fewer numbers
+- clustering: group similar data points together
+- Anomaly detection: find unusual data points
+- Dimensionality reduction: compress data using fewer numbers
 
 ## Linear Regression Model
 
@@ -70,12 +70,12 @@ Find something interesting in unlabeled data
 
 ![Training set table of house size x and price y with m = 47, and notation for x, y, m and the i-th example (x^(i), y^(i))](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.05.47_PM.webp)
 
-- Training set - data used to train the model
-- x - input variable feature
-- y - output variable, target variable
-- m - number of training examples
-- (x,y) - single training example
-- $(x^{(i)},y^{(i)})$ - ith training example
+- Training set: data used to train the model
+- x: input variable feature
+- y: output variable, target variable
+- m: number of training examples
+- (x,y): single training example
+- $(x^{(i)},y^{(i)})$: ith training example
     - ex) $(x^{(1)}, y^{(1)}) = (2104,400)$
 
 ![Diagram: training set to learning algorithm to model f, which maps feature x to prediction y-hat; linear model f_w,b(x) = wx + b](/1-Introduction-to-machine-learning/Screenshot_2024-03-20_at_7.09.04_PM.webp)

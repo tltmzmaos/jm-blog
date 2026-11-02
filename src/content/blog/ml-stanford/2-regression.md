@@ -32,7 +32,7 @@ b
 
 $\overrightarrow{x}$ = [x1 x2 x3 .. xn]
 
-### Simplified - multiple linear regression
+### Simplified: multiple linear regression
 
 $f_w,_b(x) = w_1x_1+w_2x_2+...+w_nx_n+b = \overrightarrow{w}\cdot\overrightarrow{x}+b$
 

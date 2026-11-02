@@ -1,6 +1,6 @@
 ---
 title: "How AI Changed My Development Workflow After Switching Jobs"
-description: "Moving from a Copilot-only environment to a team that actively uses Claude Code — what changed and what I'm still figuring out"
+description: "Moving from a Copilot-only environment to a team that actively uses Claude Code: what changed and what I'm still figuring out"
 pubDate: 2026-02-14
 author: "Jongmin Lee"
 tags: ["Software Engineering", "AI"]
@@ -18,7 +18,7 @@ At my new company, Claude Code was being actively used. The company itself encou
 
 Honestly, I had some resistance at first. I had this assumption that you need to write code yourself to truly understand a codebase, and that's the only way you can maintain it properly later. As someone who just joined, I felt like I couldn't claim to understand the project without getting my hands into the code directly.
 
-But once I actually started using it, that assumption began to break down. There was a day when I finished my work without writing a single line of code myself — and now that's become the norm. Most of my working hours are spent guiding the AI on how to approach the task, reviewing the quality of the generated code, and verifying that things actually work.
+But once I actually started using it, that assumption began to break down. There was a day when I finished my work without writing a single line of code myself, and now that's become the norm. Most of my working hours are spent guiding the AI on how to approach the task, reviewing the quality of the generated code, and verifying that things actually work.
 
 Of course, specifying business logic and refining requirements still requires a human. But in the implementation side of things, the shift has been real.
 
@@ -26,7 +26,7 @@ Of course, specifying business logic and refining requirements still requires a 
 
 Not all of this change has been positive. As someone new to the team, I noticed some problems.
 
-The first is depth of understanding. When you use AI to explore an existing codebase, you get a quick sense of the overall shape and context. But you miss the parts where issues actually tend to occur — the areas with tangled history, the subtle pain points. It feels like you've grasped the surface, but the depth isn't there.
+The first is depth of understanding. When you use AI to explore an existing codebase, you get a quick sense of the overall shape and context. But you miss the parts where issues actually tend to occur: the areas with tangled history, the subtle pain points. It feels like you've grasped the surface, but the depth isn't there.
 
 The second is the pace of change. Existing team members are also using AI, which means their maintenance and refactoring iterations have gotten faster. New concepts and architectural philosophies get introduced into the codebase, and what you understood yesterday might look different today. AI speeds everyone up, so the codebase itself moves fast.
 
@@ -34,7 +34,7 @@ The second is the pace of change. Existing team members are also using AI, which
 
 One thing I've felt strongly through all of this: the more AI accelerates development speed, the more advantageous it is to deeply understand the business and the industry.
 
-AI writes code well. It writes more code, faster than humans. I'll admit that now. But deciding *what* to build still comes from domain knowledge. Specifying requirements, prioritizing within a business context, understanding how technical decisions impact the product — AI doesn't do that for you.
+AI writes code well. It writes more code, faster than humans. I'll admit that now. But deciding *what* to build still comes from domain knowledge. Specifying requirements, prioritizing within a business context, understanding how technical decisions impact the product. AI doesn't do that for you.
 
 For someone like me who recently switched jobs, I have to ramp up on both the codebase and the domain simultaneously. AI has lowered the barrier on the code side, but building domain understanding quickly is a separate challenge entirely. I need to figure out my own strategy for that.
 
@@ -52,4 +52,4 @@ But there's a negative side too. There are more decision points at every moment.
 
 ## What's Next
 
-I don't have answers yet. How to use AI effectively, what kind of shared foundation a team needs, what strategies are required to adapt quickly in a new environment — I'm still thinking through all of it.
+I don't have answers yet. How to use AI effectively, what kind of shared foundation a team needs, what strategies are required to adapt quickly in a new environment. I'm still thinking through all of it.

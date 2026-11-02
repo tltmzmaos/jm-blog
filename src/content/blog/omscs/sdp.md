@@ -19,10 +19,10 @@ The course introduces multiple lifecycle models, from rigid waterfall to flexibl
 
 Key models covered:
 
-- **Waterfall** - Sequential phases, works when requirements are stable.
-- **Spiral** - Risk-driven, good for large uncertain projects.
-- **Agile/Scrum** - Iterative, embraces change and continuous feedback.
-- **RUP (Rational Unified Process)** - Use-case driven, architecture-centric.
+- **Waterfall:** Sequential phases, works when requirements are stable.
+- **Spiral:** Risk-driven, good for large uncertain projects.
+- **Agile/Scrum:** Iterative, embraces change and continuous feedback.
+- **RUP (Rational Unified Process):** Use-case driven, architecture-centric.
 
 The practical takeaway is to choose a process that matches your constraints, not to follow a model blindly.
 
@@ -43,10 +43,10 @@ Writing use cases forces you to think through edge cases before coding begins.
 
 UML diagrams are a shared language for design discussions. The course covers several diagram types:
 
-- **Class diagrams** - Show structure: classes, attributes, methods, and relationships.
-- **Sequence diagrams** - Show behavior: how objects interact over time.
-- **State diagrams** - Show lifecycle: how an object transitions between states.
-- **Activity diagrams** - Show workflow: the flow of activities in a process.
+- **Class diagrams:** Show structure: classes, attributes, methods, and relationships.
+- **Sequence diagrams:** Show behavior: how objects interact over time.
+- **State diagrams:** Show lifecycle: how an object transitions between states.
+- **Activity diagrams:** Show workflow: the flow of activities in a process.
 
 UML is not about drawing perfect diagrams. It is about communicating intent clearly so the team builds the right thing.
 
@@ -96,9 +96,9 @@ Working in a distributed team taught that communication and process discipline m
 
 Good design makes code easier to understand, test, and change. The course touched on:
 
-- **SOLID principles** - Guidelines for maintainable object-oriented design.
-- **Low coupling, high cohesion** - Modules should be independent and focused.
-- **Design patterns** - Reusable solutions to common problems.
+- **SOLID principles:** Guidelines for maintainable object-oriented design.
+- **Low coupling, high cohesion:** Modules should be independent and focused.
+- **Design patterns:** Reusable solutions to common problems.
 
 The lesson is that design decisions compound. Small improvements in structure pay off as the system grows.
 
