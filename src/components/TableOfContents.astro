@@ -3,7 +3,7 @@ import type { Section } from '../utils/sections';
 
 export interface Props {
   /** The post's h2s (utils/sections.ts): h3s made the list as long as the
-   *  article on some posts. Numbered like the headings, when they are. */
+   *  article on some posts. */
   sections: Section[];
   /** sidebar: fixed beside the article on wide screens.
    *  inline: collapsed block at the top of the article on narrower ones. */
@@ -11,7 +11,6 @@ export interface Props {
 }
 
 const { sections, variant = 'sidebar' } = Astro.props;
-const numbered = sections.some((s) => s.n !== undefined);
 ---
 
 {
@@ -20,7 +19,7 @@ const numbered = sections.some((s) => s.n !== undefined);
       <nav class="toc-sidebar" aria-label="Table of contents">
         <span class="toc-glider" aria-hidden="true" />
         <p class="toc-title">Contents</p>
-        <ul class:list={['toc-list', { numbered }]}>
+        <ul class="toc-list">
           {sections.map((section) => (
             <li>
               <a
@@ -28,11 +27,6 @@ const numbered = sections.some((s) => s.n !== undefined);
                 class="toc-link"
                 data-slug={section.slug}
               >
-                {numbered && (
-                  <span class="toc-num" aria-hidden="true">
-                    {section.n}
-                  </span>
-                )}
                 <span class="toc-text">{section.text}</span>
               </a>
             </li>
@@ -43,14 +37,9 @@ const numbered = sections.some((s) => s.n !== undefined);
       <nav class="toc-inline" aria-label="Table of contents">
         <details>
           <summary>Contents</summary>
-          <ul class:list={['toc-inline-list', { numbered }]}>
+          <ul class="toc-inline-list">
             {sections.map((section) => (
               <li>
-                {numbered && (
-                  <span class="toc-num" aria-hidden="true">
-                    {section.n}
-                  </span>
-                )}
                 <a href={`#${section.slug}`}>{section.text}</a>
               </li>
             ))}
@@ -103,22 +92,6 @@ const numbered = sections.some((s) => s.n !== undefined);
 
   .toc-link:hover {
     color: var(--color-text);
-  }
-
-  /* Section numbers, as in the margin of the article. The number is
-     taken out of the line so the words stay one inline run, which the
-     highlighter stroke needs. */
-  .numbered .toc-link {
-    padding-left: 2.5rem;
-  }
-
-  .toc-num {
-    position: absolute;
-    left: 0.875rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    line-height: 1.6;
-    color: var(--color-text-muted);
   }
 
   .toc-link.active {
@@ -210,12 +183,6 @@ const numbered = sections.some((s) => s.n !== undefined);
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
-  }
-
-  .toc-inline-list.numbered li {
-    display: grid;
-    grid-template-columns: 1.75rem minmax(0, 1fr);
-    align-items: baseline;
   }
 
   .toc-inline-list a {

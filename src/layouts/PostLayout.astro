@@ -80,8 +80,7 @@ const formatDate = (date: Date) =>
     timeZone: 'UTC',
   }).format(date);
 
-// The h2s, numbered when there are enough of them (utils/sections.ts).
-const { sections, numbered } = postSections(headings);
+const sections = postSections(headings);
 ---
 
 <BaseLayout
@@ -183,7 +182,7 @@ const { sections, numbered } = postSections(headings);
 
       <TableOfContents sections={sections} variant="inline" />
 
-      <div class:list={['article-content', { numbered }]}>
+      <div class="article-content">
         <slot />
       </div>
 
@@ -687,53 +686,12 @@ const { sections, numbered } = postSections(headings);
     scroll-padding-top: var(--runhead-height);
   }
 
-  /* Section numbers: a counter on the h2s of a post with three or more
-     sections (utils/sections.ts), drawn small and grey. A heading that
-     starts with its own number ("2. Regression...") keeps it and isn't
-     counted; its id starts with a digit. Wide screens hang the number in
-     the margin, level with the heading's baseline; narrower ones put it
-     in front of the words. Screen readers skip it. */
-  .article-content.numbered {
-    counter-reset: section;
-  }
-
-  .article-content.numbered
-    :global(
-      h2:not(
-          [id^='0'],
-          [id^='1'],
-          [id^='2'],
-          [id^='3'],
-          [id^='4'],
-          [id^='5'],
-          [id^='6'],
-          [id^='7'],
-          [id^='8'],
-          [id^='9']
-        )::before
-    ) {
-    counter-increment: section;
-    content: counter(section);
-    content: counter(section) / '';
-    display: inline-block;
-    width: var(--section-num-width, auto);
-    margin: 0 var(--section-num-gap, 0.75rem) 0 var(--section-num-hang, 0);
-    text-align: right;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    font-weight: 400;
-    letter-spacing: 0;
-    color: var(--color-text-muted);
-  }
-
-  /* In the margin: as much negative margin as the number takes, so the
-     heading's words stay on the text column's edge. */
-  @media (min-width: 1024px) {
-    .article-content.numbered {
-      --section-num-width: 3rem;
-      --section-num-gap: 1.25rem;
-      --section-num-hang: -4.25rem;
-    }
+  /* Long display math scrolls inside itself instead of widening the page.
+     The padding keeps tall glyphs clear of the clipped edge. */
+  .article-content :global(.katex-display) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-block: 0.25em;
   }
 
   .article-content :global(h2) {

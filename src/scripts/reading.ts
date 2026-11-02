@@ -87,7 +87,6 @@ const headings = segments
 
 if (runhead && title && content && headings.length === segments.length) {
   runhead.hidden = false;
-  const sectionN = runhead.querySelector<HTMLElement>('.runhead-n');
   const sectionText = runhead.querySelector<HTMLElement>('.runhead-text');
 
   // The bar is shown while the title is above the top of the window.
@@ -120,7 +119,6 @@ if (runhead && title && content && headings.length === segments.length) {
       seg.classList.toggle('current', k === i);
     });
     const seg = segments[i];
-    if (sectionN) sectionN.textContent = seg?.dataset.n ?? '';
     if (sectionText) sectionText.textContent = seg?.dataset.text ?? '';
     glide(i);
     tocLinks.forEach((link, k) => {

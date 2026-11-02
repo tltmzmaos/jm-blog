@@ -20,9 +20,7 @@ const { title, sections } = Astro.props;
 <div class="runhead" data-runhead hidden aria-hidden="true">
   <div class="runhead-bar">
     <span class="runhead-title">{title}</span>
-    <span class="runhead-section"
-      ><span class="runhead-n"></span><span class="runhead-text"></span></span
-    >
+    <span class="runhead-section"><span class="runhead-text"></span></span>
   </div>
   {
     sections.length > 0 && (
@@ -31,7 +29,6 @@ const { title, sections } = Astro.props;
           <span
             class="rail-seg"
             data-slug={section.slug}
-            data-n={section.n}
             data-text={section.text}
           >
             <span class="rail-fill" />
@@ -106,17 +103,6 @@ const { title, sections } = Astro.props;
     flex: 0 1 auto;
     max-width: 55%;
     color: var(--color-text);
-  }
-
-  .runhead-n {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-  }
-
-  .runhead-n:not(:empty)::after {
-    content: ' · ';
-    content: ' · ' / '';
   }
 
   /* The rail sits on the bar's bottom line, as wide as the text column.
