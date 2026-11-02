@@ -418,14 +418,10 @@ const sections = postSections(headings);
   }
 
   /* One hairline-bordered row of small cells: the date and reading time
-     in Plex Mono, then series and tags. The lines between
-     the cells are the row's background showing through a 1px gap, so
-     they stay right when the cells wrap. */
+     in Plex Mono, then the series. */
   .facts {
     display: flex;
-    gap: 1px;
     margin: 1.75rem 0 0;
-    background: var(--color-border);
     border-block: 1px solid var(--color-border);
   }
 
@@ -433,7 +429,10 @@ const sections = postSections(headings);
     flex: 0 0 auto;
     min-width: 0;
     padding: 0.5rem 0.875rem 0.625rem;
-    background: var(--color-bg);
+  }
+
+  .fact + .fact {
+    border-left: 1px solid var(--color-border);
   }
 
   .fact:first-child {
@@ -1113,6 +1112,8 @@ const sections = postSections(headings);
     margin-top: 2rem;
   }
 
+      border-left: 0;
+      border-top: 1px solid var(--color-border);
   .nav-link {
     display: flex;
     flex-direction: column;
@@ -1157,14 +1158,14 @@ const sections = postSections(headings);
       font-size: 1.0625rem;
     }
 
-    /* Phones: number, date and reading time share the first line; series
-       and tags get a line each. */
+    /* Phones: date and reading time share the first line; the series gets
+       its own. Written to outrank `.fact + .fact` above. */
     .facts {
       display: grid;
       grid-template-columns: auto auto minmax(0, 1fr);
     }
 
-    .fact-wide {
+    .fact + .fact.fact-wide {
       grid-column: 1 / -1;
       padding-left: 0;
     }
