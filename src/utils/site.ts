@@ -8,31 +8,39 @@ export const LINKEDIN_URL = 'https://linkedin.com/in/jml1228';
 export const EMAIL = 'tltmzmaos@gmail.com';
 
 /**
- * Where I've worked, newest first, as the About page lists it. Each entry
- * is the one place its years and label are written.
+ * Where I've worked, newest first, as the About page lists it. An entry is
+ * its field and a few words on the work there, not everything I did.
  */
-export const CAREER: { years: string; label: string }[] = [
-  { years: '2026 – now', label: 'Applied AI' },
-  { years: '2025 – 2026', label: 'Life sciences' },
-  { years: '2021 – 2025', label: 'Automotive' },
-];
-
-/**
- * The topics the About page points to, each by the tag whose page lists
- * its posts. Only topics with posts are shown, so a new one appears once
- * something is written under it.
- */
-export const WRITING_TOPICS: { label: string; tag: string }[] = [
-  { label: 'Working with AI', tag: 'AI' },
-  { label: 'Machine learning', tag: 'Machine Learning' },
-  { label: 'Software engineering', tag: 'Software Engineering' },
-  { label: 'Course notes', tag: 'OMSCS' },
+export const CAREER: { dates: string; label: string; detail: string }[] = [
+  {
+    dates: 'Jun 2026 – now',
+    label: 'Enterprise AI',
+    detail: 'New AI products, from idea to production',
+  },
+  {
+    dates: 'Aug 2025 – May 2026',
+    label: 'Life Sciences',
+    detail: 'Lab automation, equipment orchestration',
+  },
+  {
+    dates: 'Jun 2021 – Aug 2025',
+    label: 'Automotive',
+    detail: 'Vehicle diagnostics, pre/after-sales',
+  },
 ];
 
 /** Schools, as the About page lists them. */
-export const EDUCATION: string[] = [
-  'Georgia Tech — M.S. in Computer Science (OMSCS), in progress',
-  'UC Irvine — B.S. in Computer Science',
+export const EDUCATION: { dates: string; school: string; degree: string }[] = [
+  {
+    dates: 'Expected Dec 2027',
+    school: 'Georgia Tech',
+    degree: 'M.S. in Computer Science (OMSCS)',
+  },
+  {
+    dates: 'Jun 2021',
+    school: 'UC Irvine',
+    degree: 'B.S. in Computer Science',
+  },
 ];
 
 // Rendered by src/pages/og.png.ts.
