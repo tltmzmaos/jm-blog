@@ -16,20 +16,17 @@ Personal tech blog built with Astro. Writing about software engineering, archite
 
 ## Features
 
-- Home page: the name, one line about the notes, then every post newest first (title, date, description)
-- Every post by year at `/posts/` (the archive, linked from the home page)
+- Home page: every post newest first (title, date, description)
 - A "JL" monogram in the header (src/components/Monogram.astro); the favicon, touch icon and OG card footer use the same mark
 - Footer: © line on the left, GitHub / LinkedIn / Email / RSS icons on the right; contact links live only here
-- One highlighter color, used only behind text: selection, link hover, the current nav item and contents entry, the current series part
+- One highlighter color, used only behind text: selection, link hover, the current contents entry, the current series part
 - Dark mode with system preference detection; code highlighting (Shiki, GitHub light and dark themes) follows it. Switching the theme reveals it in a circle from the toggle where view transitions exist
 - Search over post titles, descriptions and tags with Fuse.js; matched words are marked
-- Tag-based post organization
 - Series navigation, driven by `src/content/series/*.json`
 - `==text==` in a post marks the words with the highlighter (`<mark>`, src/plugins/remark-mark.mjs); code and math are left alone
-- Post header: title, the description as a dek, and one row of facts (date, reading time, series part, tags)
-- Section numbers on the h2s of posts with three or more, drawn by a CSS counter (src/utils/sections.ts); headings that already start with a number keep it
+- Post header: title, the description as a dek, and one row of facts (date, reading time, series part)
 - A running header on posts: once the title scrolls away, a thin bar shows the title and the current section over a rail with one segment per section (src/scripts/reading.ts)
-- Table of contents (auto-generated), numbered like the sections; the highlighter behind the current entry glides from entry to entry
+- Table of contents (auto-generated); the highlighter behind the current entry glides from entry to entry
 - Image zoom: a post image drawn smaller than its file opens in a native `<dialog>`, as large as the window allows, growing out of its place where view transitions exist (src/scripts/zoom.ts)
 - Copy-link button
 - Skip-to-content accessibility link
@@ -51,14 +48,12 @@ src/
 │   ├── SearchBox.astro
 │   ├── ThemeToggle.astro
 │   ├── TableOfContents.astro
-│   ├── PostList.astro      # posts grouped by year
 │   ├── PostListItem.astro
 │   ├── SeriesStrip.astro   # one segment per part of a series (a picture, not links)
 │   ├── Footer.astro        # © line and profile/feed icons
 │   └── SEO.astro
 ├── content/
 │   ├── blog/          # Blog posts (Markdown)
-│   │   ├── concepts/
 │   │   ├── dev/
 │   │   ├── ml-stanford/
 │   │   └── omscs/
@@ -71,10 +66,8 @@ src/
 │   ├── index.astro
 │   ├── about.astro
 │   ├── 404.astro
-│   ├── posts/index.astro      # archive by year
 │   ├── posts/[...slug].astro
 │   ├── series/index.astro
-│   ├── tags/
 │   ├── api/posts.json.ts
 │   ├── og/[...slug].png.ts
 │   ├── og.png.ts
