@@ -72,9 +72,9 @@
       </div>
 
       <p class="search-footer">
-        <kbd>↑</kbd>
-        <kbd>↓</kbd> to move · <kbd>Enter</kbd> to open ·
-        <kbd>Esc</kbd> to close
+        <span><kbd>↑</kbd> <kbd>↓</kbd> to move</span>
+        <span><kbd>Enter</kbd> to open</span>
+        <span><kbd>Esc</kbd> to close</span>
       </p>
     </div>
   </div>
@@ -285,6 +285,8 @@
   }
 
   .search-footer {
+    display: flex;
+    gap: 1.25rem;
     margin: 0;
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;

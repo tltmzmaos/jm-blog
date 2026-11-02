@@ -1,6 +1,6 @@
 {
   "title": "OMSCS Course Notes",
-  "description": "Per-semester summaries from Georgia Tech's OMSCS program — the concepts I want to remember after the class ends.",
+  "description": "What I want to remember from each semester of Georgia Tech's OMSCS program.",
   "dir": "omscs",
   "status": "ongoing",
   "sortBy": "date",
