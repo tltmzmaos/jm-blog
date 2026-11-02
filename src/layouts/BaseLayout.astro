@@ -164,7 +164,7 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
 
   <body>
     <a href="#main-content" class="skip-to-content">Skip to content</a>
-    <slot />
+    <div class="site-body"><slot /></div>
     <Footer />
 
     <!-- Cloudflare Web Analytics -->
@@ -635,6 +635,20 @@ const katexCss = `https://cdn.jsdelivr.net/npm/katex@${katex.version}/dist/katex
   /* Printing a page gives the notes alone: the light theme (switched by
      the theme script), no header, footer, contents or buttons, highlighter
      marks kept, and the address after each link that leaves the site. */
+  /* Short pages keep the footer at the bottom of the window. */
+  @media screen {
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    .site-body {
+      flex: 1 0 auto;
+    }
+  }
+
   @media print {
     .skip-to-content,
     .header,
