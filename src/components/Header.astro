@@ -84,11 +84,11 @@ const links = [
     gap: 1.25rem;
   }
 
-  /* The current section is marked with a short, thick highlighter stroke
-     behind the lower half of the word; hovering another item sweeps in a
-     fainter pass of the same pen. The stroke runs a little past each end
-     of the word (padding), and the matching negative margin keeps the
-     words where they were. Text on the stroke is always --color-text. */
+  /* The current section is underlined, so the highlighter stays rare; the
+     mark next to it is already yellow. Hovering another item sweeps in a
+     faint pass of the pen. The stroke runs a little past each end of the
+     word (padding), and the matching negative margin keeps the words where
+     they were. Text on the stroke is always --color-text. */
   .nav-link {
     margin: 0 -0.2em;
     padding: 0 0.2em;
@@ -111,8 +111,10 @@ const links = [
 
   .nav-link.active {
     color: var(--color-text);
-    background-image: linear-gradient(var(--color-mark), var(--color-mark));
-    background-size: 100% 0.52em;
+    background-size: 0 0.52em;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.35em;
   }
 
   @media (prefers-reduced-motion: no-preference) {
